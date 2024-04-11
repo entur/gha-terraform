@@ -14,4 +14,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: terraform-linters/setup-tflint@v4
+        with:
+          tflint_wrapper: true
       - run: tflint --version
+      - run: tflint --init
+      - run: tflint --chdir=${{ inputs.terraform_dir }} -f compact
