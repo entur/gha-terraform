@@ -12,5 +12,6 @@ jobs:
     permissions:
       contents: read
     steps:
-      - uses: actions/checkout@v2
-      - uses: pauloconnor/tflint-action@v0.0.2
+      - uses: actions/checkout@v4
+      - uses: terraform-linters/setup-tflint@v4
+      - run: tflint --version
