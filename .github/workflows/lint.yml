@@ -18,4 +18,4 @@ jobs:
           tflint_wrapper: true
       - run: tflint --version
       - run: tflint --init
-      - run: tflint --chdir=${{ inputs.terraform_dir }} -f compact
+      - run: tflint --chdir=${{ inputs.terraform_dir }} -f sarif
