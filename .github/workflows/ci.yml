@@ -6,4 +6,3 @@ jobs:
     uses: ./.github/workflows/lint.yml
     with:
       terraform_dir: fixture/terraform
-  terraform-fmt:
