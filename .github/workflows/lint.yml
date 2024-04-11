@@ -5,6 +5,10 @@ on:
         description: "Path to Terraform Directory"
         type: string
         default: "terraform"
+      cloud_provider:
+        description: "The cloud provider, options are gcloud or azure"
+        type: string
+        default: "gcloud"
 
 jobs:
   lint:
@@ -18,4 +22,4 @@ jobs:
           tflint_wrapper: true
       - run: tflint --version
       - run: tflint --init
-      - run: tflint --chdir=${{ inputs.terraform_dir }} -f default
+      - run: tflint --chdir=${{ inputs.terraform_dir }} -f json
