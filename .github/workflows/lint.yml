@@ -22,4 +22,4 @@ jobs:
           tflint_wrapper: true
       - run: tflint --version
       - run: tflint --init
-      - run: tflint --chdir=${{ inputs.terraform_dir }} -f json
+      - run: tflint --chdir=${{ inputs.terraform_dir }} -f checkstyle
