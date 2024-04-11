@@ -3,6 +3,6 @@ on:
 
 jobs:
   test-lint-ok:
-    uses: .github/workflows/lint.yml
+    uses: ./.github/workflows/lint.yml
     with:
       terraform_dir: fixture/terraform
