@@ -1,0 +1,16 @@
+on:
+  workflow_call:
+    inputs:
+      terraform_dir:
+        description: "Path to Terraform Directory"
+        type: string
+        default: "terraform"
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v2
+      - uses: pauloconnor/tflint-action@v0.0.2
