@@ -1,0 +1,43 @@
+on:
+  workflow_call:
+    inputs:
+      terraform_dir:
+        description: "Path to Terraform Directory"
+        type: string
+        default: "terraform"
+      cloud_provider:
+        description: "The cloud provider for this project"
+        type: string
+        default: "gcloud"
+      environment:
+        description: "The cloud environment"
+        type: string
+        default: "dev"
+      tf_workspace:
+        description: "The terraform workspace"
+        type: string
+        default: "dev"
+
+
+jobs:
+  terraform-plan:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v3
+      - name: Upload Configuration
+        uses: hashicorp/tfc-workflows-github/actions/upload-configuration@v1.0.0
+        id: plan-upload
+        with:
+          workspace: ${{ inputs.tf_workspace }}
+          directory: ${{ inputs.terraform_dir }}
+          speculative: true
+      - name: Create Plan Run
+        uses: hashicorp/tfc-workflows-github/actions/create-run@v1.0.0
+        id: plan-run
+        with:
+          workspace: ${{ inputs.tf_workspace }}
+          configuration_version: ${{ steps.plan-upload.outputs.configuration_version_id }}
+          plan_only: true

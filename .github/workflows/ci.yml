@@ -6,3 +6,8 @@ jobs:
     uses: ./.github/workflows/lint.yml
     with:
       terraform_dir: fixture/terraform
+
+  test-terraform-plan:
+    uses: ./.github/workflows/plan.yml
+    with:
+      terraform_dir: fixture/terraform

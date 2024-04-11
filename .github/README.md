@@ -11,13 +11,10 @@
 
 [![CI](https://github.com/entur/gha-docker/actions/workflows/ci.yml/badge.svg)](https://github.com/entur/gha-docker/actions/workflows/ci.yml)
 
-GitHub Actions for working with Docker
-
-- [Terraform lint](../README-lint.md)
-- [Terraform validate](../README-build.md)
-- [Terraform apply](../README-push.md)
+GitHub Actions for working with Terraform 
 
 ## Golden Path
+
 
 ### Example
 
@@ -49,11 +46,11 @@ jobs:
   terraform-lint:
     uses: entur/gha-terraform/.github/workflows/lint.yml@main
 
-  docker-build:
-    uses: entur/gha-terraform/.github/workflows/build.yml@main
+  terraform-plan:
+    uses: entur/gha-terraform/.github/workflows/plan.yml@main
 
-  docker-push:
-    uses: entur/gha-terraform/.github/workflows/push.yml@main
+  terraform-apply:
+    uses: entur/gha-terraform/.github/workflows/apply.yml@main
     secrets: inherit
 ```
 
