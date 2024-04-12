@@ -51,11 +51,12 @@ jobs:
         working-directory: ${{ inputs.terraform_dir }}
         shell: bash
         run: |
-          terraform plan -no-color
-
+          echo 'plan<<EOF' >> $GITHUB_OUTPUT
+          terraform plan -no-color -out=tfplan >> $GITHUB_OUTPUT
+          echo 'EOF' >> $GITHUB_OUTPUT
       - name: Save Artifact
         id: save-artifact
         uses: actions/upload-artifact@v4
         with:
           name: my-tf-plan
-          path: ${{ inputs.terraform_dir }}
+          path: ${{ inputs.terraform_dir }}/tfplan
