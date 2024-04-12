@@ -51,6 +51,4 @@ jobs:
         working-directory: ${{ inputs.terraform_dir }}
         shell: bash
         run: |
-          echo 'plan<<EOF' >> $GITHUB_OUTPUT
-          terraform plan -no-color -out=tfplan >> $GITHUB_OUTPUT
-          echo 'EOF' >> $GITHUB_OUTPUT
+          terraform plan -no-color
