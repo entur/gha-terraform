@@ -11,3 +11,4 @@ jobs:
     uses: ./.github/workflows/plan.yml
     with:
       terraform_dir: fixture/terraform
+
