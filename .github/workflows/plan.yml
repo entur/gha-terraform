@@ -52,3 +52,10 @@ jobs:
         shell: bash
         run: |
           terraform plan -no-color
+
+      - name: Save Artifact
+        id: save-artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: my-tf-plan
+          path: ${{ inputs.terraform_directory }}/tfplan
