@@ -1,4 +1,26 @@
 on:
+  workflow_dispatch:
+    inputs:
+      terraform_dir:
+        description: "Path to Terraform Directory"
+        type: string
+        default: "terraform"
+      cloud_provider:
+        description: "The cloud provider for this project"
+        type: string
+        default: "GCP"
+      environment:
+        description: "The cloud environment"
+        type: string
+        default: "dev"
+      tf_workspace:
+        description: "The terraform workspace"
+        type: string
+        default: "dev"
+      tf_version:
+        description: "Terraform version"
+        type: string
+        default: "latest"
   workflow_call:
     inputs:
       terraform_dir:
@@ -8,7 +30,7 @@ on:
       cloud_provider:
         description: "The cloud provider for this project"
         type: string
-        default: "gcloud"
+        default: "GCP"
       environment:
         description: "The cloud environment"
         type: string
@@ -35,7 +57,7 @@ jobs:
       - name: Access gcp
         id: login-gcp
         uses: google-github-actions/auth@v2.1.2
-        if: inputs.cloud_provider == 'gcloud'
+        if: inputs.cloud_provider == 'GCP'
         with:
           workload_identity_provider: ${{ vars.WORKLOAD_IDENTITY_PROVIDER }}
           service_account: ${{ vars.SERVICE_ACCOUNT }}
