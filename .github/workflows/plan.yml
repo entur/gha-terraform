@@ -61,7 +61,6 @@ jobs:
         with:
           workload_identity_provider: ${{ vars.WORKLOAD_IDENTITY_PROVIDER }}
           service_account: ${{ vars.SERVICE_ACCOUNT }}
-          token_format: "access_token"
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
