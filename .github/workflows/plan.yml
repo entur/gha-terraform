@@ -32,6 +32,15 @@ jobs:
       - name: checkout
         uses: actions/checkout@v4
 
+      - name: Access gcp
+        id: login-gcp
+        uses: google-github-actions/auth@v2.1.2
+        if: inputs.cloud_provider == 'gcloud'
+        with:
+          workload_identity_provider: ${{ vars.WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ vars.SERVICE_ACCOUNT }}
+          token_format: "access_token"
+
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
         id: setup
@@ -54,6 +63,7 @@ jobs:
           echo 'plan<<EOF' >> $GITHUB_OUTPUT
           terraform plan -no-color -out=tfplan >> $GITHUB_OUTPUT
           echo 'EOF' >> $GITHUB_OUTPUT
+
       - name: Save Artifact
         id: save-artifact
         uses: actions/upload-artifact@v4
