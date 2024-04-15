@@ -1,3 +1,4 @@
+name: Entur/Terraform/CI
 on:
   push
 
