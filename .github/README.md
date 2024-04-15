@@ -9,7 +9,7 @@
       <br>entur/gha-terraform<br>
 </h1>
 
-[![CI](https://github.com/entur/gha-docker/actions/workflows/ci.yml/badge.svg)](https://github.com/entur/gha-docker/actions/workflows/ci.yml)
+[![CI](https://github.com/entur/gha-terraform/actions/workflows/ci.yml/badge.svg)](https://github.com/entur/gha-terraform/actions/workflows/ci.yml)
 
 GitHub Actions for working with Terraform 
 
