@@ -14,3 +14,8 @@ jobs:
       terraform_dir: fixture/terraform
     secrets: inherit
 
+  test-terraform-apply:
+    uses: ./.github/workflows/apply.yml
+    with:
+      terraform_dir: fixture/terraform
+    secrets: inherit
