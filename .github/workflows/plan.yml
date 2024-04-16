@@ -1,3 +1,26 @@
+on:
+  workflow_dispatch:
+    inputs:
+      terraform_dir:
+        description: "Path to Terraform Directory"
+        type: string
+        default: "terraform"
+      cloud_provider:
+        description: "The cloud provider for this project"
+        type: string
+        default: "GCP"
+      environment:
+        description: "The cloud environment"
+        type: string
+        default: "dev"
+      tf_workspace:
+        description: "The terraform workspace"
+        type: string
+        default: "dev"
+      tf_version:
+        description: "Terraform version"
+        type: string
+        default: "latest"
   workflow_call:
     inputs:
       terraform_dir:
