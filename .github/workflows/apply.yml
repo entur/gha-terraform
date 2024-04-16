@@ -82,13 +82,6 @@ jobs:
         run: |
           terraform init
 
-      - name: Download Plan
-        id: download-plan
-        uses: dawidd6/action-download-artifact@v3
-        with:
-          workflow: plan.yml
-          name: my-tf-plan
-          path: ${{ inputs.terraform_dir }}
 
       - name: Terraform Apply
         id: apply
@@ -96,5 +89,5 @@ jobs:
         shell: bash
         run: |
           echo 'apply<<EOF' >> $GITHUB_OUTPUT
-          terraform apply -input=false -no-color tfplan >> $GITHUB_OUTPUT
+          terraform apply -input=false -no-color >> $GITHUB_OUTPUT
           echo 'EOF' >> $GITHUB_OUTPUT
