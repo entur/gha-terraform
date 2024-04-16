@@ -54,18 +54,20 @@ jobs:
         run: |
           terraform init
 
-      - name: Terraform Plan
-        id: plan
+      - name: Download Plan
+        id: download-plan
+        uses: dawidd6/action-download-artifact@v2
+        with:
+          github_token: ${{ inputs.github_token }}
+          workflow: plan.yml
+          name: my-tf-plan
+          path: ${{ inputs.terraform_dir }}
+
+      - name: Terraform Apply
+        id: apply
         working-directory: ${{ inputs.terraform_dir }}
         shell: bash
         run: |
-          echo 'plan<<EOF' >> $GITHUB_OUTPUT
-          terraform plan -no-color -out=tfplan >> $GITHUB_OUTPUT
+          echo 'apply<<EOF' >> $GITHUB_OUTPUT
+          terraform apply -input=false -no-color tfplan >> $GITHUB_OUTPUT
           echo 'EOF' >> $GITHUB_OUTPUT
-
-      - name: Save Artifact
-        id: save-artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: my-tf-plan
-          path: ${{ inputs.terraform_dir }}/tfplan
