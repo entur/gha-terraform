@@ -50,7 +50,7 @@ on:
         default: "latest"
 
 jobs:
-  terraform-plan:
+  terraform-apply:
     runs-on: ubuntu-latest
     environment: ${{ inputs.environment }}
     permissions:
@@ -89,5 +89,5 @@ jobs:
         shell: bash
         run: |
           echo 'apply<<EOF' >> $GITHUB_OUTPUT
-          terraform apply -input=false -no-color >> $GITHUB_OUTPUT
+          terraform apply -no-color >> $GITHUB_OUTPUT
           echo 'EOF' >> $GITHUB_OUTPUT
