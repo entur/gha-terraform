@@ -95,5 +95,5 @@ jobs:
         shell: bash
         run: |
           echo 'apply<<EOF' >> $GITHUB_OUTPUT
-          terraform apply -input=false -no-color tfplan >> $GITHUB_OUTPUT
+          terraform apply -input=false -no-color tf-plan >> $GITHUB_OUTPUT
           echo 'EOF' >> $GITHUB_OUTPUT
