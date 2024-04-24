@@ -62,7 +62,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: tf-plan
-          path: ${{ inputs.terraform_dir }}/tfplans
+          path: ${{ inputs.terraform_dir }}/tfplan
 
       - name: list files
         run: ls -R
