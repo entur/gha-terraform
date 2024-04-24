@@ -1,6 +1,7 @@
 name: Entur/Terraform/CI
 on:
-  push
+  push:
+  workflow_dispatch:
 
 jobs:
   test-lint-ok:
