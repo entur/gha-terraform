@@ -3,7 +3,7 @@ name: Entur/Terraform/Plan
 on:
   workflow_call:
     inputs:
-      terraform_dir:
+      tf_directory:
         description: "Path to Terraform Directory"
         type: string
         default: "terraform"
@@ -32,13 +32,21 @@ jobs:
       contents: read
       id-token: write
     steps:
+      - id: set-env
+        shell: bash
+        run: |
+          echo "GHA_TERRAFORM_DIRECTORY=${{ inputs.tf_directory }}" >> $GITHUB_ENV
+          echo "GHA_CLOUD_PROVIDER=${{ inputs.cloud_provider }}" >> $GITHUB_ENV
+          echo "GHA_ENVIRONMENT=${{ inputs.environment }}" >> $GITHUB_ENV
+          echo "GHA_TERRAFORM_WORKSPACE=${{ inputs.tf_workspace }}" >> $GITHUB_ENV
+          echo "GHA_TERRAFORM_VERSION=${{ inputs.tf_version }}" >> $GITHUB_ENV
       - name: checkout
         uses: actions/checkout@v4
 
       - name: Access gcp
         id: login-gcp
         uses: google-github-actions/auth@v2.1.2
-        if: inputs.cloud_provider == 'GCP'
+        if: env.GHA_CLOUD_PROVIDER == 'GCP'
         with:
           workload_identity_provider: ${{ vars.WORKLOAD_IDENTITY_PROVIDER }}
           service_account: ${{ vars.SERVICE_ACCOUNT }}
@@ -47,37 +55,37 @@ jobs:
         uses: hashicorp/setup-terraform@v3
         id: setup
         with:
-          terraform_version: ${{ inputs.tf_version }}
+          terraform_version: ${{ env.GHA_TERRAFORM_VERSION }}
           terraform_wrapper: false
 
       - name: Terraform Init
         id: init
-        working-directory: ${{ inputs.terraform_dir }}
+        working-directory: ${{ env.GHA_TERRAFORM_DIRECTORY }}
         shell: bash
         run: |
           terraform init
 
       - name: Terraform Workspace
         id: workspace
-        working-directory: ${{ inputs.terraform_dir }}
+        working-directory: ${{ env.GHA_TERRAFORM_DIRECTORY }}
         shell: bash
         run: |
-          terraform workspace select ${{ inputs.environment }} || terraform workspace new ${{ inputs.environment }}
+          terraform workspace select ${{ env.GHA_TERRAFORM_WORKSPACE }} || terraform workspace new ${{ env.GHA_TERRAFORM_WORKSPACE }}
 
       - name: Terraform Plan
         id: plan
-        working-directory: ${{ inputs.terraform_dir }}
+        working-directory: ${{ env.GHA_TERRAFORM_DIRECTORY }}
         shell: bash
         run: |
           echo 'plan<<EOF' >> $GITHUB_OUTPUT
-          terraform plan -var-file=env/dev.tf -no-color -out=tfplan >> $GITHUB_OUTPUT
+          terraform plan -var-file=env/${{ env.GHA_ENVIRONMENT }}.tf -no-color -out=tfplan >> $GITHUB_OUTPUT
           echo 'EOF' >> $GITHUB_OUTPUT
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
          name: tf-plan
-         path: ${{ inputs.terraform_dir }}/tfplan
+         path: ${{ env.GHA_TERRAFORM_DIRECTORY }}/tfplan
          if-no-files-found: error
          retention-days: 1
          overwrite: true
