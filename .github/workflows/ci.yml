@@ -12,7 +12,7 @@ jobs:
   test-terraform-plan:
     uses: ./.github/workflows/plan.yml
     with:
-      terraform_dir: fixture/terraform
+      tf_directory: fixture/terraform
     secrets: inherit
 
   test-terraform-apply:
