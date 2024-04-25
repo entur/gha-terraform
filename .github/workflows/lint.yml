@@ -3,7 +3,7 @@ name: Entur/Terraform/Lint
 on:
   workflow_call:
     inputs:
-      terraform_dir:
+      tf_directory:
         description: "Path to Terraform Directory"
         type: string
         default: "terraform"
@@ -14,10 +14,14 @@ jobs:
     permissions:
       contents: read
     steps:
+      - id: set-env
+        shell: bash
+        run: |
+          echo "GHA_TERRAFORM_DIRECTORY=${{ inputs.tf_directory }}" >> $GITHUB_ENV
       - uses: actions/checkout@v4
       - uses: terraform-linters/setup-tflint@v4
         with:
           tflint_wrapper: true
       - run: tflint --version
       - run: tflint --init
-      - run: tflint --chdir=${{ inputs.terraform_dir }} -f compact
+      - run: tflint --chdir=${{ env.GHA_TERRAFORM_DIRECTORY }} -f compact
