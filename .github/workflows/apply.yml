@@ -57,6 +57,13 @@ jobs:
         run: |
           terraform init
 
+      - name: Terraform Workspace
+        id: workspace
+        working-directory: ${{ inputs.terraform_dir }}
+        shell: bash
+        run: |
+          terraform workspace select ${{ inputs.environment }} || terraform workspace new ${{ inputs.environment }}
+
       - name: Download Plan
         id: download-plan
         uses: actions/download-artifact@v4
@@ -73,5 +80,5 @@ jobs:
         shell: bash
         run: |
           echo 'apply<<EOF' >> $GITHUB_OUTPUT
-          terraform apply -input=false -no-color tfplan/tfplan >> $GITHUB_OUTPUT
+          terraform apply -var-file=env/dev.tf -input=false -no-color tfplan/tfplan >> $GITHUB_OUTPUT
           echo 'EOF' >> $GITHUB_OUTPUT

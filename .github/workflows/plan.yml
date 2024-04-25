@@ -57,13 +57,20 @@ jobs:
         run: |
           terraform init
 
+      - name: Terraform Workspace
+        id: workspace
+        working-directory: ${{ inputs.terraform_dir }}
+        shell: bash
+        run: |
+          terraform workspace select ${{ inputs.environment }} || terraform workspace new ${{ inputs.environment }}
+
       - name: Terraform Plan
         id: plan
         working-directory: ${{ inputs.terraform_dir }}
         shell: bash
         run: |
           echo 'plan<<EOF' >> $GITHUB_OUTPUT
-          terraform plan -no-color -out=tfplan >> $GITHUB_OUTPUT
+          terraform plan -var-file=env/dev.tf -no-color -out=tfplan >> $GITHUB_OUTPUT
           echo 'EOF' >> $GITHUB_OUTPUT
 
       - name: Upload Artifact
