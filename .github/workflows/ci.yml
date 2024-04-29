@@ -19,5 +19,5 @@ jobs:
     uses: ./.github/workflows/force-apply.yml
     needs: test-terraform-plan
     with:
-      terraform_dir: fixture/terraform
+      tf_directory: fixture/terraform
     secrets: inherit
