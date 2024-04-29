@@ -67,7 +67,6 @@ jobs:
 
       - name: Terraform Apply
         id: force-apply
-        description: Applies the infrastructure using auto-approve, make sure to use plan step first.
         working-directory: ${{ inputs.terraform_dir }}
         shell: bash
         run: |
