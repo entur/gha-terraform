@@ -83,7 +83,7 @@ jobs:
         id: force-apply
         working-directory: ${{ env.GHA_TERRAFORM_DIRECTORY }}
         shell: bash
-        if: env.GHA_TERRAFORM_DEPLOY == true
+        if: env.GHA_TERRAFORM_DEPLOY == 'true'
         run: |
           echo 'apply<<EOF' >> $GITHUB_OUTPUT
           terraform apply --auto-approve -var-file=env/${{ env.GHA_ENVIRONMENT }}.tf -input=false -no-color >> $GITHUB_OUTPUT
