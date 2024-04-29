@@ -67,9 +67,10 @@ jobs:
 
       - name: Terraform Apply
         id: force-apply
+        description: Applies the infrastructure using auto-approve, make sure to use plan step first.
         working-directory: ${{ inputs.terraform_dir }}
         shell: bash
         run: |
           echo 'apply<<EOF' >> $GITHUB_OUTPUT
-          terraform apply --auto-approce -input=false -no-color >> $GITHUB_OUTPUT
+          terraform apply --auto-approve -input=false -no-color >> $GITHUB_OUTPUT
           echo 'EOF' >> $GITHUB_OUTPUT
