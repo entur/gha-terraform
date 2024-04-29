@@ -27,10 +27,6 @@ on:
         description: "Deploy terraform infrastructure"
         type: boolean
         default: true
-      tf_varfile_ext:
-        description: "Name of variable file"
-        type: string
-        default: ".tfvars"
 
 
 jobs:
@@ -50,7 +46,6 @@ jobs:
           echo "GHA_TERRAFORM_WORKSPACE=${{ inputs.tf_workspace }}" >> $GITHUB_ENV
           echo "GHA_TERRAFORM_VERSION=${{ inputs.tf_version }}" >> $GITHUB_ENV
           echo "GHA_TERRAFORM_DEPLOY=${{ inputs.tf_deploy }}" >> $GITHUB_ENV
-          echo "GHA_TERRAFORM_VAR_EXT=${{ inputs.tf_varfile_ext }}" >> $GITHUB_ENV
 
       - name: checkout
         uses: actions/checkout@v4
@@ -92,5 +87,5 @@ jobs:
         if: env.GHA_TERRAFORM_DEPLOY == 'true'
         run: |
           echo 'apply<<EOF' >> $GITHUB_OUTPUT
-          terraform apply --auto-approve -var-file=env/${{ env.GHA_ENVIRONMENT }}.${{ env.GHA_TERRAFORM_VAR_EXT }} -input=false -no-color >> $GITHUB_OUTPUT
+          terraform apply --auto-approve -var-file=env/${{ env.GHA_ENVIRONMENT }}.tfvars -input=false -no-color >> $GITHUB_OUTPUT
           echo 'EOF' >> $GITHUB_OUTPUT

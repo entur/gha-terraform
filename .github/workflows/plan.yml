@@ -23,10 +23,6 @@ on:
         description: "Terraform version"
         type: string
         default: "latest"
-      tf_varfile_ext:
-        description: "Name of variable file"
-        type: string
-        default: ".tfvars"
 
 jobs:
   terraform-plan:
@@ -44,7 +40,6 @@ jobs:
           echo "GHA_ENVIRONMENT=${{ inputs.environment }}" >> $GITHUB_ENV
           echo "GHA_TERRAFORM_WORKSPACE=${{ inputs.tf_workspace }}" >> $GITHUB_ENV
           echo "GHA_TERRAFORM_VERSION=${{ inputs.tf_version }}" >> $GITHUB_ENV
-          echo "GHA_TERRAFORM_VAR_EXT=${{ inputs.tf_varfile_ext }}" >> $GITHUB_ENV
 
       - name: checkout
         uses: actions/checkout@v4
@@ -84,7 +79,7 @@ jobs:
         shell: bash
         run: |
           echo 'plan<<EOF' >> $GITHUB_OUTPUT
-          terraform plan -var-file=env/${{ env.GHA_ENVIRONMENT }}.${{ env.GHA_TERRAFORM_VAR_EXT }} -no-color -out=tfplan >> $GITHUB_OUTPUT
+          terraform plan -var-file=env/${{ env.GHA_ENVIRONMENT }}.tfvars -no-color -out=tfplan >> $GITHUB_OUTPUT
           echo 'EOF' >> $GITHUB_OUTPUT
 
       - name: Update Pull Request
