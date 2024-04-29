@@ -71,5 +71,5 @@ jobs:
         shell: bash
         run: |
           echo 'apply<<EOF' >> $GITHUB_OUTPUT
-          terraform apply --auto-approve -input=false -no-color >> $GITHUB_OUTPUT
+          terraform apply --auto-approve -var-file=env/${{ env.GHA_ENVIRONMENT }}.tf -input=false -no-color >> $GITHUB_OUTPUT
           echo 'EOF' >> $GITHUB_OUTPUT
