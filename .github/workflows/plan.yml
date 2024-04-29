@@ -78,7 +78,7 @@ jobs:
         shell: bash
         run: |
           echo 'plan<<EOF' >> $GITHUB_OUTPUT
-          terraform plan -var-file=env/${{ env.GHA_ENVIRONMENT }}.tf -no-color -out=tfplan >> $GITHUB_OUTPUT
+          terraform plan -var-file=env/${{ env.GHA_ENVIRONMENT }}.${{ env.GHA_TERRAFORM_VAR_EXT }} -no-color -out=tfplan >> $GITHUB_OUTPUT
           echo 'EOF' >> $GITHUB_OUTPUT
 
       - name: Update Pull Request
