@@ -3,7 +3,7 @@ name: Entur/Terraform/Apply
 on:
   workflow_call:
     inputs:
-      terraform_dir:
+      tf_directory:
         description: "Path to Terraform Directory"
         type: string
         default: "terraform"
@@ -52,7 +52,7 @@ jobs:
       - name: Access gcp
         id: login-gcp
         uses: google-github-actions/auth@v2.1.2
-        if: inputs.cloud_provider == 'GCP'
+        if: env.GHA_CLOUD_PROVIDER == 'GCP'
         with:
           workload_identity_provider: ${{ vars.WORKLOAD_IDENTITY_PROVIDER }}
           service_account: ${{ vars.SERVICE_ACCOUNT }}
@@ -61,27 +61,27 @@ jobs:
         uses: hashicorp/setup-terraform@v3
         id: setup
         with:
-          terraform_version: ${{ inputs.tf_version }}
+          terraform_version: ${{ env.GHA_TERRAFORM_VERSION }}
           terraform_wrapper: false
 
       - name: Terraform Init
         id: init
-        working-directory: ${{ inputs.terraform_dir }}
+        working-directory: ${{ env.GHA_TERRAFORM_DIRECTORY }}
         shell: bash
         run: |
           terraform init
 
       - name: Terraform Workspace
         id: workspace
-        working-directory: ${{ inputs.terraform_dir }}
+        working-directory: ${{ env.GHA_TERRAFORM_DIRECTORY }}
         shell: bash
         run: |
-          terraform workspace select ${{ inputs.environment }} || terraform workspace new ${{ inputs.environment }}
+          terraform workspace select ${{ env.GHA_TERRAFORM_WORKSPACE }} || terraform workspace new ${{ env.GHA_TERRAFORM_WORKSPACE }}
 
 
       - name: Terraform Apply
         id: force-apply
-        working-directory: ${{ inputs.terraform_dir }}
+        working-directory: ${{ env.GHA_TERRAFORM_DIRECTORY }}
         shell: bash
         if: env.GHA_TERRAFORM_DEPLOY == true
         run: |
