@@ -64,21 +64,12 @@ jobs:
         run: |
           terraform workspace select ${{ inputs.environment }} || terraform workspace new ${{ inputs.environment }}
 
-      - name: Download Plan
-        id: download-plan
-        uses: actions/download-artifact@v4
-        with:
-          name: tf-plan
-          path: ${{ inputs.terraform_dir }}/tfplan
-
-      - name: list files
-        run: ls -R
 
       - name: Terraform Apply
-        id: apply
+        id: force-apply
         working-directory: ${{ inputs.terraform_dir }}
         shell: bash
         run: |
           echo 'apply<<EOF' >> $GITHUB_OUTPUT
-          terraform apply -input=false -no-color tfplan/tfplan >> $GITHUB_OUTPUT
+          terraform apply --auto-approce -input=false -no-color >> $GITHUB_OUTPUT
           echo 'EOF' >> $GITHUB_OUTPUT

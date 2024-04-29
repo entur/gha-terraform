@@ -80,12 +80,3 @@ jobs:
           echo 'plan<<EOF' >> $GITHUB_OUTPUT
           terraform plan -var-file=env/${{ env.GHA_ENVIRONMENT }}.tf -no-color -out=tfplan >> $GITHUB_OUTPUT
           echo 'EOF' >> $GITHUB_OUTPUT
-
-      - name: Upload Artifact
-        uses: actions/upload-artifact@v4
-        with:
-         name: tf-plan
-         path: ${{ env.GHA_TERRAFORM_DIRECTORY }}/tfplan
-         if-no-files-found: error
-         retention-days: 1
-         overwrite: true
