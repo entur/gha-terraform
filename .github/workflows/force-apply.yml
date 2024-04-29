@@ -23,6 +23,11 @@ on:
         description: "Terraform version"
         type: string
         default: "latest"
+      tf_deploy:
+        description: "Deploy terraform infrastructure"
+        type: boolean
+        default: true
+
 
 jobs:
   terraform-apply:
@@ -77,6 +82,7 @@ jobs:
         id: force-apply
         working-directory: ${{ inputs.terraform_dir }}
         shell: bash
+        if: ${{ inputs.tf_deploy }}
         run: |
           echo 'apply<<EOF' >> $GITHUB_OUTPUT
           terraform apply --auto-approve -var-file=env/${{ env.GHA_ENVIRONMENT }}.tf -input=false -no-color >> $GITHUB_OUTPUT
