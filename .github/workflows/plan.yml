@@ -55,7 +55,7 @@ jobs:
 
       - name: Access GKE cluster
         id: get-credentials-gcp
-        uses: google-github-actions/get-gke-credentials@v1
+        uses: google-github-actions/get-gke-credentials@v2
         if: env.GHA_CLOUD_PROVIDER == 'GCP'
         with:
           project_id: "ent-kub-${{inputs.environment}}" # TODO: fix jp
