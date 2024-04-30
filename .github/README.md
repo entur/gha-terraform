@@ -4,7 +4,7 @@
 >
 > Please dont use 
 > 
-[<img src="logo.png" width="150px" height="150px" />](https://github.com/hashicorp/terraform)
+<img alt="Terraform" src="https://www.datocms-assets.com/2885/1629941242-logo-terraform-main.svg" width="600px">
 <h1 align="center">
       <br>entur/gha-terraform<br>
 </h1>
