@@ -50,7 +50,7 @@ jobs:
       - name: checkout
         uses: actions/checkout@v4
 
-      - name: Access gcp
+      - name: Access GCP
         id: login-gcp
         uses: google-github-actions/auth@v2.1.2
         if: env.GHA_CLOUD_PROVIDER == 'GCP'
@@ -58,8 +58,10 @@ jobs:
           workload_identity_provider: ${{ vars.WORKLOAD_IDENTITY_PROVIDER }}
           service_account: ${{ vars.SERVICE_ACCOUNT }}
 
-      - name: Access kubernetes cluster
+      - name: Access GKE cluster
         id: get-credentials-gcp
+        uses: google-github-actions/get-gke-credentials@v1
+        if: env.GHA_CLOUD_PROVIDER == 'GCP'
         with:
           project_id: "ent-kub-${{inputs.environment}}" # TODO: fix jp
           cluster_name: "kub-ent-${{inputs.environment}}-001" # TODO: fix jp
