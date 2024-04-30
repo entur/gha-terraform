@@ -89,3 +89,29 @@ jobs:
           echo 'apply<<EOF' >> $GITHUB_OUTPUT
           terraform apply --auto-approve -var-file=env/${{ env.GHA_ENVIRONMENT }}.tfvars -input=false -no-color >> $GITHUB_OUTPUT
           echo 'EOF' >> $GITHUB_OUTPUT
+
+      - name: Update Pull Request
+        uses: actions/github-script@v7
+        if: github.event_name == 'pull_request' && env.GHA_TERRAFORM_DEPLOY == 'true'
+        with:
+          script: |
+            const output = `#### Terraform Apply 📖\`${{ steps.apply.outcome }}\`
+            <details><summary>Show Apply</summary>
+
+            \`\`\`\n
+            ${{ steps.apply.outputs.apply }}
+            \`\`\`
+
+            </details>
+
+            *Pushed by: @${{ github.actor }}, Action: \`${{ github.event_name }}\`*`;
+
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: output
+            })
+      - name: Terraform Apply Status
+        if: steps.apply.outcome == 'failure'
+        run: exit 1
