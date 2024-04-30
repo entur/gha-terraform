@@ -4,7 +4,6 @@
 >
 > Please dont use 
 > 
-<img alt="Terraform" src="https://www.datocms-assets.com/2885/1629941242-logo-terraform-main.svg" width="600px">
 <h1 align="center">
       <br>entur/gha-terraform<br>
 </h1>
