@@ -5,7 +5,6 @@
 > Please dont use 
 > 
 <h1 align="center">
-      <img src="logo.png" width="150px" height="150px" />
       <br>entur/gha-terraform<br>
 </h1>
 
