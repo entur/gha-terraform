@@ -4,8 +4,8 @@
 >
 > Please dont use 
 > 
+[<img src="logo.png" width="150px" height="150px" />](https://github.com/hashicorp/terraform)
 <h1 align="center">
-      [<img src="logo.png" width="150px" height="150px" />](https://github.com/hashicorp/terraform)
       <br>entur/gha-terraform<br>
 </h1>
 
