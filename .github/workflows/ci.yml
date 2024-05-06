@@ -4,6 +4,22 @@ on:
   workflow_dispatch:
 
 jobs:
+  update-lint-doc:
+    uses: entur/gha-meta/.github/workflows/auto-doc.yml@v1.1.0
+    with:
+      workflow_file: .github/workflows/lint.yml
+      readme_file: README-lint.md
+  update-plan-doc:
+    uses: entur/gha-meta/.github/workflows/auto-doc.yml@v1.1.0
+    with:
+      workflow_file: .github/workflows/plan.yml
+      readme_file: README-plan.md
+  update-force-apply-doc:
+    uses: entur/gha-meta/.github/workflows/auto-doc.yml@v1.1.0
+    with:
+      workflow_file: .github/workflows/force-apply.yml
+      readme_file: README-force-apply.md
+
   test-lint-ok:
     uses: ./.github/workflows/lint.yml
     with:

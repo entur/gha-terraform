@@ -2,18 +2,17 @@
 >
 > # Work in progress
 >
-> Please dont use 
-> 
+> Please dont use
+
 <h1 align="center">
       <br>entur/gha-terraform<br>
 </h1>
 
 [![CI](https://github.com/entur/gha-terraform/actions/workflows/ci.yml/badge.svg)](https://github.com/entur/gha-terraform/actions/workflows/ci.yml)
 
-GitHub Actions for working with Terraform 
+GitHub Actions for working with Terraform
 
 ## Golden Path
-
 
 ### Example
 
@@ -24,13 +23,17 @@ Let's look at an example, assume our repo is called `amazing-app`:
 .
 ├── README.md
 ├── terraform
-    └── env
-        └──dev.tf
-        └──tst.tf
-        └──prd.tf
-    └── main.tf
+│   ├── env
+│   │   ├──dev.tf
+│   │   ├──tst.tf
+│   │   └──prd.tf
+│   ├── backend.tf
+│   ├── main.tf
+│   ├── variables.tf
+│   └── versions.tf
 └── .github
     └── workflows
+        ├── cd.yml
         └── ci.yml
 ```
 
@@ -52,4 +55,3 @@ jobs:
     uses: entur/gha-terraform/.github/workflows/apply.yml@main
     secrets: inherit
 ```
-
