@@ -1,6 +1,9 @@
 name: Entur/Terraform/CI
 on:
   pull_request:
+  push:
+    branches:
+      - main
 
 jobs:
   update-lint-doc:
