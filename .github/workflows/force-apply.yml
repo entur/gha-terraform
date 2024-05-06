@@ -95,7 +95,7 @@ jobs:
         working-directory: ${{ env.GHA_TERRAFORM_FORCE_APPLY_DIRECTORY }}
         shell: bash
         run: |
-          terraform workspace select ${{ env.GHA_TERRAFORM_FORCE_APPLY_WORKSPACE }} -or-create=true
+          terraform workspace select -or-create=true ${{ env.GHA_TERRAFORM_FORCE_APPLY_WORKSPACE }}
 
       - name: Terraform Apply
         id: force-apply
