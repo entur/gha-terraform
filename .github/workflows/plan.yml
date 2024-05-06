@@ -3,7 +3,7 @@ name: Entur/Terraform/Plan
 on:
   workflow_call:
     inputs:
-      tf_directory:
+      directory:
         description: "Path to Terraform Directory"
         type: string
         default: "terraform"
@@ -15,11 +15,11 @@ on:
         description: "The cloud environment"
         type: string
         default: "dev"
-      tf_workspace:
+      workspace:
         description: "The terraform workspace"
         type: string
         default: "dev"
-      tf_version:
+      version:
         description: "Terraform version"
         type: string
         default: "latest"
@@ -36,11 +36,11 @@ jobs:
       - id: set-env
         shell: bash
         run: |
-          echo "GHA_TERRAFORM_DIRECTORY=${{ inputs.tf_directory }}" >> $GITHUB_ENV
-          echo "GHA_CLOUD_PROVIDER=${{ inputs.cloud_provider }}" >> $GITHUB_ENV
-          echo "GHA_ENVIRONMENT=${{ inputs.environment }}" >> $GITHUB_ENV
-          echo "GHA_TERRAFORM_WORKSPACE=${{ inputs.tf_workspace }}" >> $GITHUB_ENV
-          echo "GHA_TERRAFORM_VERSION=${{ inputs.tf_version }}" >> $GITHUB_ENV
+          echo "GHA_TERRAFORM_PLAN_DIRECTORY=${{ inputs.directory }}" >> $GITHUB_ENV
+          echo "GHA_TERRAFORM_PLAN_CLOUD_PROVIDER=${{ inputs.cloud_provider }}" >> $GITHUB_ENV
+          echo "GHA_TERRAFORM_PLAN_ENVIRONMENT=${{ inputs.environment }}" >> $GITHUB_ENV
+          echo "GHA_TERRAFORM_PLAN_WORKSPACE=${{ inputs.workspace }}" >> $GITHUB_ENV
+          echo "GHA_TERRAFORM_PLAN_VERSION=${{ inputs.version }}" >> $GITHUB_ENV
 
       - name: checkout
         uses: actions/checkout@v4
@@ -48,7 +48,7 @@ jobs:
       - name: Access gcp
         id: login-gcp
         uses: google-github-actions/auth@v2.1.2
-        if: env.GHA_CLOUD_PROVIDER == 'GCP'
+        if: env.GHA_TERRAFORM_PLAN_CLOUD_PROVIDER == 'GCP'
         with:
           workload_identity_provider: ${{ vars.WORKLOAD_IDENTITY_PROVIDER }}
           service_account: ${{ vars.SERVICE_ACCOUNT }}
@@ -56,7 +56,7 @@ jobs:
       - name: Access GKE cluster
         id: get-credentials-gcp
         uses: google-github-actions/get-gke-credentials@v2
-        if: env.GHA_CLOUD_PROVIDER == 'GCP'
+        if: env.GHA_TERRAFORM_PLAN_CLOUD_PROVIDER == 'GCP'
         with:
           project_id: "ent-kub-${{inputs.environment}}" # TODO: fix jp
           cluster_name: "kub-ent-${{inputs.environment}}-001" # TODO: fix jp
@@ -66,30 +66,30 @@ jobs:
         uses: hashicorp/setup-terraform@v3
         id: setup
         with:
-          terraform_version: ${{ env.GHA_TERRAFORM_VERSION }}
+          terraform_version: ${{ env.GHA_TERRAFORM_PLAN_VERSION }}
           terraform_wrapper: false
 
       - name: Terraform Init
         id: init
-        working-directory: ${{ env.GHA_TERRAFORM_DIRECTORY }}
+        working-directory: ${{ env.GHA_TERRAFORM_PLAN_DIRECTORY }}
         shell: bash
         run: |
           terraform init
 
       - name: Terraform Workspace
         id: workspace
-        working-directory: ${{ env.GHA_TERRAFORM_DIRECTORY }}
+        working-directory: ${{ env.GHA_TERRAFORM_PLAN_DIRECTORY }}
         shell: bash
         run: |
-          terraform workspace select ${{ env.GHA_TERRAFORM_WORKSPACE }} || terraform workspace new ${{ env.GHA_TERRAFORM_WORKSPACE }}
+          terraform workspace select ${{ env.GHA_TERRAFORM_PLAN_WORKSPACE }} -or-create=true
 
       - name: Terraform Plan
         id: plan
-        working-directory: ${{ env.GHA_TERRAFORM_DIRECTORY }}
+        working-directory: ${{ env.GHA_TERRAFORM_PLAN_DIRECTORY }}
         shell: bash
         run: |
           echo 'plan<<EOF' >> $GITHUB_OUTPUT
-          terraform plan -var-file=env/${{ env.GHA_ENVIRONMENT }}.tfvars -no-color -out=tfplan >> $GITHUB_OUTPUT
+          terraform plan -var-file=env/${{ env.GHA_TERRAFORM_PLAN_ENVIRONMENT }}.tfvars -no-color -out=tfplan >> $GITHUB_OUTPUT
           echo 'EOF' >> $GITHUB_OUTPUT
 
       - name: Update Pull Request
@@ -99,15 +99,15 @@ jobs:
           script: |
             const output = `#### Terraform Plan 📖\`${{ steps.plan.outcome }}\`
             <details><summary>Show Plan</summary>
-  
-            \`\`\`\n
+
+            \`\`\`tf\n
             ${{ steps.plan.outputs.plan }}
             \`\`\`
-  
+
             </details>
-  
+
             *Pushed by: @${{ github.actor }}, Action: \`${{ github.event_name }}\`*`;
-  
+
             github.rest.issues.createComment({
               issue_number: context.issue.number,
               owner: context.repo.owner,
