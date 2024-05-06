@@ -42,6 +42,13 @@ jobs:
           echo "GHA_TERRAFORM_PLAN_WORKSPACE=${{ inputs.workspace }}" >> $GITHUB_ENV
           echo "GHA_TERRAFORM_PLAN_VERSION=${{ inputs.version }}" >> $GITHUB_ENV
 
+      - id: verify-cloud-provider
+        if: env.GHA_TERRAFORM_PLAN_CLOUD_PROVIDER != 'GCP' && env.GHA_TERRAFORM_PLAN_CLOUD_PROVIDER != 'Azure'
+        shell: bash
+        run: |
+          echo "cloud_provider can only be GCP or Azure"
+          exit 1
+
       - id: set-workspace
         shell: bash
         run: |
