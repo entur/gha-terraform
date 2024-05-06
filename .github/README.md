@@ -1,9 +1,3 @@
-> [!WARNING]
->
-> # Work in progress
->
-> Please dont use
-
 <h1 align="center">
       <br>entur/gha-terraform<br>
 </h1>
