@@ -95,7 +95,7 @@ jobs:
         working-directory: ${{ env.GHA_TERRAFORM_PLAN_DIRECTORY }}
         shell: bash
         run: |
-          terraform workspace select ${{ env.GHA_TERRAFORM_PLAN_WORKSPACE }} -or-create=true
+          terraform workspace select -or-create=true ${{ env.GHA_TERRAFORM_PLAN_WORKSPACE }}
 
       - name: Terraform Plan
         id: plan
