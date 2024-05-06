@@ -42,13 +42,6 @@ jobs:
           echo "GHA_TERRAFORM_PLAN_WORKSPACE=${{ inputs.workspace }}" >> $GITHUB_ENV
           echo "GHA_TERRAFORM_PLAN_VERSION=${{ inputs.version }}" >> $GITHUB_ENV
 
-      - id: verify-cloud-provider
-        if: env.GHA_TERRAFORM_PLAN_CLOUD_PROVIDER != 'GCP' && env.GHA_TERRAFORM_PLAN_CLOUD_PROVIDER != 'Azure'
-        shell: bash
-        run: |
-          echo "cloud_provider can only be GCP or Azure"
-          exit 1
-
       - id: set-workspace
         shell: bash
         run: |
@@ -59,22 +52,22 @@ jobs:
       - name: checkout
         uses: actions/checkout@v4
 
-      - name: Access gcp
-        id: login-gcp
-        uses: google-github-actions/auth@v2.1.2
-        if: env.GHA_TERRAFORM_PLAN_CLOUD_PROVIDER == 'GCP'
+      - uses: entur/gha-meta/.github/actions/cloud-auth@v1.1.0
         with:
+          environment: ${{ env.GHA_TERRAFORM_PLAN_ENVIRONMENT }}
+          cloud_provider: ${{ env.GHA_TERRAFORM_PLAN_CLOUD_PROVIDER }}
           workload_identity_provider: ${{ vars.WORKLOAD_IDENTITY_PROVIDER }}
           service_account: ${{ vars.SERVICE_ACCOUNT }}
+          azure_client_id: ${{ vars.AZURE_CLIENT_ID }}
+          azure_tenant_id: ${{ vars.AZURE_TENANT_ID }}
+          azure_subscription_id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
 
-      - name: Access GKE cluster
-        id: get-credentials-gcp
-        uses: google-github-actions/get-gke-credentials@v2
-        if: env.GHA_TERRAFORM_PLAN_CLOUD_PROVIDER == 'GCP'
+      - uses: entur/gha-meta/.github/actions/k8s-auth@v1.1.0
         with:
-          project_id: "ent-kub-${{inputs.environment}}" # TODO: fix jp
-          cluster_name: "kub-ent-${{inputs.environment}}-001" # TODO: fix jp
-          location: "europe-west1" # TODO: fix jp
+          environment: ${{ env.GHA_TERRAFORM_PLAN_ENVIRONMENT }}
+          cloud_provider: ${{ env.GHA_TERRAFORM_PLAN_CLOUD_PROVIDER }}
+          azure_cluster_resource_group: ${{ vars.AZURE_CLUSTER_RESOURCE_GROUP }}
+          azure_cluster_name: ${{ vars.AZURE_CLUSTER_NAME }}
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
