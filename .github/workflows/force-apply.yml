@@ -16,9 +16,9 @@ on:
         type: string
         default: "dev"
       workspace:
-        description: "The terraform workspace"
+        description: "The terraform workspace, defaults to env"
         type: string
-        default: "dev"
+        default: "env"
       version:
         description: "Terraform version"
         type: string
@@ -41,6 +41,13 @@ jobs:
           echo "GHA_TERRAFORM_FORCE_APPLY_ENVIRONMENT=${{ inputs.environment }}" >> $GITHUB_ENV
           echo "GHA_TERRAFORM_FORCE_APPLY_WORKSPACE=${{ inputs.workspace }}" >> $GITHUB_ENV
           echo "GHA_TERRAFORM_FORCE_APPLY_VERSION=${{ inputs.version }}" >> $GITHUB_ENV
+
+      - id: set-workspace
+        shell: bash
+        run: |
+          if [[ "${{ env.GHA_TERRAFORM_FORCE_APPLY_WORKSPACE }}" = "env" ]]; then
+            echo "GHA_TERRAFORM_FORCE_APPLY_WORKSPACE=${{ env.GHA_TERRAFORM_FORCE_APPLY_ENVIRONMENT }}" >> $GITHUB_ENV
+          fi
 
       - name: checkout
         uses: actions/checkout@v4
