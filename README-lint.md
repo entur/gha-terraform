@@ -10,21 +10,23 @@ Add the following step to your workflow configuration:
 jobs:
   tf-lint:
     name: Terraform Lint
-    uses: entur/gha-terraform/.github/workflows/lint.yml@main
+    uses: entur/gha-terraform/.github/workflows/lint.yml@v1.0.0
 ```
 
 ## Inputs
 
 <!-- AUTO-DOC-INPUT:START - Do not remove or modify this section -->
 
-|                            INPUT                            |  TYPE  | REQUIRED |    DEFAULT    |         DESCRIPTION         |
-|-------------------------------------------------------------|--------|----------|---------------|-----------------------------|
-| <a name="input_directory"></a>[directory](#input_directory) | string |  false   | `"terraform"` | Path to Terraform Directory |
+| INPUT                                                       | TYPE   | REQUIRED | DEFAULT       | DESCRIPTION                 |
+| ----------------------------------------------------------- | ------ | -------- | ------------- | --------------------------- |
+| <a name="input_directory"></a>[directory](#input_directory) | string | false    | `"terraform"` | Path to Terraform Directory |
 
 <!-- AUTO-DOC-INPUT:END -->
 
 ## Outputs
 
 <!-- AUTO-DOC-OUTPUT:START - Do not remove or modify this section -->
+
 No outputs.
+
 <!-- AUTO-DOC-OUTPUT:END -->

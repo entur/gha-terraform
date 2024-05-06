@@ -40,12 +40,12 @@ on:
 
 jobs:
   terraform-lint:
-    uses: entur/gha-terraform/.github/workflows/lint.yml@main
+    uses: entur/gha-terraform/.github/workflows/lint.yml@v1.0.0
 
   terraform-plan:
-    uses: entur/gha-terraform/.github/workflows/plan.yml@main
+    uses: entur/gha-terraform/.github/workflows/plan.yml@v1.0.0
 
   terraform-apply:
-    uses: entur/gha-terraform/.github/workflows/apply.yml@main
+    uses: entur/gha-terraform/.github/workflows/force-apply.yml@v1.0.0
     secrets: inherit
 ```
