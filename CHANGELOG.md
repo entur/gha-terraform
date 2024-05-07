@@ -1,5 +1,15 @@
 # Changelog
 
+## [1.0.1](https://github.com/entur/gha-terraform/compare/v1.0.0...v1.0.1) (2024-05-07)
+
+
+### Bug Fixes
+
+* allow custom cluster and project ([f4908de](https://github.com/entur/gha-terraform/commit/f4908deb1b1756637bf88f11692f0eca1d50f1bc))
+* allow custom cluster and project ([#19](https://github.com/entur/gha-terraform/issues/19)) ([60881a7](https://github.com/entur/gha-terraform/commit/60881a731e3bd90bd4d7346a7973ee3a6662a8fc))
+* pin version ([6251c76](https://github.com/entur/gha-terraform/commit/6251c76b3e67de269af298d8fc7396bd68828e70))
+* use allow-custom-proj-and-cluster ([456dbca](https://github.com/entur/gha-terraform/commit/456dbcada973bab3a12384cdbe7935ed032165f5))
+
 ## 1.0.0 (2024-05-06)
 
 
