@@ -23,6 +23,12 @@ on:
         description: "Terraform version"
         type: string
         default: "latest"
+      project_id:
+        type: string
+        description: "Do not use this input"
+      cluster_name:
+        type: string
+        description: "Do not use this input"
 
 jobs:
   terraform-apply:
@@ -66,6 +72,8 @@ jobs:
         with:
           environment: ${{ env.GHA_TERRAFORM_FORCE_APPLY_ENVIRONMENT }}
           cloud_provider: ${{ env.GHA_TERRAFORM_FORCE_APPLY_CLOUD_PROVIDER }}
+          project_id: ${{ inputs.project_id }}
+          cluster_name: ${{ inputs.cluster_name }}
           azure_cluster_resource_group: ${{ vars.AZURE_CLUSTER_RESOURCE_GROUP }}
           azure_cluster_name: ${{ vars.AZURE_CLUSTER_NAME }}
 
