@@ -10,7 +10,7 @@ Add the following step to your workflow configuration:
 jobs:
   tf-plan-prd:
     name: Terraform Plan
-    uses: entur/gha-terraform/.github/workflows/plan.yml@v1.0.0
+    uses: entur/gha-terraform/.github/workflows/plan.yml@v1
     with:
       environment: prd
 ```

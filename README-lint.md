@@ -10,7 +10,7 @@ Add the following step to your workflow configuration:
 jobs:
   tf-lint:
     name: Terraform Lint
-    uses: entur/gha-terraform/.github/workflows/lint.yml@v1.0.0
+    uses: entur/gha-terraform/.github/workflows/lint.yml@v1
 ```
 
 ## Inputs

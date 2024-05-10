@@ -10,7 +10,7 @@ Add the following step to your workflow configuration:
 jobs:
   tf-force-apply-prd:
     name: Terraform Apply
-    uses: entur/gha-terraform/.github/workflows/force-apply.yml@v1.0.0
+    uses: entur/gha-terraform/.github/workflows/force-apply.yml@v1
     with:
       environment: prd
 ```
