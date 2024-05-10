@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.1.0](https://github.com/entur/gha-terraform/compare/v1.0.1...v1.1.0) (2024-05-10)
+
+
+### Features
+
+* create dependabot.yml ([38af994](https://github.com/entur/gha-terraform/commit/38af994f0d3a562e5abbe7d2f6954150018583fc))
+
+
+### Bug Fixes
+
+* comment on PR and print apply log to console ([#27](https://github.com/entur/gha-terraform/issues/27)) ([8fbe594](https://github.com/entur/gha-terraform/commit/8fbe594a08aa6b9a40c9a6473123c76c000042e6))
+
 ## [1.0.1](https://github.com/entur/gha-terraform/compare/v1.0.0...v1.0.1) (2024-05-07)
 
 
