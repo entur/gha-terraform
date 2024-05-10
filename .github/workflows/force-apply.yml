@@ -111,7 +111,7 @@ jobs:
         id: print-apply-log
         shell: bash
         run: |
-          echo ${{ steps.force-apply.outputs.apply }}
+          echo "${{ steps.force-apply.outputs.apply }}"
 
       - name: Get Pull Request Number
         id: get-pr-number
