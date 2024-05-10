@@ -31,8 +31,9 @@ Let's look at an example, assume our repo is called `amazing-app`:
         └── ci.yml
 ```
 
+#### ci.yml
+
 ```yaml
-# ci.yml
 name: CI
 
 on:
@@ -40,12 +41,21 @@ on:
 
 jobs:
   terraform-lint:
-    uses: entur/gha-terraform/.github/workflows/lint.yml@v1.0.0
+    uses: entur/gha-terraform/.github/workflows/lint.yml@v1
 
   terraform-plan:
-    uses: entur/gha-terraform/.github/workflows/plan.yml@v1.0.0
+    uses: entur/gha-terraform/.github/workflows/plan.yml@v1
+```
 
+#### cd.yml
+
+```yaml
+name: CD
+
+on:
+  pull_request:
+
+jobs:
   terraform-apply:
-    uses: entur/gha-terraform/.github/workflows/force-apply.yml@v1.0.0
-    secrets: inherit
+    uses: entur/gha-terraform/.github/workflows/force-apply.yml@v1
 ```
