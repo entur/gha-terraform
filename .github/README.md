@@ -2,7 +2,7 @@
       <br>entur/gha-terraform<br>
 </h1>
 
-[![CI](https://github.com/entur/gha-terraform/actions/workflows/ci.yml/badge.svg)](https://github.com/entur/gha-terraform/actions/workflows/ci.yml)
+[![Entur/Terraform/CI](https://github.com/entur/gha-terraform/actions/workflows/ci.yml/badge.svg?event=pull_request)](https://github.com/entur/gha-terraform/actions/workflows/ci.yml)
 
 GitHub Actions for working with Terraform
 
