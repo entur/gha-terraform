@@ -20,6 +20,7 @@ jobs:
 |                            INPUT                            |  TYPE  | REQUIRED |    DEFAULT    |         DESCRIPTION         |
 |-------------------------------------------------------------|--------|----------|---------------|-----------------------------|
 | <a name="input_directory"></a>[directory](#input_directory) | string |  false   | `"terraform"` | Path to Terraform Directory |
+|    <a name="input_version"></a>[version](#input_version)    | string |  false   |  `"latest"`   |      Terraform version      |
 
 <!-- AUTO-DOC-INPUT:END -->
 
