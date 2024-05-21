@@ -7,6 +7,10 @@ on:
         description: "Path to Terraform Directory"
         type: string
         default: "terraform"
+      version:
+        description: "Terraform version"
+        type: string
+        default: "latest"
 
 jobs:
   lint:
@@ -18,11 +22,16 @@ jobs:
         shell: bash
         run: |
           echo "GHA_TERRAFORM_LINT_DIRECTORY=${{ inputs.directory }}" >> $GITHUB_ENV
+          echo "GHA_TERRAFORM_LINT_VERSION=${{ inputs.version }}" >> $GITHUB_ENV
       - uses: actions/checkout@v4
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: ${{ env.GHA_TERRAFORM_LINT_VERSION }}
+          terraform_wrapper: false
       - uses: terraform-linters/setup-tflint@v4
         with:
           tflint_wrapper: true
       - run: terraform fmt -check
-      - run: tflint --version
-      - run: tflint --init
-      - run: tflint --chdir=${{ env.GHA_TERRAFORM_LINT_DIRECTORY }} -f compact
+      - run: |
+          tflint --init
+          tflint --chdir=${{ env.GHA_TERRAFORM_LINT_DIRECTORY }} -f compact
