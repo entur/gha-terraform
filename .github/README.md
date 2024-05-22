@@ -6,6 +6,11 @@
 
 GitHub Actions for working with Terraform
 
+- [Terraform lint](../README-lint.md)
+- [Terraform plan](../README-plan.md)
+- [Terraform force-apply](../README-force-apply.md)
+
+
 ## Golden Path
 
 ### Example
