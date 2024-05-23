@@ -109,10 +109,10 @@ jobs:
         shell: bash
         run: |
           echo 'plan' >> $GITHUB_OUTPUT
-          terraform plan -var-file=env/${{ env.GHA_TERRAFORM_PLAN_ENVIRONMENT }}.tfvars -no-color -out=tfplan 2>&1 | tee -a $GITHUB_OUTPUT; tfstatus=(${PIPESTATUS[0]})
-          if [[ $tfstatus -eq 0 ]]; then
+          terraform plan -var-file=env/${{ env.GHA_TERRAFORM_PLAN_ENVIRONMENT }}.tfvars -detailed-exitcode -no-color -out=tfplan 2>&1 | tee -a $GITHUB_OUTPUT; TFSTATUS=(${PIPESTATUS[0]})
+          if [[ $TFSTATUS -eq 0 ]]; then
             echo "GHA_TERRAFORM_PLAN_STATUS="No Changes" >> $GITHUB_ENV
-          elseif [[ $tfstatus -eq 2 ]]; then
+          elseif [[ $TFSTATUS -eq 2 ]]; then
             echo "GHA_TERRAFORM_PLAN_STATUS="Changes Detected" >> $GITHUB_ENV
           else
             echo "GHA_TERRAFORM_PLAN_STATUS="Error" >> $GITHUB_ENV
