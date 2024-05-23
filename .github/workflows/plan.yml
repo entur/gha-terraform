@@ -29,10 +29,15 @@ on:
       cluster_name:
         type: string
         description: "Do not use this input"
+      timeout_minutes:
+        description: "Job timeout in minutes"
+        type: number
+        default: 10
 
 jobs:
   terraform-plan:
     runs-on: ubuntu-24.04
+    timeout-minutes: ${{ inputs.timeout_minutes }}
     environment: ${{ inputs.environment }}
     permissions:
       contents: read
