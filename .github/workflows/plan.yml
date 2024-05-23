@@ -119,7 +119,7 @@ jobs:
             echo "" >> $GITHUB_OUTPUT
             echo "<details><summary>Click to expand terraform plan</summary>" >> $GITHUB_OUTPUT
             echo '```terraform' >> $GITHUB_OUTPUT
-            $(cat tfplan) >> $GITHUB_OUTPUT
+            $(cat tfplan.txt) >> $GITHUB_OUTPUT
             echo '```' >> $GITHUB_OUTPUT
             echo "</details>" >> $GITHUB_OUTPUT
           elif [[ $TFSTATUS -eq 2 ]]; then
@@ -127,14 +127,14 @@ jobs:
             echo "## Terraform Plan Status: Changes Detected 📖" >> $GITHUB_OUTPUT
             echo "" >> $GITHUB_OUTPUT
             echo '```terraform' >> $GITHUB_OUTPUT
-            $(cat tfplan) >> $GITHUB_OUTPUT
+            $(cat tfplan.txt) >> $GITHUB_OUTPUT
             echo '```' >> $GITHUB_OUTPUT
           else
             echo "GHA_TERRAFORM_PLAN_STATUS='Error'" >> $GITHUB_ENV
             echo "## Terraform Plan Status: Plan Failed" >> $GITHUB_OUTPUT
             echo "" >> $GITHUB_OUTPUT
             echo '```terraform' >> $GITHUB_OUTPUT
-            $(cat tfplan) >> $GITHUB_OUTPUT
+            $(cat tfplan.txt) >> $GITHUB_OUTPUT
             echo '```' >> $GITHUB_OUTPUT
           fi
           echo "" >> $GITHUB_OUTPUT
