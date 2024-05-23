@@ -153,7 +153,7 @@ jobs:
               issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
-              body: output
+              body: body
             })
       - name: Terraform Plan Status Check
         if: steps.plan.outcome == 'failure' || env.GHA_TERRAFORM_PLAN_STATUS == 'Error'
