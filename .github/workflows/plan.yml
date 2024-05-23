@@ -109,15 +109,46 @@ jobs:
         shell: bash
         run: |
           echo 'plan<<EOF' >> $GITHUB_OUTPUT
-          terraform plan -var-file=env/${{ env.GHA_TERRAFORM_PLAN_ENVIRONMENT }}.tfvars -no-color -out=tfplan >> $GITHUB_OUTPUT
+          terraform plan -var-file=env/${{ env.GHA_TERRAFORM_PLAN_ENVIRONMENT }}.tfvars -no-color -out=tfplan 2>&1 | tee -a $GITHUB_OUTPUT; tfstatus=(${PIPESTATUS[0]})
           echo 'EOF' >> $GITHUB_OUTPUT
+          if [[ $tfstatus -eq 0 ]]; then
+            echo "GHA_TERRAFORM_PLAN_STATUS="No Changes" >> $GITHUB_ENV
+          elseif [[ $tfstatus -eq 2 ]]; then
+            echo "GHA_TERRAFORM_PLAN_STATUS="Changes Detected" >> $GITHUB_ENV
+          else
+            echo "GHA_TERRAFORM_PLAN_STATUS="Error" >> $GITHUB_ENV
+          fi
 
-      - name: Update Pull Request
+      - name: Terraform Plan Status
         uses: actions/github-script@v7
-        if: github.event_name == 'pull_request'
+        if: github.event_name == 'pull_request' && env.GHA_TERRAFORM_PLAN_STATUS == 'Changes Detected'
         with:
           script: |
-            const output = `#### Terraform Plan 📖\`${{ steps.plan.outcome }}\`
+            const output = `#### Terraform Plan ${{ env.GHA_TERRAFORM_PLAN_ENVIRONMENT }} 📖\` ${{ env.GHA_TERRAFORM_PLAN_STATUS }}\`
+
+            Terraform plan detected changes
+
+            \`\`\`tf\n
+            ${{ steps.plan.outputs.plan }}
+            \`\`\`
+
+            *Pushed by: @${{ github.actor }}, Action: \`${{ github.event_name }}\`*`;
+
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: output
+            })
+      - name: Terraform Plan Status
+        uses: actions/github-script@v7
+        if: github.event_name == 'pull_request' && env.GHA_TERRAFORM_PLAN_STATUS == 'No Changes'
+        with:
+          script: |
+            const output = `#### Terraform Plan ${{ env.GHA_TERRAFORM_PLAN_ENVIRONMENT }} 📖 \`${{ env.GHA_TERRAFORM_PLAN_STATUS }}\`
+
+            Terraform plan did not detect any changes
+
             <details><summary>Show Plan</summary>
 
             \`\`\`tf\n
@@ -135,5 +166,30 @@ jobs:
               body: output
             })
       - name: Terraform Plan Status
-        if: steps.plan.outcome == 'failure'
+        uses: actions/github-script@v7
+        if: github.event_name == 'pull_request' && env.GHA_TERRAFORM_PLAN_STATUS == 'Error'
+        with:
+          script: |
+            const output = `#### Terraform Plan ${{ env.GHA_TERRAFORM_PLAN_ENVIRONMENT }} 📖 \`${{ env.GHA_TERRAFORM_PLAN_STATUS }}\`
+
+            Terraform plan had an error
+
+            <details><summary>Show Plan Error</summary>
+
+            \`\`\`tf\n
+            ${{ steps.plan.outputs.plan }}
+            \`\`\`
+
+            </details>
+
+            *Pushed by: @${{ github.actor }}, Action: \`${{ github.event_name }}\`*`;
+
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: output
+            })
+      - name: Terraform Plan Status
+        if: steps.plan.outcome == 'failure' || env.GHA_TERRAFORM_PLAN_STATUS == 'Error'
         run: exit 1
