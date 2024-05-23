@@ -108,7 +108,7 @@ jobs:
         working-directory: ${{ env.GHA_TERRAFORM_PLAN_DIRECTORY }}
         shell: bash
         run: |
-          echo "plan=" | terraform plan \
+          terraform plan \
             -var-file=env/${{ env.GHA_TERRAFORM_PLAN_ENVIRONMENT }}.tfvars \
             -detailed-exitcode \
             -no-color \
