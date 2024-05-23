@@ -108,7 +108,13 @@ jobs:
         working-directory: ${{ env.GHA_TERRAFORM_PLAN_DIRECTORY }}
         shell: bash
         run: |
-          terraform plan -var-file=env/${{ env.GHA_TERRAFORM_PLAN_ENVIRONMENT }}.tfvars -detailed-exitcode -no-color -out=tfplan 2>&1 | tee -a $GITHUB_OUTPUT; TFSTATUS=(${PIPESTATUS[0]})
+          terraform plan \
+            -var-file=env/${{ env.GHA_TERRAFORM_PLAN_ENVIRONMENT }}.tfvars \
+            -detailed-exitcode \
+            -no-color \
+            -out=tfplan 2 \
+            >&1 | xargs | xargs printf "plan=%s" >> $GITHUB_OUTPUT
+          TFSTATUS=(${PIPESTATUS[0]})
           if [[ $TFSTATUS -eq 0 ]]; then
             echo "GHA_TERRAFORM_PLAN_STATUS='No Changes'" >> $GITHUB_ENV
           elif [[ $TFSTATUS -eq 2 ]]; then
