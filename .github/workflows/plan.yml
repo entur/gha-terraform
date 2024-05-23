@@ -110,9 +110,9 @@ jobs:
         run: |
           # TODO add tfmask or similar to mask sensitive data
           delimiter="$(openssl rand -hex 10)"
-          echo "plan<<${delimiter}" >> $GITHUB_OUTPUT
           terraform plan -var-file=env/${{ env.GHA_TERRAFORM_PLAN_ENVIRONMENT }}.tfvars -detailed-exitcode -no-color 2>&1 | tee -a tfplan.txt
           TFSTATUS=(${PIPESTATUS[0]})
+          echo "plan<<${delimiter}" >> $GITHUB_OUTPUT
           if [[ $TFSTATUS -eq 0 ]]; then
             echo "GHA_TERRAFORM_PLAN_STATUS='No Changes'" >> $GITHUB_ENV
             echo "## Terraform Plan Status: No Changes" >> $GITHUB_OUTPUT
