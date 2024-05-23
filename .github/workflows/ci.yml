@@ -36,6 +36,7 @@ jobs:
     uses: ./.github/workflows/plan.yml
     with:
       directory: fixture/terraform
+      version: 1.8.3
     secrets: inherit
 
   test-terraform-apply:
@@ -43,4 +44,5 @@ jobs:
     needs: test-terraform-plan
     with:
       directory: fixture/terraform
+      version: 1.8.3
     secrets: inherit
