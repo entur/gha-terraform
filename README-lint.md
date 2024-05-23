@@ -17,10 +17,11 @@ jobs:
 
 <!-- AUTO-DOC-INPUT:START - Do not remove or modify this section -->
 
-|                            INPUT                            |  TYPE  | REQUIRED |    DEFAULT    |         DESCRIPTION         |
-|-------------------------------------------------------------|--------|----------|---------------|-----------------------------|
-| <a name="input_directory"></a>[directory](#input_directory) | string |  false   | `"terraform"` | Path to Terraform Directory |
-|    <a name="input_version"></a>[version](#input_version)    | string |  false   |  `"latest"`   |      Terraform version      |
+|                                     INPUT                                     |  TYPE  | REQUIRED |    DEFAULT    |         DESCRIPTION         |
+|-------------------------------------------------------------------------------|--------|----------|---------------|-----------------------------|
+|          <a name="input_directory"></a>[directory](#input_directory)          | string |  false   | `"terraform"` | Path to Terraform Directory |
+| <a name="input_timeout_minutes"></a>[timeout_minutes](#input_timeout_minutes) | number |  false   |      `5`      |   Job timeout in minutes    |
+|             <a name="input_version"></a>[version](#input_version)             | string |  false   |  `"latest"`   |      Terraform version      |
 
 <!-- AUTO-DOC-INPUT:END -->
 
