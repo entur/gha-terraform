@@ -117,31 +117,17 @@ jobs:
           echo "plan<<${delimiter}" >> $GITHUB_OUTPUT
           if [[ $TFSTATUS -eq 0 ]]; then
             echo "GHA_TERRAFORM_PLAN_STATUS='No Changes'" >> $GITHUB_ENV
-            echo "## Terraform Plan Status: No Changes" >> $GITHUB_OUTPUT
-            echo "" >> $GITHUB_OUTPUT
-            echo "<details><summary>Click to expand</summary>" >> $GITHUB_OUTPUT
-            echo '```tf' >> $GITHUB_OUTPUT
-            echo "" >> $GITHUB_OUTPUT
-            echo "$TERRAFORM_PLAN" >> $GITHUB_OUTPUT
-            echo '```' >> $GITHUB_OUTPUT
-            echo "</details>" >> $GITHUB_OUTPUT
+            echo "### Terraform Plan Status: No Changes" >> $GITHUB_OUTPUT
           elif [[ $TFSTATUS -eq 2 ]]; then
             echo "GHA_TERRAFORM_PLAN_STATUS='Changes Detected'" >> $GITHUB_ENV
-            echo "## Terraform Plan Status: Changes Detected 📖" >> $GITHUB_OUTPUT
-            echo "" >> $GITHUB_OUTPUT
-            echo '```tf' >> $GITHUB_OUTPUT
-            echo "" >> $GITHUB_OUTPUT
-            echo "$TERRAFORM_PLAN" >> $GITHUB_OUTPUT
-            echo '```' >> $GITHUB_OUTPUT
+            echo "### Terraform Plan Status: Changes Detected 📖" >> $GITHUB_OUTPUT
           else
             echo "GHA_TERRAFORM_PLAN_STATUS='Error'" >> $GITHUB_ENV
             echo "## Terraform Plan Status: Plan Failed" >> $GITHUB_OUTPUT
-            echo "" >> $GITHUB_OUTPUT
-            echo '```tf' >> $GITHUB_OUTPUT
-            echo "" >> $GITHUB_OUTPUT
-            echo "$TERRAFORM_PLAN" >> $GITHUB_OUTPUT
-            echo '```' >> $GITHUB_OUTPUT
           fi
+          echo '```tf' >> $GITHUB_OUTPUT
+          echo "$TERRAFORM_PLAN" >> $GITHUB_OUTPUT
+          echo '```' >> $GITHUB_OUTPUT
           echo "" >> $GITHUB_OUTPUT
           echo "*Pushed by: @${{ github.actor }}, Action: ${{ github.event_name }}*" >> $GITHUB_OUTPUT
           echo "${delimiter}" >> $GITHUB_OUTPUT
