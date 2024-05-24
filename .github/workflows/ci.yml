@@ -33,6 +33,7 @@ jobs:
       directory: fixture/terraform
 
   test-terraform-plan:
+    name: Test Terraform Plan
     uses: ./.github/workflows/plan.yml
     with:
       directory: fixture/terraform
@@ -40,6 +41,7 @@ jobs:
     secrets: inherit
 
   test-terraform-apply:
+    name: Test Terraform Apply
     uses: ./.github/workflows/force-apply.yml
     needs: test-terraform-plan
     with:
@@ -48,6 +50,8 @@ jobs:
     secrets: inherit
 
   test-terraform-plan-changes:
+    needs: test-terraform-apply
+    name: Test Terraform Plan with Changes
     uses: ./.github/workflows/plan.yml
     with:
       directory: fixture/terraform_with_changes
