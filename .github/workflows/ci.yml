@@ -7,12 +7,14 @@ on:
 
 jobs:
   update-lint-doc:
+    name: Update Lint Documentation
     if: ${{ github.event_name == 'pull_request' }}
     uses: entur/gha-meta/.github/workflows/auto-doc.yml@v1.1.1
     with:
       workflow_file: .github/workflows/lint.yml
       readme_file: README-lint.md
   update-plan-doc:
+    name: Update Plan Documentation
     if: ${{ github.event_name == 'pull_request' }}
     uses: entur/gha-meta/.github/workflows/auto-doc.yml@v1.1.1
     needs: [update-lint-doc]
@@ -20,6 +22,7 @@ jobs:
       workflow_file: .github/workflows/plan.yml
       readme_file: README-plan.md
   update-force-apply-doc:
+    name: Update Force-Apply Documentation
     if: ${{ github.event_name == 'pull_request' }}
     uses: entur/gha-meta/.github/workflows/auto-doc.yml@v1.1.1
     needs: [update-plan-doc]
@@ -28,19 +31,33 @@ jobs:
       readme_file: README-force-apply.md
 
   test-lint-ok:
+    name: Test Lint
     uses: ./.github/workflows/lint.yml
     with:
       directory: fixture/terraform
 
   test-terraform-plan:
+    name: Test Terraform Plan
     uses: ./.github/workflows/plan.yml
     with:
       directory: fixture/terraform
+      version: 1.8.3
     secrets: inherit
 
   test-terraform-apply:
+    name: Test Terraform Apply
     uses: ./.github/workflows/force-apply.yml
     needs: test-terraform-plan
     with:
       directory: fixture/terraform
+      version: 1.8.3
+    secrets: inherit
+
+  test-terraform-plan-changes:
+    needs: test-terraform-apply
+    name: Test Terraform Plan with Changes
+    uses: ./.github/workflows/plan.yml
+    with:
+      directory: fixture/terraform_with_changes
+      version: 1.8.3
     secrets: inherit
