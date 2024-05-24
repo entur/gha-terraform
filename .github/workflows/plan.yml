@@ -113,8 +113,11 @@ jobs:
           export TFMASK_CHAR="#"
           export TFMASK_VALUES_REGEX="(?i)^.*[^a-zA-Z](oauth|secret|token|password|key|result|id|cert|certificate).*$"
           delimiter="$(openssl rand -hex 10)"
+          # allow exit code > 0
+          set +e
           terraform plan -var-file=env/${{ env.GHA_TERRAFORM_PLAN_ENVIRONMENT }}.tfvars -detailed-exitcode -no-color -out tfplan
           TFSTATUS=$?
+          set -e
           TERRAFORM_PLAN=$(terraform show -no-color tfplan|./tfmask)
           echo "plan<<${delimiter}" >> $GITHUB_OUTPUT
           if [[ $TFSTATUS -eq 0 ]]; then
