@@ -108,17 +108,13 @@ jobs:
         working-directory: ${{ env.GHA_TERRAFORM_PLAN_DIRECTORY }}
         shell: bash
         run: |
-          # TFMASK, todo copy this bin to the repo ?
-          curl -L https://github.com/cloudposse/tfmask/releases/download/0.7.0/tfmask_linux_amd64 -o tfmask && chmod +x tfmask
-          export TFMASK_CHAR="#"
-          export TFMASK_VALUES_REGEX="(?i)^.*[^a-zA-Z](oauth|secret|token|password|key|result|id|cert|certificate).*$"
           delimiter="$(openssl rand -hex 10)"
           # allow exit code > 0
           set +e
           terraform plan -var-file=env/${{ env.GHA_TERRAFORM_PLAN_ENVIRONMENT }}.tfvars -detailed-exitcode -no-color -out tfplan
           TFSTATUS=$?
           set -e
-          TERRAFORM_PLAN=$(terraform show -no-color tfplan|./tfmask)
+          TERRAFORM_PLAN=$(terraform show -no-color tfplan)
           echo "plan<<${delimiter}" >> $GITHUB_OUTPUT
           if [[ $TFSTATUS -eq 0 ]]; then
             echo "GHA_TERRAFORM_PLAN_STATUS='No Changes'" >> $GITHUB_ENV
