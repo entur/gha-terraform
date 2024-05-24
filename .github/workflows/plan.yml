@@ -134,7 +134,6 @@ jobs:
           echo "$TERRAFORM_PLAN" >> $GITHUB_OUTPUT
           echo '```' >> $GITHUB_OUTPUT
           echo "" >> $GITHUB_OUTPUT
-          echo "*Pushed by: @${{ github.actor }}, Action: ${{ github.event_name }}*" >> $GITHUB_OUTPUT
           echo "${delimiter}" >> $GITHUB_OUTPUT
 
       - name: Terraform Plan Status
