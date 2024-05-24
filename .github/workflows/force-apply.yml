@@ -113,7 +113,7 @@ jobs:
           echo "apply<<${delimiter}" >> $GITHUB_OUTPUT
           echo "## Terraform $ENV" >> $GITHUB_OUTPUT
           echo "#### Apply Result" >> $GITHUB_OUTPUT
-          echo "The result of `terraform apply` in environment: `$ENV`" >> $GITHUB_OUTPUT
+          echo "The result of \`terraform apply\` in environment: \`$ENV\`" >> $GITHUB_OUTPUT
           echo '```tf' >> $GITHUB_OUTPUT
           terraform apply --auto-approve -var-file=env/${{ env.GHA_TERRAFORM_FORCE_APPLY_ENVIRONMENT }}.tfvars -input=false -no-color >> $GITHUB_OUTPUT
           echo '```' >> $GITHUB_OUTPUT
