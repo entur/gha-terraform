@@ -128,7 +128,7 @@ jobs:
             echo "GHA_TERRAFORM_PLAN_STATUS='Error'" >> $GITHUB_ENV
             echo "#### Plan Status: Plan Failed" >> $GITHUB_OUTPUT
           fi
-          echo "The result of `terraform plan` in environment: `$ENV`" >> $GITHUB_OUTPUT
+          echo "The result of \`terraform plan\` in environment: \`$ENV\`" >> $GITHUB_OUTPUT
           echo '```tf' >> $GITHUB_OUTPUT
           echo "$TERRAFORM_PLAN" >> $GITHUB_OUTPUT
           echo '```' >> $GITHUB_OUTPUT
