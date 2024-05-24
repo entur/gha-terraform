@@ -112,33 +112,34 @@ jobs:
           delimiter="$(openssl rand -hex 10)"
           terraform plan -var-file=env/${{ env.GHA_TERRAFORM_PLAN_ENVIRONMENT }}.tfvars -detailed-exitcode -no-color 2>&1 | tee -a tfplan.txt
           TFSTATUS=(${PIPESTATUS[0]})
+          TERRAFORM_PLAN=$(cat tfplan.txt)
           echo "plan<<${delimiter}" >> $GITHUB_OUTPUT
           if [[ $TFSTATUS -eq 0 ]]; then
             echo "GHA_TERRAFORM_PLAN_STATUS='No Changes'" >> $GITHUB_ENV
             echo "## Terraform Plan Status: No Changes" >> $GITHUB_OUTPUT
             echo "" >> $GITHUB_OUTPUT
-            echo "<details><summary>Click to expand terraform plan</summary>" >> $GITHUB_OUTPUT
-            echo '```terraform' >> $GITHUB_OUTPUT
-            cat tfplan.txt >> $GITHUB_OUTPUT
+            echo "<details><summary>Click to expand</summary>" >> $GITHUB_OUTPUT
+            echo '```tf' >> $GITHUB_OUTPUT
+            echo "$TERRAFORM_PLAN" >> $GITHUB_OUTPUT
             echo '```' >> $GITHUB_OUTPUT
             echo "</details>" >> $GITHUB_OUTPUT
           elif [[ $TFSTATUS -eq 2 ]]; then
             echo "GHA_TERRAFORM_PLAN_STATUS='Changes Detected'" >> $GITHUB_ENV
             echo "## Terraform Plan Status: Changes Detected 📖" >> $GITHUB_OUTPUT
             echo "" >> $GITHUB_OUTPUT
-            echo '```terraform' >> $GITHUB_OUTPUT
-            cat tfplan.txt >> $GITHUB_OUTPUT
+            echo '```tf' >> $GITHUB_OUTPUT
+            echo "$TERRAFORM_PLAN" >> $GITHUB_OUTPUT
             echo '```' >> $GITHUB_OUTPUT
           else
             echo "GHA_TERRAFORM_PLAN_STATUS='Error'" >> $GITHUB_ENV
             echo "## Terraform Plan Status: Plan Failed" >> $GITHUB_OUTPUT
             echo "" >> $GITHUB_OUTPUT
-            echo '```terraform' >> $GITHUB_OUTPUT
-            cat tfplan.txt >> $GITHUB_OUTPUT
+            echo '```tf' >> $GITHUB_OUTPUT
+            echo "$TERRAFORM_PLAN" >> $GITHUB_OUTPUT
             echo '```' >> $GITHUB_OUTPUT
           fi
           echo "" >> $GITHUB_OUTPUT
-          echo "*Pushed by: @${{ github.actor }}, Action: ${{ github.event_name }}" >> $GITHUB_OUTPUT
+          echo "*Pushed by: @${{ github.actor }}, Action: ${{ github.event_name }}*" >> $GITHUB_OUTPUT
           echo "${delimiter}" >> $GITHUB_OUTPUT
 
       - name: Terraform Plan Status
