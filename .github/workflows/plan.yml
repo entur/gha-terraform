@@ -109,10 +109,11 @@ jobs:
         shell: bash
         run: |
           # TODO add tfmask or similar to mask sensitive data
+          # curl -L https://github.com/cloudposse/tfmask/releases/download/0.7.0/tfmask_linux_amd64 -o tfmask && chmod +x tfmask
           delimiter="$(openssl rand -hex 10)"
-          terraform plan -var-file=env/${{ env.GHA_TERRAFORM_PLAN_ENVIRONMENT }}.tfvars -detailed-exitcode -no-color 2>&1 | tee -a tfplan.txt
-          TFSTATUS=(${PIPESTATUS[0]})
-          TERRAFORM_PLAN=$(cat tfplan.txt)
+          terraform plan -var-file=env/${{ env.GHA_TERRAFORM_PLAN_ENVIRONMENT }}.tfvars -detailed-exitcode -no-color -out tfplan
+          TFSTATUS=$?
+          TERRAFORM_PLAN=$(terraform show -no-color tfplan)
           echo "plan<<${delimiter}" >> $GITHUB_OUTPUT
           if [[ $TFSTATUS -eq 0 ]]; then
             echo "GHA_TERRAFORM_PLAN_STATUS='No Changes'" >> $GITHUB_ENV
