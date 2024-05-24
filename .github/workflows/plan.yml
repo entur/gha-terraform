@@ -117,7 +117,7 @@ jobs:
           TERRAFORM_PLAN=$(terraform show -no-color tfplan)
           ENV=$(echo "${{ env.GHA_TERRAFORM_PLAN_ENVIRONMENT }}"| awk '{print toupper($0)}')
           echo "plan<<${delimiter}" >> $GITHUB_OUTPUT
-          echo "## Terraform PLAN $ENV" >> $GITHUB_OUTPUT
+          echo "## Terraform Plan $ENV" >> $GITHUB_OUTPUT
           if [[ $TFSTATUS -eq 0 ]]; then
             echo "GHA_TERRAFORM_PLAN_STATUS='No Changes'" >> $GITHUB_ENV
             echo "#### Status: No Changes" >> $GITHUB_OUTPUT
