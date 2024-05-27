@@ -1,5 +1,6 @@
 name: release
 on:
+  workflow_dispatch:
   push:
     branches:
       - main
@@ -10,4 +11,4 @@ permissions:
 
 jobs:
   release:
-    uses: entur/gha-meta/.github/workflows/release.yml@v1.1.5
+    uses: entur/gha-meta/.github/workflows/release.yml@v1.1.6
