@@ -52,6 +52,7 @@ jobs:
     with:
       directory: fixture/terraform
       version: 1.8.3
+      environment: prd
     secrets: inherit
 
   test-terraform-plan-changes:
