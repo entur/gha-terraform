@@ -107,7 +107,7 @@ jobs:
         uses: hashicorp/setup-terraform@v3
         id: setup
         with:
-          terraform_version: ${{ env.GHA_TERRAFORM_VERSION }}
+          terraform_version: ${GHA_TERRAFORM_VERSION}
           terraform_wrapper: false
 
       - name: Terraform Init
@@ -122,7 +122,7 @@ jobs:
         working-directory: ${{ env.GHA_TERRAFORM_DIRECTORY }}
         shell: bash
         run: |
-          terraform workspace select -or-create=true ${{ env.GHA_TERRAFORM_WORKSPACE }}
+          terraform workspace select -or-create=true ${GHA_TERRAFORM_WORKSPACE}
 
       - name: Terraform Apply
         id: force-apply
@@ -130,12 +130,12 @@ jobs:
         shell: bash
         run: |
           delimiter="$(openssl rand -hex 10)"
-          ENV=$(echo "${{ env.GHA_TERRAFORM_ENVIRONMENT }}"| awk '{print toupper($0)}')
+          ENV=$(echo "${GHA_TERRAFORM_ENVIRONMENT}"| awk '{print toupper($0)}')
           echo "apply<<${delimiter}" >> $GITHUB_OUTPUT
           echo "## Terraform Apply $ENV" >> $GITHUB_OUTPUT
           echo "The result of \`terraform apply\` in environment: \`$ENV\`" >> $GITHUB_OUTPUT
           echo '```tf' >> $GITHUB_OUTPUT
-          terraform apply --auto-approve -var-file=env/${{ env.GHA_TERRAFORM_ENVIRONMENT }}.tfvars -input=false -no-color >> $GITHUB_OUTPUT
+          terraform apply --auto-approve -var-file=env/${GHA_TERRAFORM_ENVIRONMENT}.tfvars -input=false -no-color >> $GITHUB_OUTPUT
           echo '```' >> $GITHUB_OUTPUT
           echo "${delimiter}" >> $GITHUB_OUTPUT
 
