@@ -42,7 +42,7 @@ jobs:
     with:
       directory: fixture/terraform
       version: 1.8.3
-      environment: prd
+      environment: dev
     secrets: inherit
 
   test-terraform-apply:
@@ -52,7 +52,7 @@ jobs:
     with:
       directory: fixture/terraform
       version: 1.8.3
-      environment: prd
+      environment: dev
     secrets: inherit
 
   test-terraform-plan-changes:
@@ -62,5 +62,5 @@ jobs:
     with:
       directory: fixture/terraform_with_changes
       version: 1.8.3
-      environment: prd
+      environment: dev
     secrets: inherit

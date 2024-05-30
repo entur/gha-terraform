@@ -50,8 +50,8 @@ jobs:
       GHA_TERRAFORM_STATUS: ""
       GHA_TERRAFORM_PULL_NUMBER: ""
       # ignore "context access might be invalid" warning
-      WORKLOAD_IDENTITY_PROVIDER: ${{ vars.WORKLOAD_IDENTITY_PROVIDER }}
-      SERVICE_ACCOUNT: ${{ vars.SERVICE_ACCOUNT }}
+      GHA_WORKLOAD_IDENTITY_PROVIDER: ${{ vars.WORKLOAD_IDENTITY_PROVIDER }}
+      GHA_SERVICE_ACCOUNT: ${{ vars.SERVICE_ACCOUNT }}
       AZURE_CLIENT_ID: ${{ vars.AZURE_CLIENT_ID }}
       AZURE_TENANT_ID: ${{ vars.AZURE_TENANT_ID }}
       AZURE_SUBSCRIPTION_ID: ${{ vars.AZURE_SUBSCRIPTION_ID }}
@@ -87,8 +87,8 @@ jobs:
         with:
           environment: ${{ env.GHA_TERRAFORM_ENVIRONMENT }}
           cloud_provider: ${{ env.GHA_TERRAFORM_CLOUD_PROVIDER }}
-          workload_identity_provider: ${{ env.WORKLOAD_IDENTITY_PROVIDER }}
-          service_account: ${{ env.SERVICE_ACCOUNT }}
+          workload_identity_provider: ${{ env.GHA_WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ env.GHA_SERVICE_ACCOUNT }}
           azure_client_id: ${{ env.AZURE_CLIENT_ID }}
           azure_tenant_id: ${{ env.AZURE_TENANT_ID }}
           azure_subscription_id: ${{ env.AZURE_SUBSCRIPTION_ID }}
