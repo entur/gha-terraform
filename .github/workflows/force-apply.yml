@@ -113,6 +113,7 @@ jobs:
         working-directory: ${{ env.GHA_TERRAFORM_DIRECTORY }}
         shell: bash
         run: |
+          terraform version
           terraform init
 
       - name: Terraform Workspace
