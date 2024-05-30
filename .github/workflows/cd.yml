@@ -11,4 +11,4 @@ permissions:
 
 jobs:
   release:
-    uses: entur/gha-meta/.github/workflows/release.yml@v1.1.7
+    uses: entur/gha-meta/.github/workflows/release.yml@v1

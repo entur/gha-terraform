@@ -34,30 +34,29 @@ on:
         type: number
         default: 60
 
-env:
-  GHA_TERRAFORM_DIRECTORY: ${{ inputs.directory }}
-  GHA_TERRAFORM_CLOUD_PROVIDER: ${{ inputs.cloud_provider }}
-  GHA_TERRAFORM_ENVIRONMENT: ${{ inputs.environment }}
-  GHA_TERRAFORM_WORKSPACE: ${{ inputs.workspace }}
-  GHA_TERRAFORM_VERSION: ${{ inputs.version }}
-  GHA_TERRAFORM_PROJECT_ID: ${{ inputs.project_id }}
-  GHA_TERRAFORM_CLUSTER_NAME: ${{ inputs.cluster_name }}
-  GHA_TERRAFORM_STATUS: ""
-  GHA_TERRAFORM_PULL_NUMBER: ""
-  # ignore "context access might be invalid" warning
-  WORKLOAD_IDENTITY_PROVIDER: ${{ vars.WORKLOAD_IDENTITY_PROVIDER }}
-  SERVICE_ACCOUNT: ${{ vars.SERVICE_ACCOUNT }}
-  AZURE_CLIENT_ID: ${{ vars.AZURE_CLIENT_ID }}
-  AZURE_TENANT_ID: ${{ vars.AZURE_TENANT_ID }}
-  AZURE_SUBSCRIPTION_ID: ${{ vars.AZURE_SUBSCRIPTION_ID }}
-  AZURE_CLUSTER_NAME: ${{ vars.AZURE_CLUSTER_NAME  }}
-  AZURE_CLUSTER_RESOURCE_GROUP: ${{ vars.AZURE_CLUSTER_RESOURCE_GROUP }}
-
 jobs:
   terraform-apply:
     runs-on: ubuntu-24.04
     timeout-minutes: ${{ inputs.timeout_minutes }}
     environment: ${{ inputs.environment }}
+    env:
+      GHA_TERRAFORM_DIRECTORY: ${{ inputs.directory }}
+      GHA_TERRAFORM_CLOUD_PROVIDER: ${{ inputs.cloud_provider }}
+      GHA_TERRAFORM_ENVIRONMENT: ${{ inputs.environment }}
+      GHA_TERRAFORM_WORKSPACE: ${{ inputs.workspace }}
+      GHA_TERRAFORM_VERSION: ${{ inputs.version }}
+      GHA_TERRAFORM_PROJECT_ID: ${{ inputs.project_id }}
+      GHA_TERRAFORM_CLUSTER_NAME: ${{ inputs.cluster_name }}
+      GHA_TERRAFORM_STATUS: ""
+      GHA_TERRAFORM_PULL_NUMBER: ""
+      # ignore "context access might be invalid" warning
+      WORKLOAD_IDENTITY_PROVIDER: ${{ vars.WORKLOAD_IDENTITY_PROVIDER }}
+      SERVICE_ACCOUNT: ${{ vars.SERVICE_ACCOUNT }}
+      AZURE_CLIENT_ID: ${{ vars.AZURE_CLIENT_ID }}
+      AZURE_TENANT_ID: ${{ vars.AZURE_TENANT_ID }}
+      AZURE_SUBSCRIPTION_ID: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+      AZURE_CLUSTER_NAME: ${{ vars.AZURE_CLUSTER_NAME  }}
+      AZURE_CLUSTER_RESOURCE_GROUP: ${{ vars.AZURE_CLUSTER_RESOURCE_GROUP }}
     permissions:
       contents: read
       id-token: write
@@ -84,7 +83,7 @@ jobs:
       - name: checkout
         uses: actions/checkout@v4
 
-      - uses: entur/gha-meta/.github/actions/cloud-auth@v1.1.7
+      - uses: entur/gha-meta/.github/actions/cloud-auth@v1
         with:
           environment: ${{ env.GHA_TERRAFORM_ENVIRONMENT }}
           cloud_provider: ${{ env.GHA_TERRAFORM_CLOUD_PROVIDER }}
@@ -94,9 +93,8 @@ jobs:
           azure_tenant_id: ${{ env.AZURE_TENANT_ID }}
           azure_subscription_id: ${{ env.AZURE_SUBSCRIPTION_ID }}
 
-      - uses: entur/gha-meta/.github/actions/k8s-auth@v1.1.7
+      - uses: entur/gha-meta/.github/actions/k8s-auth@v1
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
           environment: ${{ env.GHA_TERRAFORM_ENVIRONMENT }}
           cloud_provider: ${{ env.GHA_TERRAFORM_CLOUD_PROVIDER }}
           project_id: ${{ inputs.project_id }}
