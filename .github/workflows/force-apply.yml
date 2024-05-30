@@ -105,7 +105,7 @@ jobs:
         uses: hashicorp/setup-terraform@v3
         id: setup
         with:
-          terraform_version: ${GHA_TERRAFORM_VERSION}
+          terraform_version: ${{ env.GHA_TERRAFORM_VERSION }}
           terraform_wrapper: false
 
       - name: Terraform Init
