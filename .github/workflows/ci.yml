@@ -25,7 +25,7 @@ jobs:
     name: Update Force-Apply Documentation
     if: ${{ github.event_name == 'pull_request' }}
     uses: entur/gha-meta/.github/workflows/auto-doc.yml@v1.1.7
-    needs: [update-plan-doc]
+    needs: [update-plan-doc, test-terraform-plan]
     with:
       workflow_file: .github/workflows/force-apply.yml
       readme_file: README-force-apply.md
