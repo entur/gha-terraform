@@ -15,7 +15,9 @@ on:
         description: "Job timeout in minutes"
         type: number
         default: 5
-
+env:
+  GHA_TERRAFORM_LINT_DIRECTORY: ${{ inputs.directory }}
+  GHA_TERRAFORM_LINT_VERSION: ${{ inputs.version }}
 jobs:
   lint:
     runs-on: ubuntu-24.04
@@ -23,11 +25,6 @@ jobs:
     permissions:
       contents: read
     steps:
-      - id: set-env
-        shell: bash
-        run: |
-          echo "GHA_TERRAFORM_LINT_DIRECTORY=${{ inputs.directory }}" >> $GITHUB_ENV
-          echo "GHA_TERRAFORM_LINT_VERSION=${{ inputs.version }}" >> $GITHUB_ENV
       - uses: actions/checkout@v4
       - uses: hashicorp/setup-terraform@v3
         with:
@@ -39,4 +36,4 @@ jobs:
       - run: terraform fmt -check
       - run: |
           tflint --init
-          tflint --chdir=${{ env.GHA_TERRAFORM_LINT_DIRECTORY }} -f compact
+          tflint --chdir=${GHA_TERRAFORM_LINT_DIRECTORY} -f compact

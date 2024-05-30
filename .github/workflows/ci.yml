@@ -9,14 +9,14 @@ jobs:
   update-lint-doc:
     name: Update Lint Documentation
     if: ${{ github.event_name == 'pull_request' }}
-    uses: entur/gha-meta/.github/workflows/auto-doc.yml@v1.1.5
+    uses: entur/gha-meta/.github/workflows/auto-doc.yml@v1.1.7
     with:
       workflow_file: .github/workflows/lint.yml
       readme_file: README-lint.md
   update-plan-doc:
     name: Update Plan Documentation
     if: ${{ github.event_name == 'pull_request' }}
-    uses: entur/gha-meta/.github/workflows/auto-doc.yml@v1.1.5
+    uses: entur/gha-meta/.github/workflows/auto-doc.yml@v1.1.7
     needs: [update-lint-doc]
     with:
       workflow_file: .github/workflows/plan.yml
@@ -24,7 +24,7 @@ jobs:
   update-force-apply-doc:
     name: Update Force-Apply Documentation
     if: ${{ github.event_name == 'pull_request' }}
-    uses: entur/gha-meta/.github/workflows/auto-doc.yml@v1.1.5
+    uses: entur/gha-meta/.github/workflows/auto-doc.yml@v1.1.7
     needs: [update-plan-doc]
     with:
       workflow_file: .github/workflows/force-apply.yml
@@ -42,6 +42,7 @@ jobs:
     with:
       directory: fixture/terraform
       version: 1.8.3
+      environment: prd
     secrets: inherit
 
   test-terraform-apply:
@@ -60,4 +61,5 @@ jobs:
     with:
       directory: fixture/terraform_with_changes
       version: 1.8.3
+      environment: prd
     secrets: inherit
