@@ -16,7 +16,7 @@ on:
         description: "GitHub environment to use Google Cloud: (dev, tst, prd) or Azure: (az-dev, az-test, az-prod)"
         required: true
       workspace:
-        description: "The terraform workspace, defaults to env"
+        description: "The terraform workspace, defaults to environment input"
         type: string
         default: "env"
       version:
