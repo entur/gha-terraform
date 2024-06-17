@@ -23,12 +23,12 @@ on:
         description: "Terraform version"
         type: string
         default: "latest"
-      project_id:
+      gcp_project_id:
         type: string
-        description: "Do not use this input"
-      cluster_name:
+        description: "N/A"
+      gcp_cluster_name:
         type: string
-        description: "Do not use this input"
+        description: "N/A"
       timeout_minutes:
         description: "Job timeout in minutes"
         type: number
@@ -87,8 +87,8 @@ jobs:
         with:
           environment: ${{ env.GHA_TERRAFORM_ENVIRONMENT }}
           cloud_provider: ${{ env.GHA_TERRAFORM_CLOUD_PROVIDER }}
-          workload_identity_provider: ${{ env.GHA_WORKLOAD_IDENTITY_PROVIDER }}
-          service_account: ${{ env.GHA_SERVICE_ACCOUNT }}
+          gcp_workload_identity_provider: ${{ env.GHA_WORKLOAD_IDENTITY_PROVIDER }}
+          gcp_service_account: ${{ env.GHA_SERVICE_ACCOUNT }}
           azure_client_id: ${{ env.AZURE_CLIENT_ID }}
           azure_tenant_id: ${{ env.AZURE_TENANT_ID }}
           azure_subscription_id: ${{ env.AZURE_SUBSCRIPTION_ID }}
@@ -97,8 +97,8 @@ jobs:
         with:
           environment: ${{ env.GHA_TERRAFORM_ENVIRONMENT }}
           cloud_provider: ${{ env.GHA_TERRAFORM_CLOUD_PROVIDER }}
-          project_id: ${{ inputs.project_id }}
-          cluster_name: ${{ env.GHA_TERRAFORM_CLUSTER_NAME }}
+          gcp_project_id: ${{ inputs.project_id }}
+          gcp_cluster_name: ${{ env.GHA_TERRAFORM_CLUSTER_NAME }}
           azure_cluster_resource_group: ${{ env.AZURE_CLUSTER_RESOURCE_GROUP }}
 
       - name: Setup Terraform
