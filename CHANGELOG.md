@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.0.4](https://github.com/entur/gha-terraform/compare/v1.0.3...v1.0.4) (2024-06-17)
+
+
+### Bug Fixes
+
+* input/output namings ([c6ea7c0](https://github.com/entur/gha-terraform/commit/c6ea7c0b1a82688619ba2bf3edbe4795a80c4f78))
+* missing new required env ([4b32dae](https://github.com/entur/gha-terraform/commit/4b32dae2b55bf611e6978cb487217e68673dcac4))
+* naming, prevent injection ++ ([#42](https://github.com/entur/gha-terraform/issues/42)) ([8194bbd](https://github.com/entur/gha-terraform/commit/8194bbd8cee7ec0003d3f8808a500ed23b159560))
+* prd to dev env ([dae78bf](https://github.com/entur/gha-terraform/commit/dae78bfa281eb6278255b2679e4a4a27d303d81e))
+* printout terraform version for easier debugging ([bb87dd1](https://github.com/entur/gha-terraform/commit/bb87dd1db04a35d609dbd849f4ccc77c7f167267))
+
+
 ## [1.0.3](https://github.com/entur/gha-terraform/compare/v1.0.2...v1.0.3) (2024-05-27)
 
 
