@@ -127,13 +127,13 @@ jobs:
           echo "plan<<${delimiter}" >> $GITHUB_OUTPUT
           echo "## Terraform Plan $ENV" >> $GITHUB_OUTPUT
           if [[ $TFSTATUS -eq 0 ]]; then
-            echo "GHA_TERRAFORM_STATUS=\"No Changes\" >> $GITHUB_ENV
+            echo "GHA_TERRAFORM_STATUS='No Changes'" >> $GITHUB_ENV
             echo "#### Status: No Changes" >> $GITHUB_OUTPUT
           elif [[ $TFSTATUS -eq 2 ]]; then
-            echo "GHA_TERRAFORM_STATUS=\"Changes Detected\" >> $GITHUB_ENV
+            echo "GHA_TERRAFORM_STATUS='Changes Detected'" >> $GITHUB_ENV
             echo "#### Status: Changes Detected 📖" >> $GITHUB_OUTPUT
           else
-            echo "GHA_TERRAFORM_STATUS=\"Error\" >> $GITHUB_ENV
+            echo "GHA_TERRAFORM_STATUS=\`Error\`" >> $GITHUB_ENV
             echo "#### Status: Plan Failed" >> $GITHUB_OUTPUT
           fi
           echo "The result of \`terraform plan\` in environment: \`$ENV\`" >> $GITHUB_OUTPUT
