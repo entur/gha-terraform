@@ -14,7 +14,6 @@ jobs:
 
   test-terraform-plan-failure:
     name: Test Terraform Plan with Failures
-    continue-on-error: true
     uses: ./.github/workflows/plan.yml
     with:
       directory: fixture/terraform_with_failed_plan
