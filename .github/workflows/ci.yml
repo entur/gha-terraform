@@ -12,8 +12,17 @@ jobs:
     with:
       directory: fixture/terraform
 
+  test-terraform-plan-failure:
+    name: Test Terraform Plan with Failures
+    uses: ./.github/workflows/plan.yml
+    with:
+      directory: fixture/terraform_with_failed_plan
+      version: 1.8.3
+      environment: dev
+    secrets: inherit
 
   test-terraform-plan:
+    needs: test-terraform-plan-failure
     name: Test Terraform Plan
     uses: ./.github/workflows/plan.yml
     with:
@@ -42,15 +51,6 @@ jobs:
       environment: dev
     secrets: inherit
 
-  test-terraform-plan-failure:
-    needs: test-terraform-plan-changes
-    name: Test Terraform Plan with Failures
-    uses: ./.github/workflows/plan.yml
-    with:
-      directory: fixture/terraform_with_failed_plan
-      version: 1.8.3
-      environment: dev
-    secrets: inherit
 
   update-lint-doc:
     name: Update Lint Documentation

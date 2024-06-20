@@ -159,8 +159,8 @@ jobs:
             })
 
       - name: Terraform Plan Status Check
-        working-directory: ${{ env.GHA_TERRAFORM_DIRECTORY }}
         if: steps.plan.outcome == 'failure' || env.GHA_TERRAFORM_STATUS == 'Error'
         shell: bash
         run: |
+          set -e
           exit 1
