@@ -22,6 +22,7 @@ jobs:
     secrets: inherit
 
   test-terraform-plan:
+    if: failure()
     needs: test-terraform-plan-failure
     name: Test Terraform Plan
     uses: ./.github/workflows/plan.yml
