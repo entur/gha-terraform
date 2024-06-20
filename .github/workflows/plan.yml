@@ -157,7 +157,9 @@ jobs:
               repo: context.repo.repo,
               body: body
             })
+
       - name: Terraform Plan Status Check
         if: steps.plan.outcome == 'failure' || env.GHA_TERRAFORM_STATUS == 'Error'
+        shell: bash
         run: |
           exit 1
