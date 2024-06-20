@@ -118,7 +118,7 @@ jobs:
         run: |
           delimiter="$(openssl rand -hex 10)"
           # allow exit code > 0
-          set +e
+          set -e
           terraform plan -var-file=env/${GHA_TERRAFORM_ENVIRONMENT}.tfvars -detailed-exitcode -no-color -out tfplan
           TFSTATUS=$?
           set -e
