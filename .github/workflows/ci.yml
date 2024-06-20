@@ -24,7 +24,7 @@ jobs:
   test-terraform-plan:
     needs: test-terraform-plan-failure
     name: Test Terraform Plan
-    if: ${{ jobs.test-terraform-plan-failure == 'failure' }}
+    if: ${{ test-terraform-plan-failure == 'failure' }}
     uses: ./.github/workflows/plan.yml
     with:
       directory: fixture/terraform
