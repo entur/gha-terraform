@@ -159,7 +159,7 @@ jobs:
             })
 
       - name: Terraform Plan Status Check
-        if: ${{ env.GHA_TERRAFORM_STATUS }} == 'Error'
+        if: env.GHA_TERRAFORM_STATUS == 'Error'
         shell: bash
         run: |
           set -e
