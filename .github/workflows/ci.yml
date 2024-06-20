@@ -13,7 +13,6 @@ jobs:
       directory: fixture/terraform
 
   test-terraform-plan-failure:
-    needs: test-terraform-plan-changes
     name: Test Terraform Plan with Failures
     uses: ./.github/workflows/plan.yml
     with:
