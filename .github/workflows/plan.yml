@@ -117,7 +117,7 @@ jobs:
         shell: bash
         run: |
           delimiter="$(openssl rand -hex 10)"
-          # allow exit code > 0
+          # allow exit code > 0 to print failure in comment
           set +e
           terraform plan -var-file=env/${GHA_TERRAFORM_ENVIRONMENT}.tfvars -detailed-exitcode -no-color -out tfplan
           TFSTATUS=$?
@@ -133,7 +133,7 @@ jobs:
             echo "GHA_TERRAFORM_STATUS='Changes Detected'" >> $GITHUB_ENV
             echo "#### Status: Changes Detected 📖" >> $GITHUB_OUTPUT
           else
-            echo "GHA_TERRAFORM_STATUS='Error'" >> $GITHUB_ENV
+            echo "GHA_TERRAFORM_STATUS=\"Error\"" >> $GITHUB_ENV
             echo "#### Status: Plan Failed" >> $GITHUB_OUTPUT
           fi
           echo "The result of \`terraform plan\` in environment: \`$ENV\`" >> $GITHUB_OUTPUT
@@ -157,6 +157,10 @@ jobs:
               repo: context.repo.repo,
               body: body
             })
+
       - name: Terraform Plan Status Check
-        if: steps.plan.outcome == 'failure' || env.GHA_TERRAFORM_STATUS == 'Error'
-        run: exit 1
+        if: env.GHA_TERRAFORM_STATUS == '"Error"'
+        shell: bash
+        run: |
+          set -e
+          exit 1

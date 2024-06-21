@@ -12,6 +12,8 @@ jobs:
     with:
       directory: fixture/terraform
 
+
+
   test-terraform-plan:
     name: Test Terraform Plan
     uses: ./.github/workflows/plan.yml
@@ -37,6 +39,16 @@ jobs:
     uses: ./.github/workflows/plan.yml
     with:
       directory: fixture/terraform_with_changes
+      version: 1.8.3
+      environment: dev
+    secrets: inherit
+
+  test-terraform-plan-failure:
+    needs: test-terraform-plan-changes
+    name: Test Terraform Plan with Failures
+    uses: ./.github/workflows/plan.yml
+    with:
+      directory: fixture/terraform_with_failed_plan
       version: 1.8.3
       environment: dev
     secrets: inherit
