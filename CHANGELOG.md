@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.0.5](https://github.com/entur/gha-terraform/compare/v1.0.4...v1.0.5) (2024-06-28)
+
+
+### Bug Fixes
+
+* make sure plan fail stops pipeline ([fe0c244](https://github.com/entur/gha-terraform/commit/fe0c2449c9f1f18814e8c391f5f4ede9f2f205d1))
+
+
 ## [1.0.4](https://github.com/entur/gha-terraform/compare/v1.0.3...v1.0.4) (2024-06-17)
 
 
