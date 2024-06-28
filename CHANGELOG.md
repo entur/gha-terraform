@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.0.5](https://github.com/entur/gha-terraform/compare/v1.0.4...v1.0.5) (2024-06-28)
+
+
+### Miscellaneous Chores
+
+* release 1.0.5 ([ee55094](https://github.com/entur/gha-terraform/commit/ee55094b5e58153e97b8651d61c6a74aa2a010c2))
+* release 1.0.5 ([#49](https://github.com/entur/gha-terraform/issues/49)) ([2bee22e](https://github.com/entur/gha-terraform/commit/2bee22ed784195899e08f79500d185575dd1bfb2))
+
 ## [1.0.4](https://github.com/entur/gha-terraform/compare/v1.0.3...v1.0.4) (2024-06-17)
 
 
