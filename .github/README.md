@@ -64,3 +64,7 @@ jobs:
   terraform-apply:
     uses: entur/gha-terraform/.github/workflows/force-apply.yml@v1
 ```
+
+#### approval steps
+If you don't want to use a third party application to create an approval step before apply, you can use Github Environments,
+For inspiration: https://github.com/entur/thanos/blob/main/.github/workflows/cd.yml
