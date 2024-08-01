@@ -35,5 +35,9 @@ jobs:
 ## Outputs
 
 <!-- AUTO-DOC-OUTPUT:START - Do not remove or modify this section -->
-No outputs.
+
+|                            OUTPUT                             |                     VALUE                     |     DESCRIPTION     |
+|---------------------------------------------------------------|-----------------------------------------------|---------------------|
+| <a name="output_apply-log"></a>[apply-log](#output_apply-log) | `"${{ jobs.terraform-apply.outputs.apply }}"` | Terraform apply log |
+
 <!-- AUTO-DOC-OUTPUT:END -->
