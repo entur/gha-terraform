@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.0.6](https://github.com/entur/gha-terraform/compare/v1.0.5...v1.0.6) (2024-08-01)
+
+
+### Bug Fixes
+
+* make workflow run correct when triggered from merge ([4bfc4fb](https://github.com/entur/gha-terraform/commit/4bfc4fb69ae0d74cc32d39cf44e4bd4643282701))
+* make workflow run correct when triggered from push event ([#52](https://github.com/entur/gha-terraform/issues/52)) ([16ebdbe](https://github.com/entur/gha-terraform/commit/16ebdbe8dca1a29fba56569397ee774499ce88f6))
+* use correct name for output recerence ([b09789c](https://github.com/entur/gha-terraform/commit/b09789c10c61e2eebd5398a0c5945b1c1f4a2212))
+
 ## [1.0.5](https://github.com/entur/gha-terraform/compare/v1.0.4...v1.0.5) (2024-06-28)
 
 
