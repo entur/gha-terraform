@@ -36,7 +36,7 @@ on:
     outputs:
       apply-log:
         description: "Terraform apply log"
-        value: ${{ job.terraform-apply.outputs.apply }}
+        value: ${{ jobs.terraform-apply.outputs.apply }}
 
 jobs:
   terraform-apply:
