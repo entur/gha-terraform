@@ -1,0 +1,15 @@
+name: Entur/Terraform/NegativeTests
+
+on:
+  pull_request:
+
+
+jobs:
+  failing-plan-fails:
+   name: Test Terraform Plan with Failures
+   uses: ./.github/workflows/plan.yml
+   with:
+     directory: fixture/terraform_with_failed_plan
+     version: 1.8.3
+     environment: dev
+   secrets: inherit
