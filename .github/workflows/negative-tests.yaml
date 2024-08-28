@@ -5,8 +5,8 @@ on:
 
 
 jobs:
-  failing-plan-fails:
-   name: Test Terraform Plan with Failures
+  test-terraform-plan-with-failures failing-plan-fails:
+   name: This job should fail
    uses: ./.github/workflows/plan.yml
    with:
      directory: fixture/terraform_with_failed_plan
