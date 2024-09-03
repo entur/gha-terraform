@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.1.0](https://github.com/entur/gha-terraform/compare/v1.0.6...v1.1.0) (2024-09-03)
+
+
+### Features
+
+* new workflow apply ([814b40f](https://github.com/entur/gha-terraform/commit/814b40fe9fc0d6e11937caa2173df098df6ade92))
+* new workflow apply ([a502650](https://github.com/entur/gha-terraform/commit/a5026508f600bd9af8ce4a1892691c7fac89d169))
+* new workflow apply ([#56](https://github.com/entur/gha-terraform/issues/56)) ([cace651](https://github.com/entur/gha-terraform/commit/cace651a2254bb072c53620a027ef005e521cec7))
+
 ## [1.0.6](https://github.com/entur/gha-terraform/compare/v1.0.5...v1.0.6) (2024-08-01)
 
 
