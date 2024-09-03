@@ -1,9 +1,4 @@
-# !! THIS WORKFLOW IS DEPRECATED !!
-# Use [gha-terraform/apply](README-apply.md) instead
-
----
-
-# `gha-terraform/force-apply`
+# `gha-terraform/apply`
 
 ## Usage
 
@@ -13,9 +8,9 @@ Add the following step to your workflow configuration:
 
 ```yml
 jobs:
-  tf-force-apply-prd:
+  tf-apply-prd:
     name: Terraform Apply
-    uses: entur/gha-terraform/.github/workflows/force-apply.yml@v1
+    uses: entur/gha-terraform/.github/workflows/apply.yml@v1
     with:
       environment: prd
 ```
