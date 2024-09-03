@@ -23,7 +23,7 @@ jobs:
 
   test-terraform-apply:
     name: Test Terraform Apply
-    uses: ./.github/workflows/force-apply.yml
+    uses: ./.github/workflows/apply.yml
     needs: test-terraform-plan
     with:
       directory: fixture/terraform
@@ -41,7 +41,6 @@ jobs:
       environment: dev
     secrets: inherit
 
-
   update-lint-doc:
     name: Update Lint Documentation
     needs: test-terraform-plan-changes
@@ -58,11 +57,11 @@ jobs:
     with:
       workflow_file: .github/workflows/plan.yml
       readme_file: README-plan.md
-  update-force-apply-doc:
-    name: Update Force-Apply Documentation
+  update-apply-doc:
+    name: Update Apply Documentation
     if: ${{ github.event_name == 'pull_request' }}
     uses: entur/gha-meta/.github/workflows/auto-doc.yml@v1
     needs: [update-plan-doc, test-terraform-plan]
     with:
-      workflow_file: .github/workflows/force-apply.yml
-      readme_file: README-force-apply.md
+      workflow_file: .github/workflows/apply.yml
+      readme_file: README-apply.md
