@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.0](https://github.com/entur/gha-terraform/compare/v1.0.6...v1.1.0) (2024-09-03)
+
+
+### Features
+
+* new workflow apply ([#56](https://github.com/entur/gha-terraform/issues/56)) ([cace651](https://github.com/entur/gha-terraform/commit/cace651a2254bb072c53620a027ef005e521cec7))
+
 ## [1.0.6](https://github.com/entur/gha-terraform/compare/v1.0.5...v1.0.6) (2024-08-01)
 
 
