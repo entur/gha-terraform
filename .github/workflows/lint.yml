@@ -20,6 +20,7 @@ env:
   GHA_TERRAFORM_LINT_VERSION: ${{ inputs.version }}
 jobs:
   lint:
+    name: Terraform Lint
     runs-on: ubuntu-24.04
     timeout-minutes: ${{ inputs.timeout_minutes }}
     permissions:
