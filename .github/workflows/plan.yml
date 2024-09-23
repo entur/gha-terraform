@@ -69,7 +69,12 @@ jobs:
 
       - name: checkout
         uses: actions/checkout@v4
-
+      - name: set version
+        if: env.GHA_TERRAFORM_VERSION == 'asdf'
+        run: |
+          asdf_version=`cat ${GHA_TERRAFORM_DIRECTORY}/.tool-versions | grep terraform | cut -d " " -f 2`
+          echo "Setting terraform version to: $asdf_version"
+          echo "GHA_TERRAFORM_VERSION=$(echo $asdf_version)" >> $GITHUB_ENV
       - uses: entur/gha-meta/.github/actions/cloud-auth@v1
         name: Authenticate
         with:

@@ -27,14 +27,12 @@ jobs:
       contents: read
     steps:
       - uses: actions/checkout@v4
-
       - name: set version
         if: env.GHA_TERRAFORM_LINT_VERSION == 'asdf'
         run: |
           asdf_version=`cat ${GHA_TERRAFORM_LINT_DIRECTORY}/.tool-versions | grep terraform | cut -d " " -f 2`
           echo "Setting terraform version to: $asdf_version"
           echo "GHA_TERRAFORM_LINT_VERSION=$(echo $asdf_version)" >> $GITHUB_ENV
-        
       - uses: hashicorp/setup-terraform@v3
         with:
           terraform_version: ${{ env.GHA_TERRAFORM_LINT_VERSION }}
