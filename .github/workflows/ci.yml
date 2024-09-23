@@ -11,6 +11,12 @@ jobs:
     uses: ./.github/workflows/lint.yml
     with:
       directory: fixture/terraform
+  test-lint-ok-asdf:
+    name: Test Lint
+    uses: ./.github/workflows/lint.yml
+    with:
+      version: asdf
+      directory: fixture/terraform
 
   test-terraform-plan:
     name: Test Terraform Plan
