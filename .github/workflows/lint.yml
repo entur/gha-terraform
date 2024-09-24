@@ -38,6 +38,6 @@ jobs:
       - run: |
           tflint --init
           tflint --chdir=${GHA_TERRAFORM_LINT_DIRECTORY} -f compact
-      # Do init to check that dependency versions are available
       - run: terraform -chdir=${GHA_TERRAFORM_LINT_DIRECTORY} init -backend=false
+      - run: terraform -chdir=${GHA_TERRAFORM_LINT_DIRECTORY} validate
       
