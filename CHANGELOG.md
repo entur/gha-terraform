@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.1](https://github.com/entur/gha-terraform/compare/v1.1.0...v1.1.1) (2024-10-08)
+
+
+### Bug Fixes
+
+* terraform fmt path ([#60](https://github.com/entur/gha-terraform/issues/60)) ([19ff31e](https://github.com/entur/gha-terraform/commit/19ff31e6be50126107961cc5cf5cc497ede240f8))
+
 ## [1.1.0](https://github.com/entur/gha-terraform/compare/v1.0.6...v1.1.0) (2024-09-03)
 
 
