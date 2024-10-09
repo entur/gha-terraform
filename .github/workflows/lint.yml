@@ -35,6 +35,7 @@ jobs:
         with:
           tflint_wrapper: true
       - run: |
+          LINT=TESTS
           RED='\033[0;31m'
           GREEN='\033[0;32m'
           YELLOW='\033[0;33m'
@@ -52,8 +53,10 @@ jobs:
           fi
 
           printf "%bRunning TFLint: %b\n" "${YELLOW}" "${NEUTRAL}"
+          printf "----------------------------------------\n"
           tflint --init
           if ! tflint --chdir=${GHA_TERRAFORM_LINT_DIRECTORY} --recursive; then
+            printf "----------------------------------------\n"
             printf "\n\\e[1;31mERROR\\e[0m: TFLint found issues in the Terraform configuration\n"
             printf "Please check the error messages above and fix the issue\n\n"
             exit 1
@@ -62,7 +65,9 @@ jobs:
           fi
 
           printf "%bInitializing Terraform Configuration to check for provider plugins issues: %b\n" "${YELLOW}" "${NEUTRAL}"
+          printf "----------------------------------------\n"
           if ! terraform -chdir=${GHA_TERRAFORM_LINT_DIRECTORY} init -backend=false; then
+            printf "----------------------------------------\n"
             printf "\n%bERROR%b: Terraform configuration could not be initialized\n" "${RED}" "${NEUTRAL}"
             printf "Please check the error messages above and fix the issue\n\n"
             exit 1
@@ -71,7 +76,9 @@ jobs:
           fi
 
           printf "%bValidating Terraform Configuration: %b\n" "${YELLOW}" "${NEUTRAL}"
+          printf "----------------------------------------\n"
           if ! terraform -chdir=${GHA_TERRAFORM_LINT_DIRECTORY} validate; then
+            printf "----------------------------------------\n"
             printf "\n%bERROR%b: Terraform configuration is not valid\n" "${RED}" "${NEUTRAL}"
             printf "Please check the error messages above and fix the issue\n\n"
             exit 1
