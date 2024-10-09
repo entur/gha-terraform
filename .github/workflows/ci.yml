@@ -12,7 +12,12 @@ jobs:
     with:
       directory: fixture/terraform
       version: 1.8.3
-
+  test-lint-ok-failed-test:
+    name: Test Lint fail - test
+    uses: ./.github/workflows/lint.yml
+    with:
+      directory: fixture/terraform_with_failed_plan
+      version: 1.8.3
   test-terraform-plan:
     name: Test Terraform Plan
     uses: ./.github/workflows/plan.yml
