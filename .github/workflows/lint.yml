@@ -46,7 +46,7 @@ jobs:
             printf "#--------------------------------------------------------------------------------\n"
             printf "%bERROR%b: Terraform files are not formatted correctly\n" "${RED}" "${NEUTRAL}"
             printf "Please run 'terraform fmt -recursive' to fix the formatting issues in the files listed above.\n"
-            printf "ps: this can be automated in VS Code or IntelliJ by installing the Terraform extension and enabling 'Format on Save'\n\n"
+            printf "PS: You can most likely find a terraform plugin or mode for your editor that can format on save, or as you type. If none is provided, you can use the 'terraform-ls' language server."
             exit 1
           else
             printf "Formating: %bOK%b\n\n" "${GREEN}" "${NEUTRAL}"
