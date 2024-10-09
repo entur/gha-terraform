@@ -18,11 +18,12 @@ data "google_secret_manager_secret_version" "test_secret" {
   project = "none-existing"
 }
 
-resource "null_resource" "testing_123" {
-  triggers2 = {
-    always_run = timestamp()
-  }
-  provisioner "local-exec" {
-    command = "echo 'Hello, Terra'"
-  }
-}
+# tests with invalid options:
+# resource "null_resource" "testing_123" {
+#   triggers2 = {
+#     always_run = timestamp()
+#   }
+#   provisioner "local-exec" {
+#     command = "echo 'Hello, Terra'"
+#   }
+# }
