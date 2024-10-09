@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.1.2](https://github.com/entur/gha-terraform/compare/v1.1.1...v1.1.2) (2024-10-09)
+
+
+### Bug Fixes
+
+* improve lint messages output ([#64](https://github.com/entur/gha-terraform/issues/64)) ([4b2a798](https://github.com/entur/gha-terraform/commit/4b2a798a1afa04a94f7655010f342539a6050f1d))
+
+
 ## [1.1.1](https://github.com/entur/gha-terraform/compare/v1.1.0...v1.1.1) (2024-10-08)
 
 
