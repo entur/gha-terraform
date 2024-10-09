@@ -41,47 +41,48 @@ jobs:
           YELLOW='\033[0;33m'
           NEUTRAL='\033[0m'
           printf "%bChecking Terraform files for formatting issues: %b\n" "${YELLOW}" "${NEUTRAL}"
-          printf "#----------------------------------------\n"
+          printf "#--------------------------------------------------------------------------------\n"
           if ! terraform -chdir=${GHA_TERRAFORM_LINT_DIRECTORY} fmt -check -recursive; then
-            printf "#----------------------------------------\n"
+            printf "#--------------------------------------------------------------------------------\n"
             printf "%bERROR%b: Terraform files are not formatted correctly\n" "${RED}" "${NEUTRAL}"
             printf "Please run 'terraform fmt -recursive' to fix the formatting issues in the files listed above.\n"
             printf "ps: this can be automated in VS Code or IntelliJ by installing the Terraform extension and enabling 'Format on Save'\n\n"
             exit 1
           else
-            printf "Formating: %bOK%b\n" "${GREEN}" "${NEUTRAL}"
+            printf "Formating: %bOK%b\n\n" "${GREEN}" "${NEUTRAL}"
           fi
 
+
           printf "%bRunning TFLint: %b\n" "${YELLOW}" "${NEUTRAL}"
-          printf "#----------------------------------------\n"
+          printf "#--------------------------------------------------------------------------------\n"
           tflint --init
           if ! tflint --chdir=${GHA_TERRAFORM_LINT_DIRECTORY} --recursive; then
-            printf "#----------------------------------------\n"
+            printf "#--------------------------------------------------------------------------------\n"
             printf "%bERROR%b: TFLint found issues in the Terraform configuration\n" "${RED}" "${NEUTRAL}"
             printf "Please check the error messages above and fix the issue\n\n"
             exit 1
           else
-            printf "TFLint: %bOK%b\n" "${GREEN}" "${NEUTRAL}"
+            printf "TFLint: %bOK%b\n\n" "${GREEN}" "${NEUTRAL}"
           fi
 
           printf "%bInitializing Terraform Configuration to check for provider plugins issues: %b\n" "${YELLOW}" "${NEUTRAL}"
-          printf "#----------------------------------------\n"
+          printf "#--------------------------------------------------------------------------------\n"
           if ! terraform -chdir=${GHA_TERRAFORM_LINT_DIRECTORY} init -backend=false; then
             printf "#----------------------------------------\n"
             printf "\n%bERROR%b: Terraform configuration could not be initialized\n" "${RED}" "${NEUTRAL}"
             printf "Please check the error messages above and fix the issue\n\n"
             exit 1
           else
-            printf "Initialization: %bOK%b\n" "${GREEN}" "${NEUTRAL}"
+            printf "Initialization: %bOK%b\n\n" "${GREEN}" "${NEUTRAL}"
           fi
 
           printf "%bValidating Terraform Configuration: %b\n" "${YELLOW}" "${NEUTRAL}"
-          printf "#----------------------------------------\n"
+          printf "#--------------------------------------------------------------------------------\n"
           if ! terraform -chdir=${GHA_TERRAFORM_LINT_DIRECTORY} validate; then
-            printf "#----------------------------------------\n"
+            printf "#--------------------------------------------------------------------------------\n"
             printf "\n%bERROR%b: Terraform configuration is not valid\n" "${RED}" "${NEUTRAL}"
             printf "Please check the error messages above and fix the issue\n\n"
             exit 1
           else
-            printf "Validation: %bOK%b\n" "${GREEN}" "${NEUTRAL}"
+            printf "Validation: %bOK%b\n\n" "${GREEN}" "${NEUTRAL}"
           fi
