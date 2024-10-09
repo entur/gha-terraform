@@ -5,16 +5,8 @@
 
 ### Bug Fixes
 
-* add lines ([2516166](https://github.com/entur/gha-terraform/commit/2516166b79d4a1ecd8153d126af4973f812357a7))
-* extra spacing and longer lines ([16f61fa](https://github.com/entur/gha-terraform/commit/16f61fa9ff4241bfd761f4b0b0f5c032cebeeb9a))
-* First Line is displayed only before expand ([066ed22](https://github.com/entur/gha-terraform/commit/066ed22fbd9976da90dca82a50cdb5652e4ad03e))
 * improve lint messages output ([#64](https://github.com/entur/gha-terraform/issues/64)) ([4b2a798](https://github.com/entur/gha-terraform/commit/4b2a798a1afa04a94f7655010f342539a6050f1d))
-* printf and lines ([68220e7](https://github.com/entur/gha-terraform/commit/68220e72bba659e30af54bb0c4920b41f5469524))
-* remove test code ([ce04097](https://github.com/entur/gha-terraform/commit/ce04097299d5d17b19cccf1e8f8ee135abece57f))
-* test invalid config ([eb6f922](https://github.com/entur/gha-terraform/commit/eb6f922fcf3191b51bbbb9851b89c9c371be4656))
-* test invalid config 2 ([2915709](https://github.com/entur/gha-terraform/commit/2915709dfae6371fe3a421acad2c3656f9265af3))
-* test output ([c7c06dd](https://github.com/entur/gha-terraform/commit/c7c06ddb882867aee6850f39ab0f0a56c2764667))
-* test output 2 ([b7cf4cb](https://github.com/entur/gha-terraform/commit/b7cf4cb3f457133732681e8d48ff6818755f155d))
+
 
 ## [1.1.1](https://github.com/entur/gha-terraform/compare/v1.1.0...v1.1.1) (2024-10-08)
 
