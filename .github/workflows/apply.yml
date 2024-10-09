@@ -42,7 +42,7 @@ jobs:
   terraform-apply:
     runs-on: ubuntu-24.04
     outputs:
-      apply: ${{ steps.force-apply.outputs.apply }}
+      apply: ${{ steps.apply.outputs.apply }}
     timeout-minutes: ${{ inputs.timeout_minutes }}
     environment: ${{ inputs.environment }}
     env:
@@ -126,7 +126,7 @@ jobs:
           terraform workspace select -or-create=true ${GHA_TERRAFORM_WORKSPACE}
 
       - name: Terraform Apply
-        id: force-apply
+        id: apply
         working-directory: ${{ env.GHA_TERRAFORM_DIRECTORY }}
         shell: bash
         run: |
@@ -141,5 +141,5 @@ jobs:
           echo "${delimiter}" >> $GITHUB_OUTPUT
 
       - name: Terraform Apply Status Check
-        if: steps.force-apply.outcome == 'failure'
+        if: steps.apply.outcome == 'failure'
         run: exit 1

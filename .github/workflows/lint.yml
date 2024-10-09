@@ -20,6 +20,7 @@ env:
   GHA_TERRAFORM_LINT_VERSION: ${{ inputs.version }}
 jobs:
   lint:
+    name: Terraform Lint
     runs-on: ubuntu-24.04
     timeout-minutes: ${{ inputs.timeout_minutes }}
     permissions:
@@ -33,7 +34,10 @@ jobs:
       - uses: terraform-linters/setup-tflint@v4
         with:
           tflint_wrapper: true
-      - run: terraform fmt -check
+      - run: terraform -chdir=${GHA_TERRAFORM_LINT_DIRECTORY} fmt -check
       - run: |
           tflint --init
           tflint --chdir=${GHA_TERRAFORM_LINT_DIRECTORY} -f compact
+      - run: terraform -chdir=${GHA_TERRAFORM_LINT_DIRECTORY} init -backend=false
+      - run: terraform -chdir=${GHA_TERRAFORM_LINT_DIRECTORY} validate
+      

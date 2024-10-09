@@ -8,7 +8,7 @@ GitHub Actions for working with Terraform
 
 - [Terraform lint](../README-lint.md)
 - [Terraform plan](../README-plan.md)
-- [Terraform force-apply](../README-force-apply.md)
+- [Terraform apply](../README-apply.md)
 
 
 ## Golden Path
@@ -62,7 +62,7 @@ on:
 
 jobs:
   terraform-apply:
-    uses: entur/gha-terraform/.github/workflows/force-apply.yml@v1
+    uses: entur/gha-terraform/.github/workflows/apply.yml@v1
 ```
 
 #### approval steps
