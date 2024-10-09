@@ -40,10 +40,12 @@ jobs:
           YELLOW='\033[0;33m'
           NEUTRAL='\033[0m'
           printf "%bChecking Terraform files for formatting issues: %b\n" "${YELLOW}" "${NEUTRAL}"
+          printf "----------------------------------------\n"
           if ! terraform -chdir=${GHA_TERRAFORM_LINT_DIRECTORY} fmt -check -recursive; then
+            printf "----------------------------------------\n"
             printf "%bERROR%b: Terraform files are not formatted correctly\n" "${RED}" "${NEUTRAL}"
             printf "Please run 'terraform fmt -recursive' to fix the formatting issues in the files listed above.\n"
-            printf "ps: this can be automated in Ms Code or IntelliJ by installing the Terraform extension and enabling 'Format on Save'\n\n"
+            printf "ps: this can be automated in VS Code or IntelliJ by installing the Terraform extension and enabling 'Format on Save'\n\n"
             exit 1
           else
             printf "Formating: %bOK%b\n" "${GREEN}" "${NEUTRAL}"
