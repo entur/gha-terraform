@@ -12,7 +12,6 @@ jobs:
     with:
       directory: fixture/terraform
       version: 1.8.3
-
   test-terraform-plan:
     name: Test Terraform Plan
     uses: ./.github/workflows/plan.yml
