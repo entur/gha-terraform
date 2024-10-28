@@ -20,7 +20,7 @@ on:
         type: string
         default: "env"
       version:
-        description: "Terraform version"
+        description: "Terraform version, nb: Setting this, overrides the version defined in code. If not set in code, the latest version is used."
         type: string
         default: "latest"
       gcp_project_id:
@@ -33,6 +33,10 @@ on:
         description: "Job timeout in minutes"
         type: number
         default: 10
+    outputs:
+      version:
+        description: "Terraform version"
+        value: ${{ jobs.terraform-plan.outputs.version }}
 
 jobs:
   terraform-plan:
@@ -45,8 +49,8 @@ jobs:
       GHA_TERRAFORM_ENVIRONMENT: ${{ inputs.environment }}
       GHA_TERRAFORM_WORKSPACE: ${{ inputs.workspace }}
       GHA_TERRAFORM_VERSION: ${{ inputs.version }}
-      GHA_TERRAFORM_PROJECT_ID: ${{ inputs.project_id }}
-      GHA_TERRAFORM_CLUSTER_NAME: ${{ inputs.cluster_name }}
+      GHA_TERRAFORM_GCP_PROJECT_ID: ${{ inputs.gcp_project_id }}
+      GHA_TERRAFORM_GCP_CLUSTER_NAME: ${{ inputs.gcp_cluster_name }}
       GHA_TERRAFORM_STATUS: ""
       # ignore "context access might be invalid" warning
       WORKLOAD_IDENTITY_PROVIDER: ${{ vars.WORKLOAD_IDENTITY_PROVIDER }}
@@ -60,6 +64,8 @@ jobs:
       contents: read
       id-token: write
       pull-requests: write
+    outputs:
+      version: ${{ env.GHA_TERRAFORM_VERSION }}
     steps:
       - id: set-workspace
         shell: bash
@@ -85,9 +91,22 @@ jobs:
         with:
           environment: ${{ env.GHA_TERRAFORM_ENVIRONMENT }}
           cloud_provider: ${{ env.GHA_TERRAFORM_CLOUD_PROVIDER }}
-          gcp_project_id: ${{ inputs.project_id }}
-          gcp_cluster_name: ${{ inputs.cluster_name }}
+          gcp_project_id: ${{ env.GHA_TERRAFORM_GCP_PROJECT_ID }}
+          gcp_cluster_name: ${{ env.GHA_TERRAFORM_GCP_CLUSTER_NAME }}
           azure_cluster_resource_group: ${{ env.AZURE_CLUSTER_RESOURCE_GROUP }}
+
+      - if: env.GHA_TERRAFORM_VERSION == 'latest'
+        name: Set Terraform version
+        shell: bash
+        working-directory: ${{ env.GHA_TERRAFORM_DIRECTORY }}
+        run: |
+          tfcode_version=$(grep -IR -A 100 "terraform {"|grep -oE 'required_version\s*=\s*"([^"]+)"'|grep -Eo '[0-9]+\.[0-9]+\.[0-9]+'|head -1)
+          if [ -z "$tfcode_version" ]; then
+            tfcode_version=$(grep "terraform" .tool-versions|awk '{print $2}')
+          fi
+          if [ "$tfcode_version" ]; then
+              echo "GHA_TERRAFORM_VERSION=$tfcode_version" >> $GITHUB_ENV
+          fi
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3

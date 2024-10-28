@@ -10,6 +10,10 @@ GitHub Actions for working with Terraform
 - [Terraform plan](../README-plan.md)
 - [Terraform apply](../README-apply.md)
 
+## Terraform version management
+
+These reusable workflows will try to automatically determine the terraform version from your terraform code.
+You can override this by setting the `version` input property.
 
 ## Golden Path
 
