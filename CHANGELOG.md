@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.1.3](https://github.com/entur/gha-terraform/compare/v1.1.2...v1.1.3) (2024-10-28)
+
+
+### Bug Fixes
+
+* bugfix and lint ([2af95fd](https://github.com/entur/gha-terraform/commit/2af95fd113b8fa8b77225cf3b7b6378c6ef58cbc))
+* Cloud 2239 - implement automatic terraform version fetch ([#67](https://github.com/entur/gha-terraform/issues/67)) ([cee435b](https://github.com/entur/gha-terraform/commit/cee435b0b6c39b40b61acb06570f43b049cf5646)), closes [#47](https://github.com/entur/gha-terraform/issues/47)
+* implement automatic terraform version fetch (fixes: [#47](https://github.com/entur/gha-terraform/issues/47)) ([c215c34](https://github.com/entur/gha-terraform/commit/c215c34e68df40724f2d38dbfe35a3d58470c799))
+* new dependabot [skip ci] ([9c2e473](https://github.com/entur/gha-terraform/commit/9c2e4732205ccf61959ae314c5ba0a5ff891b456))
+* new dependabot [skip ci] ([#66](https://github.com/entur/gha-terraform/issues/66)) ([b92d5ac](https://github.com/entur/gha-terraform/commit/b92d5acf6b6c9349e262df4aa223b175f2efb464))
+* remove required_version from test code ([47e3b08](https://github.com/entur/gha-terraform/commit/47e3b0863617ed845aa5053e6589e6eb9271a950))
+
 ## [1.1.2](https://github.com/entur/gha-terraform/compare/v1.1.1...v1.1.2) (2024-10-09)
 
 
