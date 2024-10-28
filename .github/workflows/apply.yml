@@ -20,7 +20,7 @@ on:
         type: string
         default: "env"
       version:
-        description: "Terraform version"
+        description: "Terraform version, nb: Setting this, overrides the version defined in code. If not set in code, the latest version is used."
         type: string
         default: "latest"
       gcp_project_id:
@@ -51,7 +51,9 @@ jobs:
       GHA_TERRAFORM_ENVIRONMENT: ${{ inputs.environment }}
       GHA_TERRAFORM_WORKSPACE: ${{ inputs.workspace }}
       GHA_TERRAFORM_VERSION: ${{ inputs.version }}
-      GHA_TERRAFORM_CLUSTER_NAME: ${{ inputs.cluster_name }}
+      GHA_TERRAFORM_GCP_PROJECT_ID: ${{ inputs.gcp_project_id }}
+      GHA_TERRAFORM_GCP_CLUSTER_NAME: ${{ inputs.gcp_cluster_name }}
+      # ignore "context access might be invalid" warning
       GHA_WORKLOAD_IDENTITY_PROVIDER: ${{ vars.WORKLOAD_IDENTITY_PROVIDER }}
       GHA_SERVICE_ACCOUNT: ${{ vars.SERVICE_ACCOUNT }}
       AZURE_CLIENT_ID: ${{ vars.AZURE_CLIENT_ID }}
@@ -99,8 +101,8 @@ jobs:
         with:
           environment: ${{ env.GHA_TERRAFORM_ENVIRONMENT }}
           cloud_provider: ${{ env.GHA_TERRAFORM_CLOUD_PROVIDER }}
-          gcp_project_id: ${{ inputs.project_id }}
-          gcp_cluster_name: ${{ env.GHA_TERRAFORM_CLUSTER_NAME }}
+          gcp_project_id: ${{ env.GHA_TERRAFORM_GCP_PROJECT_ID }}
+          gcp_cluster_name: ${{ env.GHA_TERRAFORM_GCP_CLUSTER_NAME }}
           azure_cluster_resource_group: ${{ env.AZURE_CLUSTER_RESOURCE_GROUP }}
 
       - name: Setup Terraform
