@@ -58,5 +58,6 @@ runs:
           echo "version=${version}" >> $GITHUB_OUTPUT
         else
           echo "version=${inputs_version}" >> $GITHUB_OUTPUT
+          version=${inputs_version}
         fi
         printf "\n%bINFO%b: Terraform version: %b${version}%b\n" "${green}" "${neutral}" "${yellow}" "${neutral}"
