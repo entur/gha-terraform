@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.0](https://github.com/entur/gha-terraform/compare/v1.1.3...v1.2.0) (2024-11-05)
+
+
+### Features
+
+* new composite action to get tf version ([#70](https://github.com/entur/gha-terraform/issues/70)) ([f6c41e3](https://github.com/entur/gha-terraform/commit/f6c41e3d227a151767c3e0fb3512b347ad344adf))
+
 ## [1.1.3](https://github.com/entur/gha-terraform/compare/v1.1.3...v1.1.3) (2024-10-28)
 
 
