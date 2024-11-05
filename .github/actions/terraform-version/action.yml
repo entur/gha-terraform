@@ -40,11 +40,9 @@ runs:
               curdir=$(pwd "$1")
               find "$curdir" -maxdepth 1 -name ".tool-versions"
               c=0
-              pwd
               while [ $c -lt 4 ]; do # max 4 levels up
                 curdir=$(dirname "$curdir")
-                echo "$curdir"
-                find "$CURDIR" -maxdepth 1 -name ".tool-versions"
+                find "$curdir" -maxdepth 1 -name ".tool-versions"
                 c=$((c + 1))
               done
             }
