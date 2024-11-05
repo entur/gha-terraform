@@ -1,0 +1,50 @@
+name: 'Terraform Version Action'
+description: 'Determine the Terraform version to use'
+inputs:
+  directory:
+    description: 'Path to Terraform Directory'
+    required: true
+
+outputs:
+  version:
+    description: 'Terraform version'
+    value: ${{ steps.set-terraform-version.outputs.version }}
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Set Terraform version
+      id: set-terraform-version
+      env:
+        inputs_version: ${{ inputs.version }}
+      working-directory: ${{ inputs.directory }}
+      shell: bash
+      run: |
+        red='\033[0;31m'
+        green='\033[0;32m'
+        yellow='\033[0;33m'
+        neutral='\033[0m'
+        if [ "${inputs_version}" == "latest" ]; then
+          version=$(grep -IR -A 100 "terraform {"|grep -oE 'required_version\s*=\s*"([^"]+)"'|grep -Eo '[0-9]+\.[0-9]+\.[0-9]+'|head -1)
+          if [ -z "$version" ]; then
+            find_tool_versions() {
+              curdir=$(pwd "$1")
+              stopdir="/home/runner/work/"
+              find "$curdir" -maxdepth 1 -name ".tool-versions"
+              while [ "$curdir" != "$stopdir" ] ; do
+                curdir=$(dirname "$curdir")
+                find "$curdir" -maxdepth 1 -name ".tool-versions"
+              done
+            }
+            tool_versions_location=$(find_tool_versions ./|head -1)
+            if [ "$tool_versions_location" ]; then
+              version=$(grep "terraform" .tool-versions |awk '{print $2}')
+            else
+              printf "\n%bWARNING%b: No terraform version defined in tf code or .tool-versions, using latest\n" "${yellow}" "${neutral}"
+              version="latest"
+            fi
+          fi
+          echo "version=${version}" >> $GITHUB_OUTPUT
+        else
+          echo "version=${inputs_version}" >> $GITHUB_OUTPUT
+        fi
