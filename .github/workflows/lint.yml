@@ -33,8 +33,9 @@ jobs:
       version: ${{ env.GHA_TERRAFORM_VERSION }}
     steps:
       - uses: actions/checkout@v4
-      - if: env.GHA_TERRAFORM_VERSION == 'latest'
-        name: "Terraform Version Action"
+
+      - name: "Terraform Version Action"
+        id: set-terraform-version
         uses: entur/gha-terraform/.github/actions/terraform-version@tool-versions-fix
         with:
           directory: ${{ env.GHA_TERRAFORM_DIRECTORY }}
@@ -42,7 +43,7 @@ jobs:
 
       - uses: hashicorp/setup-terraform@v3
         with:
-          terraform_version: ${{ env.GHA_TERRAFORM_VERSION }}
+          terraform_version: ${{ steps.set-terraform-version.outputs.version }}
           terraform_wrapper: false
       - uses: terraform-linters/setup-tflint@v4
         with:
