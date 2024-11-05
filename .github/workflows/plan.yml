@@ -65,7 +65,7 @@ jobs:
       id-token: write
       pull-requests: write
     outputs:
-      version: ${{ env.GHA_TERRAFORM_VERSION }}
+      version: ${{ steps.set-terraform-version.outputs.version }}
     steps:
       - id: set-workspace
         shell: bash
@@ -95,24 +95,16 @@ jobs:
           gcp_cluster_name: ${{ env.GHA_TERRAFORM_GCP_CLUSTER_NAME }}
           azure_cluster_resource_group: ${{ env.AZURE_CLUSTER_RESOURCE_GROUP }}
 
-      - if: env.GHA_TERRAFORM_VERSION == 'latest'
-        name: Set Terraform version
-        shell: bash
-        working-directory: ${{ env.GHA_TERRAFORM_DIRECTORY }}
-        run: |
-          tfcode_version=$(grep -IR -A 100 "terraform {"|grep -oE 'required_version\s*=\s*"([^"]+)"'|grep -Eo '[0-9]+\.[0-9]+\.[0-9]+'|head -1)
-          if [ -z "$tfcode_version" ]; then
-            tfcode_version=$(grep "terraform" .tool-versions|awk '{print $2}')
-          fi
-          if [ "$tfcode_version" ]; then
-              echo "GHA_TERRAFORM_VERSION=$tfcode_version" >> $GITHUB_ENV
-          fi
-
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v3
-        id: setup
+      - name: "Terraform Version Action"
+        id: set-terraform-version
+        uses: entur/gha-terraform/.github/actions/terraform-version@v1
         with:
-          terraform_version: ${{ env.GHA_TERRAFORM_VERSION }}
+          directory: ${{ env.GHA_TERRAFORM_DIRECTORY }}
+          version: ${{ env.GHA_TERRAFORM_VERSION }}
+
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: ${{ steps.set-terraform-version.outputs.version }}
           terraform_wrapper: false
 
       - name: Terraform Init

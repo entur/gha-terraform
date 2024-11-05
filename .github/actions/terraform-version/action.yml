@@ -1,0 +1,64 @@
+name: 'Terraform Version Action'
+description: 'Determine the Terraform version to use'
+inputs:
+  directory:
+    description: 'Path to Terraform Directory'
+    required: true
+  version:
+    description: 'Terraform version, nb: Setting this, overrides the version defined in code. If not set in code, the latest version is used.'
+    required: true
+
+outputs:
+  version:
+    description: 'Terraform version'
+    value: ${{ steps.set-terraform-version.outputs.version }}
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Set Terraform version
+      id: set-terraform-version
+      env:
+        inputs_version: ${{ inputs.version }}
+      working-directory: ${{ inputs.directory }}
+      shell: bash
+      run: |
+        terraform=version
+        red='\033[0;31m'
+        green='\033[0;32m'
+        yellow='\033[0;33m'
+        neutral='\033[0m'
+        if [ "${inputs_version}" == "latest" ]; then
+          version=$( \
+            { grep -IR -A 100 "terraform {" || echo ""; } \
+            | { grep -oE 'required_version\s*=\s*"([^"]+)"' || echo ""; } \
+            | { grep -Eo '[0-9]+\.[0-9]+\.[0-9]+' || echo ""; } \
+            | head -1 \
+          )
+          if [ -z "$version" ]; then
+            function find_tool_versions() {
+              curdir=$(pwd)
+              find "$curdir" -maxdepth 1 -name ".tool-versions"
+              c=0
+              while [ $c -lt 4 ]; do # max 4 levels up
+                curdir=$(dirname "$curdir")
+                find "$curdir" -maxdepth 1 -name ".tool-versions"
+                c=$((c + 1))
+              done
+            }
+            tool_versions_location=$(find_tool_versions|head -1)
+            if [ -n "$tool_versions_location" ]; then
+              printf "\n%bINFO%b: Found asdf file: %b${tool_versions_location}%b\n" "${green}" "${neutral}" "${yellow}" "${neutral}"
+              version=$(grep -E "^terraform" "$tool_versions_location"|awk '{print $2}')
+            else
+              printf "\n%bWARNING%b: No terraform version defined in tf code or .tool-versions, using latest\n" "${yellow}" "${neutral}"
+            fi
+          fi
+        fi
+        if [ -n "$version" ]; then
+          echo "version=${version}" >> $GITHUB_OUTPUT
+        else
+          echo "version=${inputs_version}" >> $GITHUB_OUTPUT
+          version=${inputs_version}
+        fi
+        printf "\n%bINFO%b: Terraform version: %b${version}%b\n" "${green}" "${neutral}" "${yellow}" "${neutral}"
