@@ -20,6 +20,7 @@ runs:
       id: set-terraform-version
       env:
         inputs_version: ${{ inputs.version }}
+        directory: ${{ inputs.directory }}
       working-directory: ${{ inputs.directory }}
       shell: bash
       run: |
@@ -47,6 +48,8 @@ runs:
                 c=$((c + 1))
               done
             }
+            find_tool_version ${inputs_directory}
+
             tool_versions_location=$(find_tool_versions ./|head -1)
             if [ -n "$tool_versions_location" ]; then
               printf "\n%bINFO%b: Found asdf file: %b${tool_versions_location}%b\n" "${green}" "${neutral}" "${yellow}" "${neutral}"
