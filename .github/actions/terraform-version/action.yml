@@ -27,10 +27,8 @@ runs:
         green='\033[0;32m'
         yellow='\033[0;33m'
         neutral='\033[0m'
-        echo "testing"
         if [ "${inputs_version}" == "latest" ]; then
-          echo "test0"
-          version=$(grep -IR -A 100 "terraform {" | grep -oE 'required_version\s*=\s*"([^"]+)"' | grep -Eo '[0-9]+\.[0-9]+\.[0-9]+' | head -1)
+          version=$(grep -IR -A 100 "terraform {" | grep -oE 'required_version\s*=\s*"([^"]+)"' | grep -Eo '[0-9]+\.[0-9]+\.[0-9]+' | head -1)|| ""
           if [ -z "$version" ]; then
             find_tool_versions() {
               curdir=$(pwd "$1")
@@ -41,17 +39,16 @@ runs:
                 find "$curdir" -maxdepth 1 -name ".tool-versions"
               done
             }
-            echo "test1"
             tool_versions_location=$(find_tool_versions ./|head -1)
-            echo "test2"
             if [ -n "$tool_versions_location" ]; then
+              printf "\n%bINFO%b: Found asdf file: %b${tool_versions_location}%b\n" "${green}" "${neutral}" "${yellow}" "${neutral}"
               version=$(grep -E "^terraform" "$tool_versions_location"|awk '{print $2}')
             else
               printf "\n%bWARNING%b: No terraform version defined in tf code or .tool-versions, using latest\n" "${yellow}" "${neutral}"
-              version="latest"
             fi
           fi
-          echo "test3"
+        fi
+        if [ -n "$version" ]; then
           echo "version=${version}" >> $GITHUB_OUTPUT
         else
           echo "version=${inputs_version}" >> $GITHUB_OUTPUT
