@@ -28,7 +28,7 @@ runs:
         yellow='\033[0;33m'
         neutral='\033[0m'
         if [ "${inputs_version}" == "latest" ]; then
-          version=$(grep -IR -A 100 "terraform {" | grep -oE 'required_version\s*=\s*"([^"]+)"' | grep -Eo '[0-9]+\.[0-9]+\.[0-9]+' | head -1)|| ""
+          version=$(grep -IR -A 100 "terraform {" | grep -oE 'required_version\s*=\s*"([^"]+)"' | grep -Eo '[0-9]+\.[0-9]+\.[0-9]+' | head -1 || "")
           if [ -z "$version" ]; then
             find_tool_versions() {
               curdir=$(pwd "$1")
