@@ -11,6 +11,18 @@ jobs:
     uses: ./.github/workflows/lint.yml
     with:
       directory: fixture/terraform
+
+  temp-test:
+    name: Test Lint2
+    uses: ./.github/workflows/lint.yml
+    with:
+      directory: fixture/terraform_with_changes
+  temp-test2:
+    name: Test Lint3
+    uses: ./.github/workflows/lint.yml
+    with:
+      directory: fixture/terraform_with_failed_plan
+
   verify-version:
     needs: test-lint-ok
     name: Verify Terraform Version
