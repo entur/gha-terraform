@@ -30,7 +30,7 @@ runs:
         echo "testing"
         if [ "${inputs_version}" == "latest" ]; then
           echo "test0"
-          version=$(grep -IR -A 100 "terraform {"|grep -oE 'required_version\s*=\s*"([^"]+)"'|grep -Eo '[0-9]+\.[0-9]+\.[0-9]+'|head -1)
+          version=$(grep -IR -A 100 "terraform {" | grep -oE 'required_version\s*=\s*"([^"]+)"' | grep -Eo '[0-9]+\.[0-9]+\.[0-9]+' | head -1)
           if [ -z "$version" ]; then
             find_tool_versions() {
               curdir=$(pwd "$1")
@@ -51,6 +51,7 @@ runs:
               version="latest"
             fi
           fi
+          echo "test3"
           echo "version=${version}" >> $GITHUB_OUTPUT
         else
           echo "version=${inputs_version}" >> $GITHUB_OUTPUT
