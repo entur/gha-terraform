@@ -40,8 +40,8 @@ runs:
               done
             }
             tool_versions_location=$(find_tool_versions ./|head -1)
-            if [ "$tool_versions_location" ]; then
-              version=$(grep "terraform" .tool-versions |awk '{print $2}')
+            if [ -n "$tool_versions_location" ]; then
+              version=$(grep -E "^terraform" "$tool_versions_location"|awk '{print $2}')
             else
               printf "\n%bWARNING%b: No terraform version defined in tf code or .tool-versions, using latest\n" "${yellow}" "${neutral}"
               version="latest"
