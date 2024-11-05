@@ -34,17 +34,12 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - if: env.GHA_TERRAFORM_VERSION == 'latest'
-        name: Set Terraform version
-        shell: bash
-        working-directory: ${{ env.GHA_TERRAFORM_DIRECTORY }}
-        run: |
-          tfcode_version=$(grep -IR -A 100 "terraform {"|grep -oE 'required_version\s*=\s*"([^"]+)"'|grep -Eo '[0-9]+\.[0-9]+\.[0-9]+'|head -1)
-          if [ -z "$tfcode_version" ]; then
-            tfcode_version=$(grep "terraform" .tool-versions|awk '{print $2}')
-          fi
-          if [ "$tfcode_version" ]; then
-              echo "GHA_TERRAFORM_VERSION=$tfcode_version" >> $GITHUB_ENV
-          fi
+        name: "Terraform Version Action"
+        uses: entur/gha-terraform/.github/actions/terraform-version@tool-versions-fix
+        with:
+          directory: ${{ env.GHA_TERRAFORM_DIRECTORY }}
+          version: ${{ env.GHA_TERRAFORM_VERSION }}
+
       - uses: hashicorp/setup-terraform@v3
         with:
           terraform_version: ${{ env.GHA_TERRAFORM_VERSION }}

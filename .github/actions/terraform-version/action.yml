@@ -4,6 +4,9 @@ inputs:
   directory:
     description: 'Path to Terraform Directory'
     required: true
+  version:
+    description: 'Terraform version, nb: Setting this, overrides the version defined in code. If not set in code, the latest version is used.'
+    required: true
 
 outputs:
   version:
