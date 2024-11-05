@@ -6,22 +6,20 @@ on:
       - main
 
 jobs:
+  verify-pr:
+    if: ${{ github.event_name == 'pull_request' }}
+    uses: entur/gha-meta/.github/workflows/verify-pr.yml@v1
+
   test-lint-ok:
     name: Test Lint
     uses: ./.github/workflows/lint.yml
     with:
       directory: fixture/terraform
-
-  temp-test:
-    name: Test Lint2
+  test-lint-ok2:
+    name: Test Lint .tools-version
     uses: ./.github/workflows/lint.yml
     with:
       directory: fixture/terraform_with_changes
-  temp-test2:
-    name: Test Lint3
-    uses: ./.github/workflows/lint.yml
-    with:
-      directory: fixture/terraform_with_failed_plan
 
   verify-version:
     needs: test-lint-ok
@@ -32,6 +30,15 @@ jobs:
         with:
           expected: "1.8.3"
           actual: ${{ needs.test-lint-ok.outputs.version }}
+  verify-version2:
+    needs: test-lint-ok2
+    name: Verify Terraform Version
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: nick-fields/assert-action@v2
+        with:
+          expected: "1.9.8"
+          actual: ${{ needs.test-lint-ok2.outputs.version }}
 
   test-terraform-plan:
     name: Test Terraform Plan
