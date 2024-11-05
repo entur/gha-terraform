@@ -30,7 +30,7 @@ jobs:
     permissions:
       contents: read
     outputs:
-      version: ${{ env.GHA_TERRAFORM_VERSION }}
+      version: ${{ steps.set-terraform-version.outputs.version }}
     steps:
       - uses: actions/checkout@v4
 
