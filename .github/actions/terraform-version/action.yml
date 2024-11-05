@@ -37,11 +37,12 @@ runs:
           if [ -z "$version" ]; then
             find_tool_versions() {
               curdir=$(pwd "$1")
-              stopdir="/home/runner/work/"
               find "$curdir" -maxdepth 1 -name ".tool-versions"
-              while [ "$curdir" != "$stopdir" ] ; do
+              c=0
+              while [ $c -lt 4 ]; do # max 4 levels up
                 curdir=$(dirname "$curdir")
-                find "$curdir" -maxdepth 1 -name ".tool-versions"
+                find "$CURDIR" -maxdepth 1 -name ".tool-versions"
+                c=$((c + 1))
               done
             }
             tool_versions_location=$(find_tool_versions ./|head -1)
