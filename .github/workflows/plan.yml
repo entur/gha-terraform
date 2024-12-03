@@ -52,6 +52,8 @@ jobs:
       GHA_TERRAFORM_GCP_PROJECT_ID: ${{ inputs.gcp_project_id }}
       GHA_TERRAFORM_GCP_CLUSTER_NAME: ${{ inputs.gcp_cluster_name }}
       GHA_TERRAFORM_STATUS: ""
+      GHA_TERRAFORM_SUMMARY: ""
+      GHA_TERRAFORM_HIGHLIGHTS: ""
       # ignore "context access might be invalid" warning
       WORKLOAD_IDENTITY_PROVIDER: ${{ vars.WORKLOAD_IDENTITY_PROVIDER }}
       SERVICE_ACCOUNT: ${{ vars.SERVICE_ACCOUNT }}
@@ -122,56 +124,133 @@ jobs:
         run: |
           terraform workspace select -or-create=true ${GHA_TERRAFORM_WORKSPACE}
 
+      - name: Install tf-summarize
+        uses: kishaningithub/setup-tf-summarize@v1
+
       - name: Terraform Plan
         id: plan
         working-directory: ${{ env.GHA_TERRAFORM_DIRECTORY }}
         shell: bash
         run: |
-          delimiter="$(openssl rand -hex 10)"
-          # allow exit code > 0 to print failure in comment
           set +e
           terraform plan -var-file=env/${GHA_TERRAFORM_ENVIRONMENT}.tfvars -detailed-exitcode -no-color -out tfplan
-          TFSTATUS=$?
+          echo "GHA_TERRAFORM_STATUS=$?" >> $GITHUB_ENV
           set -e
-          TERRAFORM_PLAN=$(terraform show -no-color tfplan)
-          ENV=$(echo "${GHA_TERRAFORM_ENVIRONMENT}"| awk '{print toupper($0)}')
-          echo "plan<<${delimiter}" >> $GITHUB_OUTPUT
-          echo "## Terraform Plan $ENV" >> $GITHUB_OUTPUT
-          if [[ $TFSTATUS -eq 0 ]]; then
-            echo "GHA_TERRAFORM_STATUS='No Changes'" >> $GITHUB_ENV
-            echo "#### Status: No Changes" >> $GITHUB_OUTPUT
-          elif [[ $TFSTATUS -eq 2 ]]; then
-            echo "GHA_TERRAFORM_STATUS='Changes Detected'" >> $GITHUB_ENV
-            echo "#### Status: Changes Detected 📖" >> $GITHUB_OUTPUT
-          else
-            echo "GHA_TERRAFORM_STATUS=\"Error\"" >> $GITHUB_ENV
-            echo "#### Status: Plan Failed" >> $GITHUB_OUTPUT
-          fi
-          echo "The result of \`terraform plan\` in environment: \`$ENV\`" >> $GITHUB_OUTPUT
-          echo '```tf' >> $GITHUB_OUTPUT
-          echo "$TERRAFORM_PLAN" >> $GITHUB_OUTPUT
-          echo '```' >> $GITHUB_OUTPUT
-          echo "" >> $GITHUB_OUTPUT
-          echo "${delimiter}" >> $GITHUB_OUTPUT
 
-      - name: Terraform Plan Status
-        env:
-          PLAN: ${{ steps.plan.outputs.plan }}
+      - if: steps.plan.outputs.GHA_TERRAFORM_STATUS == 0
+        name: Terraform No Changes
+        run: |
+          echo "GHA_TERRAFORM_HIGHLIGHTS='No changes detected'" >> $GITHUB_ENV
+
+      - if: steps.plan.outputs.GHA_TERRAFORM_STATUS == 2
+        name: Terraform Changes Detected
+        working-directory: ${{ env.GHA_TERRAFORM_DIRECTORY }}
+        shell: bash
+        run: |
+          delimiter="$(openssl rand -hex 10)"
+          # Save the plan output to a file so we can upload as a artifact and add a download link to the PR comment
+          terraform show -no-color tfplan > tfplan.txt
+          # Create highlights of the changes
+          echo "GHA_TERRAFORM_HIGHLIGHTS=$(terraform show tfplan|grep -E '(^[[:punct:]]|Plan)')" >> $GITHUB_ENV"
+          # Create a summary of the changes
+          terraform show -no-color -json tfplan|tf-summarize -tree > tfplan-summary.txt
+          echo "GHA_TERRAFORM_SUMMARY=$(cat tfplan-summary.txt)" >> $GITHUB_ENV
+
+      - if: steps.plan.outputs.GHA_TERRAFORM_STATUS == 2
+        name: Split Plan and Summary
+        shell: bash
+        run: |
+          # Split the files on 60k characters, but only on newlines
+          cat > split.awk << EOF
+          BEGIN {
+            RS = "\n\n"
+            ORS = "\n\n"
+            maxlen = 60000
+            i = 1
+          }
+          {
+            reclen = length(\$0) + 2
+            l = n + reclen
+            if (l > maxlen) {
+                i++
+                n = 0
+            }
+            n += reclen
+            print \$0 > FILENAME"."i
+          }
+          EOF
+          # debug
+          cat split.awk
+          # Split the files
+          awk -f split.awk tfplan.txt && rm tfplan.txt
+          ls -lah
+          awk -f split.awk tfplan-summary.txt && rm tfplan-summary.txt
+          ls -lah
+      # - if: steps.plan.outputs.GHA_TERRAFORM_STATUS == 2
+      #   name: Comment Plan and Summary
+      #   shell: bash
+      #   run: |
+
+      # # Create a markdown formatted summary of the changes
+      # ENV=$(echo "${GHA_TERRAFORM_ENVIRONMENT}"| awk '{print toupper($0)}')
+      # echo "plan<<${delimiter}" >> $GITHUB_OUTPUT
+      # echo "## Terraform Plan $ENV" >> $GITHUB_OUTPUT
+      # if [[ $TFSTATUS -eq 0 ]]; then
+      #   echo "GHA_TERRAFORM_STATUS='No Changes'" >> $GITHUB_ENV
+      #   echo "#### Status: No Changes" >> $GITHUB_OUTPUT
+      # elif [[ $TFSTATUS -eq 2 ]]; then
+      #   echo "GHA_TERRAFORM_STATUS='Changes Detected'" >> $GITHUB_ENV
+      #   echo "#### Status: Changes Detected 📖" >> $GITHUB_OUTPUT
+      # else
+      #   echo "GHA_TERRAFORM_STATUS=\"Error\"" >> $GITHUB_ENV
+      #   echo "#### Status: Plan Failed" >> $GITHUB_OUTPUT
+      # fi
+      # echo "The result of \`terraform plan\` in environment: \`$ENV\`" >> $GITHUB_OUTPUT
+      # echo '```tf' >> $GITHUB_OUTPUT
+      # echo "$TERRAFORM_PLAN" >> $GITHUB_OUTPUT
+      # echo '```' >> $GITHUB_OUTPUT
+      # echo "" >> $GITHUB_OUTPUT
+      # echo "${delimiter}" >> $GITHUB_OUTPUT
+      - if: steps.plan.outputs.GHA_TERRAFORM_STATUS != 0 && steps.plan.outputs.GHA_TERRAFORM_STATUS != 2
+        name: Terraform Plan Status Check
+        shell: bash
+        run: |
+          echo GHA_TERRAFORM_SUMMARY="Plan failed" >> $GITHUB_ENV
+          echo GHA_TERRAFORM_HIGHLIGHTS="Error" >> $GITHUB_ENV
+          exit 99
+
+      - name: Delete previous comments
         uses: actions/github-script@v7
-        if: github.event_name == 'pull_request'
         with:
           script: |
-            const body = `${process.env.PLAN}`;
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number
+            });
+            for (const comment of comments) {
+              if (comment.user.login === 'github-actions[bot]') {
+                await github.rest.issues.deleteComment({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  comment_id: comment.id
+                });
+              }
+            }
+
+      - if: ( success() || failure() ) && github.event_name == 'pull_request'
+        name: Terraform Plan Status
+        env:
+          COMMENT: |
+            ${{ env.GHA_TERRAFORM_HIGHLIGHTS }}
+            ${{ env.GHA_TERRAFORM_SUMMARY }}
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const body = `${process.env.COMMENT}`;
             github.rest.issues.createComment({
               issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
               body: body
             })
-
-      - name: Terraform Plan Status Check
-        if: env.GHA_TERRAFORM_STATUS == '"Error"'
-        shell: bash
-        run: |
-          set -e
-          exit 1
