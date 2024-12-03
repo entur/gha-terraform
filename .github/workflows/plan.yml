@@ -147,12 +147,11 @@ jobs:
         working-directory: ${{ env.GHA_TERRAFORM_DIRECTORY }}
         shell: bash
         run: |
-          delimiter="$(openssl rand -hex 10)"
           # Save the plan output to a file so we can upload as a artifact and add a download link to the PR comment
           terraform show -no-color tfplan > tfplan.txt
           # Create highlights of the changes
           GHA_TERRAFORM_HIGHLIGHTS=$(terraform show tfplan|grep -E '(^[[:punct:]]|Plan)')
-          echo "GHA_TERRAFORM_HIGHLIGHTS=${GHA_TERRAFORM_HIGHLIGHTS}" >> $GITHUB_ENV"
+          echo "GHA_TERRAFORM_HIGHLIGHTS=${GHA_TERRAFORM_HIGHLIGHTS}" >> $GITHUB_ENV
           # Create a summary of the changes
           terraform show -no-color -json tfplan|tf-summarize -tree > tfplan-summary.txt
 
