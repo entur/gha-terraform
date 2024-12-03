@@ -248,12 +248,14 @@ jobs:
           path: ${{ env.GHA_TERRAFORM_DIRECTORY }}/tfplan.tf
           if-no-files-found: error
       - name: Save artifact_id
+        if: env.GHA_TERRAFORM_STATUS == 2
         shell: bash
         env:
           WORKFLOW_RUN_EVENT_OBJ: ${{ toJSON(github.event.workflow_run) }}
           OWNER: ${{ github.repository_owner }}
           REPO: ${{ github.event.repository.name }}
           RUN_ID: ${{ github.run_id }}
+          GH_TOKEN: ${{ github.token }}
         run: |
           ARTIFACT_ID=$(gh api "/repos/${OWNER}/${REPO}/actions/artifacts" \
             --jq ".artifacts.[] |
