@@ -151,10 +151,10 @@ jobs:
           # Save the plan output to a file so we can upload as a artifact and add a download link to the PR comment
           terraform show -no-color tfplan > tfplan.txt
           # Create highlights of the changes
-          echo "GHA_TERRAFORM_HIGHLIGHTS=$(terraform show tfplan|grep -E '(^[[:punct:]]|Plan)')" >> $GITHUB_ENV"
+          GHA_TERRAFORM_HIGHLIGHTS=$(terraform show tfplan|grep -E '(^[[:punct:]]|Plan)')
+          echo "GHA_TERRAFORM_HIGHLIGHTS=${GHA_TERRAFORM_HIGHLIGHTS}" >> $GITHUB_ENV"
           # Create a summary of the changes
           terraform show -no-color -json tfplan|tf-summarize -tree > tfplan-summary.txt
-          echo "GHA_TERRAFORM_SUMMARY=$(cat tfplan-summary.txt)" >> $GITHUB_ENV
 
       - if: env.GHA_TERRAFORM_STATUS == 2
         name: Split Plan and Summary
