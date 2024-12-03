@@ -148,7 +148,7 @@ jobs:
         shell: bash
         run: |
           # Save the plan output to a file so we can upload as a artifact and add a download link to the PR comment
-          terraform show -no-color tfplan > tfplan.txt
+          terraform show -no-color tfplan > tfplan.tf
           # Create highlights of the changes
           GHA_TERRAFORM_HIGHLIGHTS=$(terraform show tfplan|grep -E '(^[[:punct:]]|Plan)')
           echo "GHA_TERRAFORM_HIGHLIGHTS=${GHA_TERRAFORM_HIGHLIGHTS}" >> $GITHUB_ENV
@@ -182,7 +182,7 @@ jobs:
           # debug
           cat split.awk
           # Split the files
-          awk -f split.awk tfplan.txt
+          awk -f split.awk tfplan.tf
           ls -lah
           awk -f split.awk tfplan-summary.txt
           ls -lah
@@ -240,18 +240,48 @@ jobs:
               }
             }
       - name: Upload Summary
+        id: upload
         if: env.GHA_TERRAFORM_STATUS == 2
         uses: actions/upload-artifact@v4
         with:
-          name: tfplan.txt
-          path: ${{ env.GHA_TERRAFORM_DIRECTORY }}/tfplan.txt
+          name: tfplan.tf
+          path: ${{ env.GHA_TERRAFORM_DIRECTORY }}/tfplan.tf
+          if-no-files-found: error
+      - name: Save artifact_id
+        shell: bash
+        env:
+          WORKFLOW_RUN_EVENT_OBJ: ${{ toJSON(github.event.workflow_run) }}
+          OWNER: ${{ github.repository_owner }}
+          REPO: ${{ github.event.repository.name }}
+          RUN_ID: ${{ github.run_id }}
+        run: |
+          ARTIFACT_ID=$(gh api "/repos/${OWNER}/${REPO}/actions/artifacts" \
+            --jq ".artifacts.[] |
+            select(.workflow_run.id==${RUN_ID}) |
+            select(.expired==false) |
+            .id")
+          if [ -z "$ARTIFACT_ID" ]; then
+            echo "Failed to get artifact_id"
+            exit 98
+          fi
+          echo "ARTIFACT_ID=$ARTIFACT_ID" >> $GITHUB_ENV
       - name: Post link to to artifact as comment
         if: env.GHA_TERRAFORM_STATUS == 2
+        env:
+          ARTIFACT_ID: ${{ steps.upload.outputs.artifact_id }}
         uses: actions/github-script@v7
         with:
           script: |
+            println("TEST");
+            local myfilelist : dir `${{ env.GHA_TERRAFORM_DIRECTORY }}` "tfplan.tf.*"
+            for file in myfilelist {
+              println(file);
+            }
             const body = `Terraform Plan detected changes, [download the plan](
-            ${process.env.GITHUB_SERVER_URL}/${process.env.GITHUB_REPOSITORY}/actions/runs/${process.env.GITHUB_RUN_ID}/artifacts/${process.env.GHA_TERRAFORM_DIRECTORY}/tfplan.txt)`;
+            ${process.env.GITHUB_SERVER_URL}/${process.env.GITHUB_REPOSITORY}/actions/runs/${process.env.GITHUB_RUN_ID}/artifacts/${process.env.ARTIFACT_ID})`;
+
+            # for each file named like tfplan.txt.*
+
             github.rest.issues.createComment({
               issue_number: context.issue.number,
               owner: context.repo.owner,
