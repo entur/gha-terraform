@@ -157,6 +157,7 @@ jobs:
 
       - if: env.GHA_TERRAFORM_STATUS == 2
         name: Split Plan and Summary
+        working-directory: ${{ env.GHA_TERRAFORM_DIRECTORY }}
         shell: bash
         run: |
           # Split the files on 60k characters, but only on newlines
@@ -181,10 +182,12 @@ jobs:
           # debug
           cat split.awk
           # Split the files
-          awk -f split.awk tfplan.txt && rm tfplan.txt
+          awk -f split.awk tfplan.txt
           ls -lah
-          awk -f split.awk tfplan-summary.txt && rm tfplan-summary.txt
+          awk -f split.awk tfplan-summary.txt
           ls -lah
+          cat tfplan-summary.txt
+          gh --version
       # - if: env.GHA_TERRAFORM_STATUS == 2
       #   name: Comment Plan and Summary
       #   shell: bash
@@ -236,20 +239,39 @@ jobs:
                 });
               }
             }
-
-      - if: ( success() || failure() ) && github.event_name == 'pull_request'
-        name: Terraform Plan Status
-        env:
-          COMMENT: |
-            ${{ env.GHA_TERRAFORM_HIGHLIGHTS }}
-            ${{ env.GHA_TERRAFORM_SUMMARY }}
+      - name: Upload Summary
+        if: env.GHA_TERRAFORM_STATUS == 2
+        uses: actions/upload-artifact@v4
+        with:
+          name: tfplan.txt
+          path: ${{ env.GHA_TERRAFORM_DIRECTORY }}/tfplan.txt
+      - name: Post link to to artifact as comment
+        if: env.GHA_TERRAFORM_STATUS == 2
         uses: actions/github-script@v7
         with:
           script: |
-            const body = `${process.env.COMMENT}`;
+            const body = `Terraform Plan detected changes, [download the plan](
+            ${process.env.GITHUB_SERVER_URL}/${process.env.GITHUB_REPOSITORY}/actions/runs/${process.env.GITHUB_RUN_ID}/artifacts/${process.env.GHA_TERRAFORM_DIRECTORY}/tfplan.txt)`;
             github.rest.issues.createComment({
               issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
               body: body
             })
+      # - if: ( success() || failure() ) && github.event_name == 'pull_request'
+      #   name: Terraform Plan Status
+
+      #   env:
+      #     COMMENT:
+      #       ${{ env.GHA_TERRAFORM_HIGHLIGHTS }}
+      #   uses: actions/github-script@v7
+      #   with:
+      #     script: |
+      #       # foreach file like tfplan.txt.* and tfplan-summary.txt.*
+      #       const body = `${process.env.COMMENT}`;
+      #       github.rest.issues.createComment({
+      #         issue_number: context.issue.number,
+      #         owner: context.repo.owner,
+      #         repo: context.repo.repo,
+      #         body: body
+      #       })
