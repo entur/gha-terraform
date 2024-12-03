@@ -133,16 +133,16 @@ jobs:
         shell: bash
         run: |
           set +e
-          terraform plan -var-file=env/${GHA_TERRAFORM_ENVIRONMENT}.tfvars -detailed-exitcode -no-color -out tfplan
+          terraform plan -var-file=env/${GHA_TERRAFORM_ENVIRONMENT}.tfvars -detailed-exitcode -out tfplan
           echo "GHA_TERRAFORM_STATUS=$?" >> $GITHUB_ENV
           set -e
 
-      - if: steps.plan.outputs.GHA_TERRAFORM_STATUS == 0
+      - if: env.GHA_TERRAFORM_STATUS == 0
         name: Terraform No Changes
         run: |
           echo "GHA_TERRAFORM_HIGHLIGHTS='No changes detected'" >> $GITHUB_ENV
 
-      - if: steps.plan.outputs.GHA_TERRAFORM_STATUS == 2
+      - if: env.GHA_TERRAFORM_STATUS == 2
         name: Terraform Changes Detected
         working-directory: ${{ env.GHA_TERRAFORM_DIRECTORY }}
         shell: bash
@@ -156,7 +156,7 @@ jobs:
           terraform show -no-color -json tfplan|tf-summarize -tree > tfplan-summary.txt
           echo "GHA_TERRAFORM_SUMMARY=$(cat tfplan-summary.txt)" >> $GITHUB_ENV
 
-      - if: steps.plan.outputs.GHA_TERRAFORM_STATUS == 2
+      - if: env.GHA_TERRAFORM_STATUS == 2
         name: Split Plan and Summary
         shell: bash
         run: |
@@ -186,7 +186,7 @@ jobs:
           ls -lah
           awk -f split.awk tfplan-summary.txt && rm tfplan-summary.txt
           ls -lah
-      # - if: steps.plan.outputs.GHA_TERRAFORM_STATUS == 2
+      # - if: env.GHA_TERRAFORM_STATUS == 2
       #   name: Comment Plan and Summary
       #   shell: bash
       #   run: |
@@ -211,7 +211,7 @@ jobs:
       # echo '```' >> $GITHUB_OUTPUT
       # echo "" >> $GITHUB_OUTPUT
       # echo "${delimiter}" >> $GITHUB_OUTPUT
-      - if: steps.plan.outputs.GHA_TERRAFORM_STATUS != 0 && steps.plan.outputs.GHA_TERRAFORM_STATUS != 2
+      - if: env.GHA_TERRAFORM_STATUS != 0 && env.GHA_TERRAFORM_STATUS != 2
         name: Terraform Plan Status Check
         shell: bash
         run: |
