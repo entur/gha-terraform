@@ -266,64 +266,33 @@ jobs:
             exit 98
           fi
           echo "ARTIFACT_ID=$ARTIFACT_ID" >> $GITHUB_ENV
-      - name: Post comment with gh
-        shell: bash
-        working-directory: ${{ env.GHA_TERRAFORM_DIRECTORY }}
-        env:
-          OWNER: ${{ github.repository_owner }}
-          REPO: ${{ github.event.repository.name }}
-          ISSUE: ${{ github.event.repository.pull_request.number }}
-          GH_TOKEN: ${{ github.token }}
-        if: env.GHA_TERRAFORM_STATUS == 2
-        run: |
-          for file in $( find . -type f -name "tfplan-summary.txt.*" )
-          do
-            echo "$file"
-          done
-          COMMENT=$(cat tfplan-summary.txt)
-          gh api "/repos/${OWNER}/${REPO}/issues/${ISSUE}/comments" \
-            -f body="$COMMENT"
-          for file in $( find . -type f -name "tfplan.tf.*" )
-          do
-            echo "$file"
-          done
-      # - name: Post link to to artifact as comment
-      #   if: env.GHA_TERRAFORM_STATUS == 2
-      #   env:
-      #     ARTIFACT_ID: ${{ steps.upload.outputs.artifact_id }}
-      #   uses: actions/github-script@v7
-      #   with:
-      #     script: |
-      #       println("TEST");
-      #       local myfilelist : dir `${{ env.GHA_TERRAFORM_DIRECTORY }}` "tfplan.tf.*"
-      #       for file in myfilelist {
-      #         println(file);
-      #       }
-      #       const body = `Terraform Plan detected changes, [download the plan](
-      #       ${process.env.GITHUB_SERVER_URL}/${process.env.GITHUB_REPOSITORY}/actions/runs/${process.env.GITHUB_RUN_ID}/artifacts/${process.env.ARTIFACT_ID})`;
+      - if: ( success() || failure() ) && github.event_name == 'pull_request'
+        name: Terraform Plan Status
+        uses: actions/github-script@v7
+        with:
+          script: |
+            n=0
+            const patterns = [`${process.env.GHA_TERRAFORM_DIRECTORY}/tfplan.txt.*`]
+            const globber = await glob.create(patterns.join('\n'))
+            const files = await globber.glob()
 
-      #       # for each file named like tfplan.txt.*
+            const codeblockstart = '```tf\n'
+            const codeblockend = '\n```'
+            downloadlink = printf('[Download Plan](%s)', {process.env.GITHUB_SERVER_URL}/${process.env.GITHUB_REPOSITORY}/actions/runs/${process.env.GITHUB_RUN_ID}/artifacts/${process.env.ARTIFACT_ID})`;
 
-      #       github.rest.issues.createComment({
-      #         issue_number: context.issue.number,
-      #         owner: context.repo.owner,
-      #         repo: context.repo.repo,
-      #         body: body
-      #       })
-      # - if: ( success() || failure() ) && github.event_name == 'pull_request'
-      #   name: Terraform Plan Status
-
-      #   env:
-      #     COMMENT:
-      #       ${{ env.GHA_TERRAFORM_HIGHLIGHTS }}
-      #   uses: actions/github-script@v7
-      #   with:
-      #     script: |
-      #       # foreach file like tfplan.txt.* and tfplan-summary.txt.*
-      #       const body = `${process.env.COMMENT}`;
-      #       github.rest.issues.createComment({
-      #         issue_number: context.issue.number,
-      #         owner: context.repo.owner,
-      #         repo: context.repo.repo,
-      #         body: body
-      #       })
+            for (const file of files) {
+              n++
+              console.log(file)
+              let header = `## Terraform Plan ${process.env.GHA_TERRAFORM_ENVIRONMENT}\n\n`
+              if (files.length > 1) {
+                header = `## Terraform Plan ${process.env.GHA_TERRAFORM_ENVIRONMENT} - Part ${n}/${files.length}\n\n`
+              }
+              let codeblock = fs.readFileSync(file, 'utf8')
+              let body = printf('%s%s%s%s%s\n', header,codeblockstart, codeblock, codeblockend, downloadlink)
+              github.rest.issues.createComment({
+                issue_number: context.issue.number,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                body: body
+              })
+            }
