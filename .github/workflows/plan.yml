@@ -272,7 +272,7 @@ jobs:
         env:
           OWNER: ${{ github.repository_owner }}
           REPO: ${{ github.event.repository.name }}
-          ISSUE: ${{ github.event.issue.number }}
+          ISSUE: ${{ github.event.repository.pull_request.number }}
           GH_TOKEN: ${{ github.token }}
         if: env.GHA_TERRAFORM_STATUS == 2
         run: |
