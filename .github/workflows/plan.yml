@@ -278,14 +278,14 @@ jobs:
 
             const codeblockstart = '```tf\n'
             const codeblockend = '\n```'
-            downloadlink = printf('[Download Plan](%s)', {process.env.GITHUB_SERVER_URL}/${process.env.GITHUB_REPOSITORY}/actions/runs/${process.env.GITHUB_RUN_ID}/artifacts/${process.env.ARTIFACT_ID})`;
+            const downloadlink = printf('[Download Plan](%s)', ${process.env.GITHUB_SERVER_URL}/${process.env.GITHUB_REPOSITORY}/actions/runs/${process.env.GITHUB_RUN_ID}/artifacts/${process.env.ARTIFACT_ID})`
 
             for (const file of files) {
-              n++
               console.log(file)
-              let header = `## Terraform Plan ${process.env.GHA_TERRAFORM_ENVIRONMENT}\n\n`
+              let header = printf('## Terraform Plan %s\n\n', process.env.GHA_TERRAFORM_ENVIRONMENT)
               if (files.length > 1) {
-                header = `## Terraform Plan ${process.env.GHA_TERRAFORM_ENVIRONMENT} - Part ${n}/${files.length}\n\n`
+                n++
+                header = printf('## Terraform Plan %s - Part %s/%s \n\n', process.env.GHA_TERRAFORM_ENVIRONMENT, n, files.length)
               }
               let codeblock = fs.readFileSync(file, 'utf8')
               let body = printf('%s%s%s%s%s\n', header,codeblockstart, codeblock, codeblockend, downloadlink)
