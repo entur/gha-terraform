@@ -278,7 +278,7 @@ jobs:
 
             const codeblockstart = '```tf\n'
             const codeblockend = '\n```'
-            const downloadlink = printf('[Download Plan](%s)', ${process.env.GITHUB_SERVER_URL}/${process.env.GITHUB_REPOSITORY}/actions/runs/${process.env.GITHUB_RUN_ID}/artifacts/${process.env.ARTIFACT_ID})
+            const downloadlink = printf('[Download Plan](%s/%s/actions/runs/%s/artifacts/%s)', process.env.GITHUB_SERVER_URL, process.env.GITHUB_REPOSITORY, process.env.GITHUB_RUN_ID, process.env.ARTIFACT_ID)
 
             for (const file of files) {
               console.log(file)
