@@ -249,7 +249,7 @@ jobs:
             function printf(format, ...values) {
               return values.reduce((carry, current) => carry.replace('%s', current), format);
             }
-            const patterns = [`${process.env.GHA_TERRAFORM_DIRECTORY}/tfplan.txt.*`]
+            const patterns = ['`${process.env.GHA_TERRAFORM_DIRECTORY}/tfplan.txt.*`']
             const globber = await glob.create(patterns.join('\n'))
             const files = await globber.glob()
             console.log(patterns)
