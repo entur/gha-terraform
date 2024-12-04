@@ -156,7 +156,7 @@ jobs:
           terraform show -no-color -json tfplan|tf-summarize -tree > tfplan-summary.txt
 
       - if: env.GHA_TERRAFORM_STATUS == 2
-        name: Split Plan and Summary
+        name: Split plan and create summary
         working-directory: ${{ env.GHA_TERRAFORM_DIRECTORY }}
         shell: bash
         run: |
@@ -187,32 +187,6 @@ jobs:
           awk -f split.awk tfplan-summary.txt
           ls -lah
           cat tfplan-summary.txt
-          gh --version
-      # - if: env.GHA_TERRAFORM_STATUS == 2
-      #   name: Comment Plan and Summary
-      #   shell: bash
-      #   run: |
-
-      # # Create a markdown formatted summary of the changes
-      # ENV=$(echo "${GHA_TERRAFORM_ENVIRONMENT}"| awk '{print toupper($0)}')
-      # echo "plan<<${delimiter}" >> $GITHUB_OUTPUT
-      # echo "## Terraform Plan $ENV" >> $GITHUB_OUTPUT
-      # if [[ $TFSTATUS -eq 0 ]]; then
-      #   echo "GHA_TERRAFORM_STATUS='No Changes'" >> $GITHUB_ENV
-      #   echo "#### Status: No Changes" >> $GITHUB_OUTPUT
-      # elif [[ $TFSTATUS -eq 2 ]]; then
-      #   echo "GHA_TERRAFORM_STATUS='Changes Detected'" >> $GITHUB_ENV
-      #   echo "#### Status: Changes Detected 📖" >> $GITHUB_OUTPUT
-      # else
-      #   echo "GHA_TERRAFORM_STATUS=\"Error\"" >> $GITHUB_ENV
-      #   echo "#### Status: Plan Failed" >> $GITHUB_OUTPUT
-      # fi
-      # echo "The result of \`terraform plan\` in environment: \`$ENV\`" >> $GITHUB_OUTPUT
-      # echo '```tf' >> $GITHUB_OUTPUT
-      # echo "$TERRAFORM_PLAN" >> $GITHUB_OUTPUT
-      # echo '```' >> $GITHUB_OUTPUT
-      # echo "" >> $GITHUB_OUTPUT
-      # echo "${delimiter}" >> $GITHUB_OUTPUT
       - if: env.GHA_TERRAFORM_STATUS != 0 && env.GHA_TERRAFORM_STATUS != 2
         name: Terraform Plan Status Check
         shell: bash
@@ -278,10 +252,13 @@ jobs:
             const patterns = [`${process.env.GHA_TERRAFORM_DIRECTORY}/tfplan.txt.*`]
             const globber = await glob.create(patterns.join('\n'))
             const files = await globber.glob()
+            console.log(patterns)
+            console.log(files)
 
             const codeblockstart = '```tf\n'
             const codeblockend = '\n```'
             const downloadlink = printf('[Download Plan](%s/%s/actions/runs/%s/artifacts/%s)', process.env.GITHUB_SERVER_URL, process.env.GITHUB_REPOSITORY, process.env.GITHUB_RUN_ID, process.env.ARTIFACT_ID)
+            console.log(downloadlink)
 
             for (const file of files) {
               console.log(file)
