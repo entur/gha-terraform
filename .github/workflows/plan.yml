@@ -187,7 +187,7 @@ jobs:
             });
             for (const comment of comments) {
               if (comment.user.login === 'github-actions[bot]') {
-                if (comment.body.includes('`Terraform Plan ${process.env.GHA_TERRAFORM_ENVIRONMENT}`')) {
+                if (comment.body.contains('`Terraform Plan ${process.env.GHA_TERRAFORM_ENVIRONMENT}`')) {
                   await github.rest.issues.deleteComment({
                     owner: context.repo.owner,
                     repo: context.repo.repo,
@@ -196,7 +196,7 @@ jobs:
                 }
               }
             }
-      - name: Upload Summary
+      - name: Upload Plan
         id: upload
         if: env.GHA_TERRAFORM_STATUS == 2
         uses: actions/upload-artifact@v4
@@ -204,25 +204,6 @@ jobs:
           name: tfplan.tf
           path: ${{ env.GHA_TERRAFORM_DIRECTORY }}/tfplan.tf
           if-no-files-found: error
-      - name: Get artifact_id
-        if: env.GHA_TERRAFORM_STATUS == 2
-        shell: bash
-        env:
-          OWNER: ${{ github.repository_owner }}
-          REPO: ${{ github.event.repository.name }}
-          RUN_ID: ${{ github.run_id }}
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          ARTIFACT_ID=$(gh api "/repos/${OWNER}/${REPO}/actions/artifacts" \
-            --jq ".artifacts.[] |
-            select(.workflow_run.id==${RUN_ID}) |
-            select(.expired==false) |
-            .id")
-          if [ -z "$ARTIFACT_ID" ]; then
-            echo "Failed to get artifact_id"
-            exit 98
-          fi
-          echo "ARTIFACT_ID=$ARTIFACT_ID" >> $GITHUB_ENV
       - if: env.GHA_TERRAFORM_STATUS == 2 && github.event_name == 'pull_request'
         name: Terraform Plan Status
         uses: actions/github-script@v7
@@ -231,7 +212,6 @@ jobs:
             function printf(format, ...values) {
               return values.reduce((carry, current) => carry.replace('%s', current), format);
             }
-
             const artifactResponse = await github.rest.actions.listWorkflowRunArtifacts({
               owner: context.repo.owner,
               repo: context.repo.repo,
@@ -249,8 +229,7 @@ jobs:
             const files = await globber.glob()
             const codeblockstart = '```tf\n'
             const codeblockend = '\n```\n'
-            const downloadlink = printf('\n[Download Plan](%s/%s/actions/runs/%s/artifacts/%s)', process.env.GITHUB_SERVER_URL, process.env.GITHUB_REPOSITORY, process.env.GITHUB_RUN_ID, process.env.ARTIFACT_ID)
-            const summary = printf('### %s\n', process.env.GHA_TERRAFORM_SUMMARY)
+            const downloadlink = printf('\n[Download Plan](%s/%s/actions/runs/%s/artifacts/%s)', process.env.GITHUB_SERVER_URL, process.env.GITHUB_REPOSITORY, process.env.GITHUB_RUN_ID, artifact_id)
             let plan = '';
             let n = 0;
             let body = '';
@@ -262,14 +241,15 @@ jobs:
                 n++
                 header = printf('## Terraform Plan %s - Part %s/%s \n\n', process.env.GHA_TERRAFORM_ENVIRONMENT.toString().toUpperCase(), n, files.length)
                 if (n == 1) {
-                  body = printf('%s%s%s%s%s%s%s%s\n', header,codeblockstart, summary, codeblockend, codeblockstart, plan, codeblockend, downloadlink)
+                  body = printf('%s%s%s%s%s%s%s%s\n', header,codeblockstart, process.env.GHA_TERRAFORM_SUMMARY, codeblockend, codeblockstart, plan, codeblockend, downloadlink)
                 } else {
                   body = printf('%s%s%s%s\n', header,codeblockstart, plan, codeblockend)
                 }
               }else{
                 header = printf('## Terraform Plan %s\n\n', process.env.GHA_TERRAFORM_ENVIRONMENT.toString().toUpperCase())
-                body = printf('%s%s%s%s%s%s%s%s\n', header,codeblockstart, summary, codeblockend, codeblockstart, plan, codeblockend, downloadlink)
+                body = printf('%s%s%s%s%s%s%s%s\n', header,codeblockstart, process.env.GHA_TERRAFORM_SUMMARY, codeblockend, codeblockstart, plan, codeblockend, downloadlink)
               }
+
               github.rest.issues.createComment({
                 issue_number: context.issue.number,
                 owner: context.repo.owner,
