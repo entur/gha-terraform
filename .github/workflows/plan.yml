@@ -180,14 +180,18 @@ jobs:
         uses: actions/github-script@v7
         with:
           script: |
+            function printf(format, ...values) {
+              return values.reduce((carry, current) => carry.replace('%s', current), format);
+            }
             const { data: comments } = await github.rest.issues.listComments({
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: context.issue.number
             });
+            const commentsfilter = printf('Terraform Plan %s', process.env.GHA_TERRAFORM_ENVIRONMENT.toString().toUpperCase())
             for (const comment of comments) {
               if (comment.user.login === 'github-actions[bot]') {
-                if (comment.body.contains('`Terraform Plan ${process.env.GHA_TERRAFORM_ENVIRONMENT}`')) {
+                if (comment.body.includes(commentsfilter)) {
                   await github.rest.issues.deleteComment({
                     owner: context.repo.owner,
                     repo: context.repo.repo,
