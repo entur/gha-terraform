@@ -254,20 +254,20 @@ jobs:
             const downloadlink = printf('\n[Download Plan](%s/%s/actions/runs/%s/artifacts/%s)', process.env.GITHUB_SERVER_URL, process.env.GITHUB_REPOSITORY, process.env.GITHUB_RUN_ID, process.env.ARTIFACT_ID)
             let summary = fs.readFileSync(`${process.env.GHA_TERRAFORM_DIRECTORY}/tfplan-summary.txt`, 'utf8')
             for (const file of files) {
-              let plan = fs.readFileSync(file, 'utf8')
+              plan = fs.readFileSync(file, 'utf8')
               let body =''
               let header = ''
               if (files.length > 1) {
                 n++
                 header = printf('## Terraform Plan %s - Part %s/%s \n\n', process.env.GHA_TERRAFORM_ENVIRONMENT, n, files.length)
                 if (n == 1) {
-                  body = printf('%s%s%s%s%s\n', header,codeblockstart, summary, codeblockend, codeblockstart, plan, codeblockend, downloadlink)
+                  body = printf('%s%s%s%s%s%s%s%s\n', header,codeblockstart, summary, codeblockend, codeblockstart, plan, codeblockend, downloadlink)
                 } else {
                   body = printf('%s%s%s%s\n', header,codeblockstart, plan, codeblockend)
                 }
               }else{
                 header = printf('## Terraform Plan %s\n\n', process.env.GHA_TERRAFORM_ENVIRONMENT)
-                body = printf('%s%s%s%s%s\n', header,codeblockstart, summary, codeblockend, codeblockstart, plan, codeblockend, downloadlink)
+                body = printf('%s%s%s%s%s%s%s%s\n', header,codeblockstart, summary, codeblockend, codeblockstart, plan, codeblockend, downloadlink)
               }
               github.rest.issues.createComment({
                 issue_number: context.issue.number,
