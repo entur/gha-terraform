@@ -52,6 +52,7 @@ jobs:
       GHA_TERRAFORM_GCP_PROJECT_ID: ${{ inputs.gcp_project_id }}
       GHA_TERRAFORM_GCP_CLUSTER_NAME: ${{ inputs.gcp_cluster_name }}
       GHA_TERRAFORM_STATUS: ""
+      GHA_TERRAFORM_SUMMARY: ""
       # ignore "context access might be invalid" warning
       WORKLOAD_IDENTITY_PROVIDER: ${{ vars.WORKLOAD_IDENTITY_PROVIDER }}
       SERVICE_ACCOUNT: ${{ vars.SERVICE_ACCOUNT }}
@@ -127,51 +128,134 @@ jobs:
         working-directory: ${{ env.GHA_TERRAFORM_DIRECTORY }}
         shell: bash
         run: |
-          delimiter="$(openssl rand -hex 10)"
-          # allow exit code > 0 to print failure in comment
           set +e
-          terraform plan -var-file=env/${GHA_TERRAFORM_ENVIRONMENT}.tfvars -detailed-exitcode -no-color -out tfplan
-          TFSTATUS=$?
+          terraform plan -var-file=env/${GHA_TERRAFORM_ENVIRONMENT}.tfvars -detailed-exitcode -out tfplan
+          echo "GHA_TERRAFORM_STATUS=$?" >> $GITHUB_ENV
           set -e
-          TERRAFORM_PLAN=$(terraform show -no-color tfplan)
-          ENV=$(echo "${GHA_TERRAFORM_ENVIRONMENT}"| awk '{print toupper($0)}')
-          echo "plan<<${delimiter}" >> $GITHUB_OUTPUT
-          echo "## Terraform Plan $ENV" >> $GITHUB_OUTPUT
-          if [[ $TFSTATUS -eq 0 ]]; then
-            echo "GHA_TERRAFORM_STATUS='No Changes'" >> $GITHUB_ENV
-            echo "#### Status: No Changes" >> $GITHUB_OUTPUT
-          elif [[ $TFSTATUS -eq 2 ]]; then
-            echo "GHA_TERRAFORM_STATUS='Changes Detected'" >> $GITHUB_ENV
-            echo "#### Status: Changes Detected 📖" >> $GITHUB_OUTPUT
-          else
-            echo "GHA_TERRAFORM_STATUS=\"Error\"" >> $GITHUB_ENV
-            echo "#### Status: Plan Failed" >> $GITHUB_OUTPUT
-          fi
-          echo "The result of \`terraform plan\` in environment: \`$ENV\`" >> $GITHUB_OUTPUT
-          echo '```tf' >> $GITHUB_OUTPUT
-          echo "$TERRAFORM_PLAN" >> $GITHUB_OUTPUT
-          echo '```' >> $GITHUB_OUTPUT
-          echo "" >> $GITHUB_OUTPUT
-          echo "${delimiter}" >> $GITHUB_OUTPUT
 
-      - name: Terraform Plan Status
-        env:
-          PLAN: ${{ steps.plan.outputs.plan }}
-        uses: actions/github-script@v7
-        if: github.event_name == 'pull_request'
-        with:
-          script: |
-            const body = `${process.env.PLAN}`;
-            github.rest.issues.createComment({
-              issue_number: context.issue.number,
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              body: body
-            })
-
-      - name: Terraform Plan Status Check
-        if: env.GHA_TERRAFORM_STATUS == '"Error"'
+      - if: env.GHA_TERRAFORM_STATUS == 2
+        name: Terraform Changes Detected
+        working-directory: ${{ env.GHA_TERRAFORM_DIRECTORY }}
         shell: bash
         run: |
-          set -e
-          exit 1
+          # Save the plan output to a file so we can upload as a artifact and add a download link to the PR comment
+          terraform show -no-color tfplan > tfplan.tf
+          # Create highlights of the changes
+          GHA_TERRAFORM_SUMMARY=$(terraform show -no-color tfplan |grep -E '(^[[:punct:]]|Plan)')
+          echo "GHA_TERRAFORM_SUMMARY=${GHA_TERRAFORM_SUMMARY}" >> $GITHUB_ENV
+      - if: env.GHA_TERRAFORM_STATUS == 2
+        name: Split plan and create summary
+        working-directory: ${{ env.GHA_TERRAFORM_DIRECTORY }}
+        shell: bash
+        run: |
+          # Split the files on maxlen characters, but only on double newlines
+          cat > split.awk << EOF
+          BEGIN {
+            RS = "\n\n"
+            ORS = "\n\n"
+            maxlen = 55000
+            i = 1
+          }
+          {
+            reclen = length(\$0) + 2
+            l = n + reclen
+            if (l > maxlen) {
+                i++
+                n = 0
+            }
+            n += reclen
+            print \$0 > FILENAME"."i
+          }
+          EOF
+          # Split the files
+          awk -f split.awk tfplan.tf
+      - if: env.GHA_TERRAFORM_STATUS != 0 && env.GHA_TERRAFORM_STATUS != 2
+        name: Terraform Plan Status Check
+        shell: bash
+        run: |
+          echo GHA_TERRAFORM_SUMMARY="Plan failed" >> $GITHUB_ENV
+          exit 99
+
+      - name: Delete previous plan comments for same environment
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number
+            });
+            const commentsFilter = `Terraform Plan ${process.env.GHA_TERRAFORM_ENVIRONMENT.toString().toUpperCase()}`;
+            console.log(commentsFilter);
+
+            for (const comment of comments) {
+              if (comment.user.login === 'github-actions[bot]' && comment.body.includes(commentsFilter)) {
+              console.log(comment.body);
+              await github.rest.issues.deleteComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: comment.id
+              });
+              }
+            }
+      - name: Upload Plan
+        id: upload
+        if: env.GHA_TERRAFORM_STATUS == 2
+        uses: actions/upload-artifact@v4
+        with:
+          name: tfplan.tf
+          path: ${{ env.GHA_TERRAFORM_DIRECTORY }}/tfplan.tf
+          if-no-files-found: error
+      - if: env.GHA_TERRAFORM_STATUS == 2 && github.event_name == 'pull_request'
+        name: Terraform Plan Status
+        uses: actions/github-script@v7
+        with:
+          script: |
+            function filesort(x,y) {
+              x=parseInt(x.split('.').slice(-1));
+              y=parseInt(y.split('.').slice(-1));
+              return x<y ? -1 : x>y ? 1 : 0;
+            }
+            const artifactResponse = await github.rest.actions.listWorkflowRunArtifacts({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              run_id: context.runId
+            });
+            const artifact = artifactResponse.data.artifacts.find(a => a.name === 'tfplan.tf');
+            if (!artifact) {
+              throw new Error('Artifact not found');
+            }
+            const artifact_id = artifact.id;
+            const fs = require('fs')
+            const globber = await glob.create(`${process.env.GHA_TERRAFORM_DIRECTORY}/tfplan.tf.*`)
+            const files = await globber.glob()
+            files.sort(filesort)
+            const codeblockstart = '```tf\n'
+            const codeblockend = '\n```\n'
+            const downloadlink = `\n[Download Plan](${process.env.GITHUB_SERVER_URL}/${process.env.GITHUB_REPOSITORY}/actions/runs/${process.env.GITHUB_RUN_ID}/artifacts/${artifact_id})\n`;
+            let plan = '';
+            let n = 0;
+            let body = '';
+            let header = '';
+            for (const file of files) {
+              plan = fs.readFileSync(file, 'utf8');
+              if (files.length > 1) {
+                n++
+                header = `## Terraform Plan ${process.env.GHA_TERRAFORM_ENVIRONMENT.toString().toUpperCase()} - Part ${n}/${files.length}\n`;
+                if (n == 1) {
+                  body = `${header} ${codeblockstart} ${process.env.GHA_TERRAFORM_SUMMARY} ${codeblockend} ${codeblockstart} ${plan} ${codeblockend} ${downloadlink}\n`;
+                } else {
+                  body = `${header} ${codeblockstart} ${plan} ${codeblockend}\n`;
+                }
+              }else{
+                header = `## Terraform Plan ${process.env.GHA_TERRAFORM_ENVIRONMENT.toString().toUpperCase()}\n`;
+                body = `${header} ${codeblockstart} ${process.env.GHA_TERRAFORM_SUMMARY} ${codeblockend} ${codeblockstart} ${plan} ${codeblockend} ${downloadlink}\n`;
+              }
+
+              await github.rest.issues.createComment({
+                issue_number: context.issue.number,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                body: body
+              })
+            }
