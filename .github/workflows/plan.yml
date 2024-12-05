@@ -53,7 +53,6 @@ jobs:
       GHA_TERRAFORM_GCP_CLUSTER_NAME: ${{ inputs.gcp_cluster_name }}
       GHA_TERRAFORM_STATUS: ""
       GHA_TERRAFORM_SUMMARY: ""
-      GHA_TERRAFORM_HIGHLIGHTS: ""
       # ignore "context access might be invalid" warning
       WORKLOAD_IDENTITY_PROVIDER: ${{ vars.WORKLOAD_IDENTITY_PROVIDER }}
       SERVICE_ACCOUNT: ${{ vars.SERVICE_ACCOUNT }}
@@ -124,9 +123,6 @@ jobs:
         run: |
           terraform workspace select -or-create=true ${GHA_TERRAFORM_WORKSPACE}
 
-      - name: Install tf-summarize
-        uses: kishaningithub/setup-tf-summarize@v1
-
       - name: Terraform Plan
         id: plan
         working-directory: ${{ env.GHA_TERRAFORM_DIRECTORY }}
@@ -137,11 +133,6 @@ jobs:
           echo "GHA_TERRAFORM_STATUS=$?" >> $GITHUB_ENV
           set -e
 
-      - if: env.GHA_TERRAFORM_STATUS == 0
-        name: Terraform No Changes
-        run: |
-          echo "GHA_TERRAFORM_HIGHLIGHTS='No changes detected'" >> $GITHUB_ENV
-
       - if: env.GHA_TERRAFORM_STATUS == 2
         name: Terraform Changes Detected
         working-directory: ${{ env.GHA_TERRAFORM_DIRECTORY }}
@@ -150,11 +141,8 @@ jobs:
           # Save the plan output to a file so we can upload as a artifact and add a download link to the PR comment
           terraform show -no-color tfplan > tfplan.tf
           # Create highlights of the changes
-          GHA_TERRAFORM_HIGHLIGHTS=$(terraform show tfplan|grep -E '(^[[:punct:]]|Plan)')
-          #echo "GHA_TERRAFORM_HIGHLIGHTS=${GHA_TERRAFORM_HIGHLIGHTS}" >> $GITHUB_ENV
-          # Create a summary of the changes
-          terraform show -no-color -json tfplan|tf-summarize > tfplan-summary.txt
-          #echo $GHA_TERRAFORM_HIGHLIGHTS >> tfplan-summary.txt
+          GHA_TERRAFORM_SUMMARY=$(terraform show tfplan|grep -E '(^[[:punct:]]|Plan)')
+          echo "GHA_TERRAFORM_SUMMARY=${GHA_TERRAFORM_SUMMARY}" >> $GITHUB_ENV
       - if: env.GHA_TERRAFORM_STATUS == 2
         name: Split plan and create summary
         working-directory: ${{ env.GHA_TERRAFORM_DIRECTORY }}
@@ -186,7 +174,6 @@ jobs:
         shell: bash
         run: |
           echo GHA_TERRAFORM_SUMMARY="Plan failed" >> $GITHUB_ENV
-          #echo GHA_TERRAFORM_HIGHLIGHTS="Error" >> $GITHUB_ENV
           exit 99
 
       - name: Delete previous comments
@@ -200,7 +187,7 @@ jobs:
             });
             for (const comment of comments) {
               if (comment.user.login === 'github-actions[bot]') {
-                if (comment.body.includes('`## Terraform Plan ${process.env.GHA_TERRAFORM_ENVIRONMENT}`')) {
+                if (comment.body.includes('`Terraform Plan ${process.env.GHA_TERRAFORM_ENVIRONMENT}`')) {
                   await github.rest.issues.deleteComment({
                     owner: context.repo.owner,
                     repo: context.repo.repo,
@@ -245,28 +232,40 @@ jobs:
             function printf(format, ...values) {
               return values.reduce((carry, current) => carry.replace('%s', current), format);
             }
+
+            const artifactResponse = await github.rest.actions.listWorkflowRunArtifacts({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              run_id: context.runId
+            });
+            const artifact = artifactResponse.data.artifacts.find(a => a.name === 'tfplan.tf');
+            if (!artifact) {
+              throw new Error('Artifact not found');
+            }
+            const artifact_id = artifact.id;
+            console.log(`Artifact ID: ${artifact_id}`);
+
             const fs = require('fs')
             const globber = await glob.create(`${process.env.GHA_TERRAFORM_DIRECTORY}/tfplan.tf.*`)
             const files = await globber.glob()
-
             const codeblockstart = '```bash\n'
             const codeblockend = '\n```\n'
             const downloadlink = printf('\n[Download Plan](%s/%s/actions/runs/%s/artifacts/%s)', process.env.GITHUB_SERVER_URL, process.env.GITHUB_REPOSITORY, process.env.GITHUB_RUN_ID, process.env.ARTIFACT_ID)
-            let summary = fs.readFileSync(`${process.env.GHA_TERRAFORM_DIRECTORY}/tfplan-summary.txt`, 'utf8')
+            const summary = printf('### %s\n', process.env.GHA_TERRAFORM_SUMMARY)
+            let plan = '', n = 0, body = '', header = ''
             for (const file of files) {
               plan = fs.readFileSync(file, 'utf8')
-              let body =''
-              let header = ''
+
               if (files.length > 1) {
                 n++
-                header = printf('## Terraform Plan %s - Part %s/%s \n\n', process.env.GHA_TERRAFORM_ENVIRONMENT, n, files.length)
+                header = printf('## Terraform Plan %s - Part %s/%s \n\n', process.env.GHA_TERRAFORM_ENVIRONMENT.toString().toUpperCase(), n, files.length)
                 if (n == 1) {
                   body = printf('%s%s%s%s%s%s%s%s\n', header,codeblockstart, summary, codeblockend, codeblockstart, plan, codeblockend, downloadlink)
                 } else {
                   body = printf('%s%s%s%s\n', header,codeblockstart, plan, codeblockend)
                 }
               }else{
-                header = printf('## Terraform Plan %s\n\n', process.env.GHA_TERRAFORM_ENVIRONMENT)
+                header = printf('## Terraform Plan %s\n\n', process.env.GHA_TERRAFORM_ENVIRONMENT.toString().toUpperCase())
                 body = printf('%s%s%s%s%s%s%s%s\n', header,codeblockstart, summary, codeblockend, codeblockstart, plan, codeblockend, downloadlink)
               }
               github.rest.issues.createComment({
@@ -276,7 +275,7 @@ jobs:
                 body: body
               })
             }
-      - if: env.GHA_TERRAFORM_STATUS != 2 && github.event_name == 'pull_request'
+      - if: env.GHA_TERRAFORM_STATUS == 0 && github.event_name == 'pull_request'
         name: No Changes
         uses: actions/github-script@v7
         with:
@@ -284,7 +283,7 @@ jobs:
             function printf(format, ...values) {
               return values.reduce((carry, current) => carry.replace('%s', current), format);
             }
-            const body = printf('## Terraform Plan %s - No Changes\n\n', process.env.GHA_TERRAFORM_ENVIRONMENT)
+            const body = printf('### Terraform Plan %s - No Changes found\n\n', process.env.GHA_TERRAFORM_ENVIRONMENT.toString().toUpperCase())
             github.rest.issues.createComment({
               issue_number: context.issue.number,
               owner: context.repo.owner,
