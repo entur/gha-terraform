@@ -148,12 +148,12 @@ jobs:
         working-directory: ${{ env.GHA_TERRAFORM_DIRECTORY }}
         shell: bash
         run: |
-          # Split the files on 60k characters, but only on double newlines
+          # Split the files on maxlen characters, but only on double newlines
           cat > split.awk << EOF
           BEGIN {
             RS = "\n\n"
             ORS = "\n\n"
-            maxlen = 2000
+            maxlen = 55000
             i = 1
           }
           {
@@ -180,15 +180,12 @@ jobs:
         uses: actions/github-script@v7
         with:
           script: |
-            function printf(format, ...values) {
-              return values.reduce((carry, current) => carry.replace('%s', current), format);
-            }
             const { data: comments } = await github.rest.issues.listComments({
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: context.issue.number
             });
-            const commentsFilter = printf('Terraform Plan %s', process.env.GHA_TERRAFORM_ENVIRONMENT.toString().toUpperCase());
+            const commentsFilter = `Terraform Plan ${process.env.GHA_TERRAFORM_ENVIRONMENT.toString().toUpperCase()}`;
             console.log(commentsFilter);
 
             for (const comment of comments) {
@@ -214,9 +211,6 @@ jobs:
         uses: actions/github-script@v7
         with:
           script: |
-            function printf(format, ...values) {
-              return values.reduce((carry, current) => carry.replace('%s', current), format);
-            }
             function filesort(x,y) {
               x=parseInt(x.split('.').slice(-1));
               y=parseInt(y.split('.').slice(-1));
@@ -240,7 +234,7 @@ jobs:
             files.sort(filesort)
             const codeblockstart = '```tf\n'
             const codeblockend = '\n```\n'
-            const downloadlink = printf('\n[Download Plan](%s/%s/actions/runs/%s/artifacts/%s)', process.env.GITHUB_SERVER_URL, process.env.GITHUB_REPOSITORY, process.env.GITHUB_RUN_ID, artifact_id)
+            const downloadlink = `\n[Download Plan](${process.env.GITHUB_SERVER_URL}/${process.env.GITHUB_REPOSITORY}/actions/runs/${process.env.GITHUB_RUN_ID}/artifacts/${artifact_id})\n`;
             let plan = '';
             let n = 0;
             let body = '';
@@ -251,15 +245,15 @@ jobs:
 
               if (files.length > 1) {
                 n++
-                header = printf('## Terraform Plan %s - Part %s/%s \n\n', process.env.GHA_TERRAFORM_ENVIRONMENT.toString().toUpperCase(), n, files.length)
+                header = `## Terraform Plan ${process.env.GHA_TERRAFORM_ENVIRONMENT.toString().toUpperCase()} - Part ${n}/${files.length}\n`;
                 if (n == 1) {
-                  body = printf('%s%s%s%s%s%s%s%s\n', header,codeblockstart, process.env.GHA_TERRAFORM_SUMMARY, codeblockend, codeblockstart, plan, codeblockend, downloadlink)
+                  body = `${header} ${codeblockstart} ${process.env.GHA_TERRAFORM_SUMMARY} ${codeblockend} ${codeblockstart} ${plan} ${codeblockend} ${downloadlink}\n`;
                 } else {
-                  body = printf('%s%s%s%s\n', header,codeblockstart, plan, codeblockend)
+                  body = `${header} ${codeblockstart} ${plan} ${codeblockend}\n`;
                 }
               }else{
-                header = printf('## Terraform Plan %s\n\n', process.env.GHA_TERRAFORM_ENVIRONMENT.toString().toUpperCase())
-                body = printf('%s%s%s%s%s%s%s%s\n', header,codeblockstart, process.env.GHA_TERRAFORM_SUMMARY, codeblockend, codeblockstart, plan, codeblockend, downloadlink)
+                header = `## Terraform Plan ${process.env.GHA_TERRAFORM_ENVIRONMENT.toString().toUpperCase()}\n`;
+                body = `${header} ${codeblockstart} ${process.env.GHA_TERRAFORM_SUMMARY} ${codeblockend} ${codeblockstart} ${plan} ${codeblockend} ${downloadlink}\n`;
               }
 
               await github.rest.issues.createComment({
@@ -269,18 +263,3 @@ jobs:
                 body: body
               })
             }
-      - if: env.GHA_TERRAFORM_STATUS == 0 && github.event_name == 'pull_request'
-        name: No Changes
-        uses: actions/github-script@v7
-        with:
-          script: |
-            function printf(format, ...values) {
-              return values.reduce((carry, current) => carry.replace('%s', current), format);
-            }
-            const body = printf('### Terraform Plan %s - No Changes found\n\n', process.env.GHA_TERRAFORM_ENVIRONMENT.toString().toUpperCase())
-            github.rest.issues.createComment({
-              issue_number: context.issue.number,
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              body: body
-            })
