@@ -217,6 +217,11 @@ jobs:
             function printf(format, ...values) {
               return values.reduce((carry, current) => carry.replace('%s', current), format);
             }
+            function filesort = (x,y) => {
+              x=parseInt(x.split('.').slice(-1));
+              y=parseInt(y.split('.').slice(-1));
+              return x<y ? -1 : x>y ? 1 : 0;
+            };
             const artifactResponse = await github.rest.actions.listWorkflowRunArtifacts({
               owner: context.repo.owner,
               repo: context.repo.repo,
@@ -230,8 +235,9 @@ jobs:
             console.log(`Artifact ID: ${artifact_id}`);
 
             const fs = require('fs')
-            const globber = await glob.create(`${process.env.GHA_TERRAFORM_DIRECTORY}/tfplan.tf.*`)
+            const globber = await glob.create(`${process.env.GHA_TERRAFORM_DIRECTORY}/tfplan.tf.*`).sort()
             const files = await globber.glob()
+            files.sort(filesort);
             const codeblockstart = '```tf\n'
             const codeblockend = '\n```\n'
             const downloadlink = printf('\n[Download Plan](%s/%s/actions/runs/%s/artifacts/%s)', process.env.GITHUB_SERVER_URL, process.env.GITHUB_REPOSITORY, process.env.GITHUB_RUN_ID, artifact_id)
@@ -240,6 +246,7 @@ jobs:
             let body = '';
             let header = '';
             for (const file of files) {
+              console.log(`Processing file: ${file}`)
               plan = fs.readFileSync(file, 'utf8')
 
               if (files.length > 1) {
@@ -255,7 +262,7 @@ jobs:
                 body = printf('%s%s%s%s%s%s%s%s\n', header,codeblockstart, process.env.GHA_TERRAFORM_SUMMARY, codeblockend, codeblockstart, plan, codeblockend, downloadlink)
               }
 
-              github.rest.issues.createComment({
+              await github.rest.issues.createComment({
                 issue_number: context.issue.number,
                 owner: context.repo.owner,
                 repo: context.repo.repo,
