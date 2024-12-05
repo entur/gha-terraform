@@ -154,7 +154,7 @@ jobs:
           #echo "GHA_TERRAFORM_HIGHLIGHTS=${GHA_TERRAFORM_HIGHLIGHTS}" >> $GITHUB_ENV
           # Create a summary of the changes
           terraform show -no-color -json tfplan|tf-summarize -tree > tfplan-summary.txt
-          echo $GHA_TERRAFORM_HIGHLIGHTS >> tfplan-summary.txt
+          #echo $GHA_TERRAFORM_HIGHLIGHTS >> tfplan-summary.txt
       - if: env.GHA_TERRAFORM_STATUS == 2
         name: Split plan and create summary
         working-directory: ${{ env.GHA_TERRAFORM_DIRECTORY }}
