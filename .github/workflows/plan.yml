@@ -217,11 +217,11 @@ jobs:
             function printf(format, ...values) {
               return values.reduce((carry, current) => carry.replace('%s', current), format);
             }
-            function filesort = (x,y) => {
+            function filesort(x,y) {
               x=parseInt(x.split('.').slice(-1));
               y=parseInt(y.split('.').slice(-1));
               return x<y ? -1 : x>y ? 1 : 0;
-            };
+            }
             const artifactResponse = await github.rest.actions.listWorkflowRunArtifacts({
               owner: context.repo.owner,
               repo: context.repo.repo,
