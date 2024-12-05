@@ -235,9 +235,8 @@ jobs:
             console.log(`Artifact ID: ${artifact_id}`);
 
             const fs = require('fs')
-            const globber = await glob.create(`${process.env.GHA_TERRAFORM_DIRECTORY}/tfplan.tf.*`).sort()
+            const globber = await glob.create(`${process.env.GHA_TERRAFORM_DIRECTORY}/tfplan.tf.*`).sort(filesort)
             const files = await globber.glob()
-            files.sort(filesort);
             const codeblockstart = '```tf\n'
             const codeblockend = '\n```\n'
             const downloadlink = printf('\n[Download Plan](%s/%s/actions/runs/%s/artifacts/%s)', process.env.GITHUB_SERVER_URL, process.env.GITHUB_REPOSITORY, process.env.GITHUB_RUN_ID, artifact_id)
