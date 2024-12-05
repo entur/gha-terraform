@@ -153,7 +153,7 @@ jobs:
           BEGIN {
             RS = "\n\n"
             ORS = "\n\n"
-            maxlen = 60000
+            maxlen = 2000
             i = 1
           }
           {
