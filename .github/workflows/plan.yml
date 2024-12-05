@@ -252,7 +252,7 @@ jobs:
             const codeblockend = '\n```\n'
             const downloadlink = printf('\n[Download Plan](%s/%s/actions/runs/%s/artifacts/%s)', process.env.GITHUB_SERVER_URL, process.env.GITHUB_REPOSITORY, process.env.GITHUB_RUN_ID, process.env.ARTIFACT_ID)
             const summary = printf('### %s\n', process.env.GHA_TERRAFORM_SUMMARY)
-            let plan = '', n = 0, body = '', header = ''
+            let plan = '', n = 0, body = '', header = '';
             for (const file of files) {
               plan = fs.readFileSync(file, 'utf8')
 
