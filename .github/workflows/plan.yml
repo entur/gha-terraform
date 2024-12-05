@@ -226,8 +226,6 @@ jobs:
               throw new Error('Artifact not found');
             }
             const artifact_id = artifact.id;
-            console.log(`Artifact ID: ${artifact_id}`);
-
             const fs = require('fs')
             const globber = await glob.create(`${process.env.GHA_TERRAFORM_DIRECTORY}/tfplan.tf.*`)
             const files = await globber.glob()
@@ -240,9 +238,7 @@ jobs:
             let body = '';
             let header = '';
             for (const file of files) {
-              console.log(`Processing file: ${file}`)
-              plan = fs.readFileSync(file, 'utf8')
-
+              plan = fs.readFileSync(file, 'utf8');
               if (files.length > 1) {
                 n++
                 header = `## Terraform Plan ${process.env.GHA_TERRAFORM_ENVIRONMENT.toString().toUpperCase()} - Part ${n}/${files.length}\n`;
