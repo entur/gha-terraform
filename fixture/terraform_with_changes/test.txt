@@ -1,2 +1,0 @@
-|---null_resource
-|	|---[32mdummy(+)[0m

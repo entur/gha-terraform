@@ -5,6 +5,7 @@ module "init" {
   environment = var.environment
 }
 resource "null_resource" "dummy" {
+  count = 200
   triggers = {
     always_run = timestamp()
   }
