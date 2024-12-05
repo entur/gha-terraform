@@ -184,8 +184,6 @@ jobs:
           # Split the files
           awk -f split.awk tfplan.tf
           ls -lah
-          awk -f split.awk tfplan-summary.txt
-          ls -lah
           cat tfplan-summary.txt
       - if: env.GHA_TERRAFORM_STATUS != 0 && env.GHA_TERRAFORM_STATUS != 2
         name: Terraform Plan Status Check
@@ -252,23 +250,28 @@ jobs:
             const fs = require('fs')
             const globber = await glob.create(`${process.env.GHA_TERRAFORM_DIRECTORY}/tfplan.tf.*`)
             const files = await globber.glob()
-            console.log(globber)
-            console.log(files)
 
             const codeblockstart = '```tf\n'
-            const codeblockend = '\n```'
-            const downloadlink = printf('[Download Plan](%s/%s/actions/runs/%s/artifacts/%s)', process.env.GITHUB_SERVER_URL, process.env.GITHUB_REPOSITORY, process.env.GITHUB_RUN_ID, process.env.ARTIFACT_ID)
-            console.log(downloadlink)
-
+            const codeblockend = '\n```\n'
+            const downloadlink = printf('\n[Download Plan](%s/%s/actions/runs/%s/artifacts/%s)', process.env.GITHUB_SERVER_URL, process.env.GITHUB_REPOSITORY, process.env.GITHUB_RUN_ID, process.env.ARTIFACT_ID)
+            let summary = fs.readFileSync(`${process.env.GHA_TERRAFORM_DIRECTORY}/tfplan-summary.txt`, 'utf8')
             for (const file of files) {
               console.log(file)
               let header = printf('## Terraform Plan %s\n\n', process.env.GHA_TERRAFORM_ENVIRONMENT)
+              let plan = fs.readFileSync(file, 'utf8')
               if (files.length > 1) {
                 n++
                 header = printf('## Terraform Plan %s - Part %s/%s \n\n', process.env.GHA_TERRAFORM_ENVIRONMENT, n, files.length)
+                if (n == 1) {
+                  let body = printf('%s%s%s%s%s\n', header,codeblockstart, summary, codeblockend, codeblockstart, plan, codeblockend, downloadlink)
+                } else {
+                  let body = printf('%s%s%s%s\n', header,codeblockstart, plan, codeblockend)
+                }
+              }else{
+                let body = printf('%s%s%s%s%s\n', header,codeblockstart, summary, codeblockend, codeblockstart, plan, codeblockend, downloadlink)
               }
-              let codeblock = fs.readFileSync(file, 'utf8')
-              let body = printf('%s%s%s%s%s\n', header,codeblockstart, codeblock, codeblockend, downloadlink)
+
+
               github.rest.issues.createComment({
                 issue_number: context.issue.number,
                 owner: context.repo.owner,
