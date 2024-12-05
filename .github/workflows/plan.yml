@@ -151,16 +151,16 @@ jobs:
           terraform show -no-color tfplan > tfplan.tf
           # Create highlights of the changes
           GHA_TERRAFORM_HIGHLIGHTS=$(terraform show tfplan|grep -E '(^[[:punct:]]|Plan)')
-          echo "GHA_TERRAFORM_HIGHLIGHTS=${GHA_TERRAFORM_HIGHLIGHTS}" >> $GITHUB_ENV
+          #echo "GHA_TERRAFORM_HIGHLIGHTS=${GHA_TERRAFORM_HIGHLIGHTS}" >> $GITHUB_ENV
           # Create a summary of the changes
           terraform show -no-color -json tfplan|tf-summarize -tree > tfplan-summary.txt
-
+          echo $GHA_TERRAFORM_HIGHLIGHTS >> tfplan-summary.txt
       - if: env.GHA_TERRAFORM_STATUS == 2
         name: Split plan and create summary
         working-directory: ${{ env.GHA_TERRAFORM_DIRECTORY }}
         shell: bash
         run: |
-          # Split the files on 60k characters, but only on newlines
+          # Split the files on 60k characters, but only on double newlines
           cat > split.awk << EOF
           BEGIN {
             RS = "\n\n"
@@ -179,18 +179,14 @@ jobs:
             print \$0 > FILENAME"."i
           }
           EOF
-          # debug
-          cat split.awk
           # Split the files
           awk -f split.awk tfplan.tf
-          ls -lah
-          cat tfplan-summary.txt
       - if: env.GHA_TERRAFORM_STATUS != 0 && env.GHA_TERRAFORM_STATUS != 2
         name: Terraform Plan Status Check
         shell: bash
         run: |
           echo GHA_TERRAFORM_SUMMARY="Plan failed" >> $GITHUB_ENV
-          echo GHA_TERRAFORM_HIGHLIGHTS="Error" >> $GITHUB_ENV
+          #echo GHA_TERRAFORM_HIGHLIGHTS="Error" >> $GITHUB_ENV
           exit 99
 
       - name: Delete previous comments
@@ -204,11 +200,13 @@ jobs:
             });
             for (const comment of comments) {
               if (comment.user.login === 'github-actions[bot]') {
-                await github.rest.issues.deleteComment({
-                  owner: context.repo.owner,
-                  repo: context.repo.repo,
-                  comment_id: comment.id
-                });
+                if (comment.body.includes('`## Terraform Plan ${process.env.GHA_TERRAFORM_ENVIRONMENT}`')) {
+                  await github.rest.issues.deleteComment({
+                    owner: context.repo.owner,
+                    repo: context.repo.repo,
+                    comment_id: comment.id
+                  });
+                }
               }
             }
       - name: Upload Summary
@@ -219,7 +217,7 @@ jobs:
           name: tfplan.tf
           path: ${{ env.GHA_TERRAFORM_DIRECTORY }}/tfplan.tf
           if-no-files-found: error
-      - name: Save artifact_id
+      - name: Get artifact_id
         if: env.GHA_TERRAFORM_STATUS == 2
         shell: bash
         env:
@@ -238,7 +236,7 @@ jobs:
             exit 98
           fi
           echo "ARTIFACT_ID=$ARTIFACT_ID" >> $GITHUB_ENV
-      - if: ( success() || failure() ) && github.event_name == 'pull_request'
+      - if: env.GHA_TERRAFORM_STATUS == 2 && github.event_name == 'pull_request'
         name: Terraform Plan Status
         uses: actions/github-script@v7
         with:
@@ -279,3 +277,18 @@ jobs:
                 body: body
               })
             }
+      - if: env.GHA_TERRAFORM_STATUS != 2 && github.event_name == 'pull_request'
+        name: No Changes
+        uses: actions/github-script@v7
+        with:
+          script: |
+            function printf(format, ...values) {
+              return values.reduce((carry, current) => carry.replace('%s', current), format);
+            }
+            const body = printf('## Terraform Plan %s - No Changes\n\n', process.env.GHA_TERRAFORM_ENVIRONMENT)
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: body
+            })
