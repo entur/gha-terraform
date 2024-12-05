@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.1](https://github.com/entur/gha-terraform/compare/v1.2.0...v1.2.1) (2024-12-05)
+
+
+### Bug Fixes
+
+* only run step if in PR ([#74](https://github.com/entur/gha-terraform/issues/74)) ([06da365](https://github.com/entur/gha-terraform/commit/06da3653e91c4055ee785ccaf1a41b9eb79be66b))
+
 ## [1.2.0](https://github.com/entur/gha-terraform/compare/v1.1.3...v1.2.0) (2024-11-05)
 
 
