@@ -153,7 +153,7 @@ jobs:
           GHA_TERRAFORM_HIGHLIGHTS=$(terraform show tfplan|grep -E '(^[[:punct:]]|Plan)')
           #echo "GHA_TERRAFORM_HIGHLIGHTS=${GHA_TERRAFORM_HIGHLIGHTS}" >> $GITHUB_ENV
           # Create a summary of the changes
-          terraform show -no-color -json tfplan|tf-summarize -tree > tfplan-summary.txt
+          terraform show -no-color -json tfplan|tf-summarize > tfplan-summary.txt
           #echo $GHA_TERRAFORM_HIGHLIGHTS >> tfplan-summary.txt
       - if: env.GHA_TERRAFORM_STATUS == 2
         name: Split plan and create summary
@@ -252,7 +252,7 @@ jobs:
             const codeblockstart = '```bash\n'
             const codeblockend = '\n```\n'
             const downloadlink = printf('\n[Download Plan](%s/%s/actions/runs/%s/artifacts/%s)', process.env.GITHUB_SERVER_URL, process.env.GITHUB_REPOSITORY, process.env.GITHUB_RUN_ID, process.env.ARTIFACT_ID)
-            let summary = fs.readFileSync(`${process.env.GHA_TERRAFORM_DIRECTORY}/tfplan-summary.txt`, 'ascii')
+            let summary = fs.readFileSync(`${process.env.GHA_TERRAFORM_DIRECTORY}/tfplan-summary.txt`, 'utf8')
             for (const file of files) {
               plan = fs.readFileSync(file, 'utf8')
               let body =''
