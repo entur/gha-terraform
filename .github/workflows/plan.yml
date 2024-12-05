@@ -249,10 +249,10 @@ jobs:
             const globber = await glob.create(`${process.env.GHA_TERRAFORM_DIRECTORY}/tfplan.tf.*`)
             const files = await globber.glob()
 
-            const codeblockstart = '```txt\n'
+            const codeblockstart = '```bash\n'
             const codeblockend = '\n```\n'
             const downloadlink = printf('\n[Download Plan](%s/%s/actions/runs/%s/artifacts/%s)', process.env.GITHUB_SERVER_URL, process.env.GITHUB_REPOSITORY, process.env.GITHUB_RUN_ID, process.env.ARTIFACT_ID)
-            let summary = fs.readFileSync(`${process.env.GHA_TERRAFORM_DIRECTORY}/tfplan-summary.txt`, 'utf8')
+            let summary = fs.readFileSync(`${process.env.GHA_TERRAFORM_DIRECTORY}/tfplan-summary.txt`, 'ascii')
             for (const file of files) {
               plan = fs.readFileSync(file, 'utf8')
               let body =''
