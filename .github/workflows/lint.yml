@@ -61,6 +61,7 @@ jobs:
             printf "%bERROR%b: Terraform files are not formatted correctly\n" "${RED}" "${NEUTRAL}"
             printf "Please run 'terraform fmt -recursive' to fix the formatting issues in the files listed above.\n"
             printf "PS: You can most likely find a terraform plugin or mode for your editor that can format on save, or as you type. If none is provided, you can use the 'terraform-ls' language server."
+            echo "## :x: Lint Failed" >> $GITHUB_STEP_SUMMARY
             exit 1
           else
             printf "Formating: %bOK%b\n\n" "${GREEN}" "${NEUTRAL}"
@@ -74,6 +75,7 @@ jobs:
             printf "#--------------------------------------------------------------------------------\n"
             printf "%bERROR%b: TFLint found issues in the Terraform configuration\n" "${RED}" "${NEUTRAL}"
             printf "Please check the error messages above and fix the issue\n\n"
+            echo "## :x: Lint Failed" >> $GITHUB_STEP_SUMMARY
             exit 1
           else
             printf "TFLint: %bOK%b\n\n" "${GREEN}" "${NEUTRAL}"
@@ -85,6 +87,7 @@ jobs:
             printf "#----------------------------------------\n"
             printf "\n%bERROR%b: Terraform configuration could not be initialized\n" "${RED}" "${NEUTRAL}"
             printf "Please check the error messages above and fix the issue\n\n"
+            echo "## :x: Lint Failed" >> $GITHUB_STEP_SUMMARY
             exit 1
           else
             printf "Initialization: %bOK%b\n\n" "${GREEN}" "${NEUTRAL}"
@@ -96,7 +99,9 @@ jobs:
             printf "#--------------------------------------------------------------------------------\n"
             printf "\n%bERROR%b: Terraform configuration is not valid\n" "${RED}" "${NEUTRAL}"
             printf "Please check the error messages above and fix the issue\n\n"
+            echo "## :x: Lint Failed" >> $GITHUB_STEP_SUMMARY
             exit 1
           else
             printf "Validation: %bOK%b\n\n" "${GREEN}" "${NEUTRAL}"
           fi
+          echo "## :white_check_mark: Lint" >> $GITHUB_STEP_SUMMARY

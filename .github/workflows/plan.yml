@@ -51,8 +51,8 @@ jobs:
       GHA_TERRAFORM_VERSION: ${{ inputs.version }}
       GHA_TERRAFORM_GCP_PROJECT_ID: ${{ inputs.gcp_project_id }}
       GHA_TERRAFORM_GCP_CLUSTER_NAME: ${{ inputs.gcp_cluster_name }}
-      GHA_TERRAFORM_STATUS: ""
-      GHA_TERRAFORM_SUMMARY: ""
+      GHA_TERRAFORM_PLAN_STATUS: 0
+      GHA_TERRAFORM_PLAN_SUMMARY: ""
       # ignore "context access might be invalid" warning
       WORKLOAD_IDENTITY_PROVIDER: ${{ vars.WORKLOAD_IDENTITY_PROVIDER }}
       SERVICE_ACCOUNT: ${{ vars.SERVICE_ACCOUNT }}
@@ -68,9 +68,9 @@ jobs:
     outputs:
       version: ${{ steps.set-terraform-version.outputs.version }}
     steps:
-      - id: set-workspace
+      - if: env.GHA_TERRAFORM_WORKSPACE == 'env'
+        name: Set Terraform Workspace Variable
         shell: bash
-        if: env.GHA_TERRAFORM_WORKSPACE == 'env'
         run: |
           echo "GHA_TERRAFORM_WORKSPACE=${GHA_TERRAFORM_ENVIRONMENT}" >> $GITHUB_ENV
 
@@ -96,7 +96,7 @@ jobs:
           gcp_cluster_name: ${{ env.GHA_TERRAFORM_GCP_CLUSTER_NAME }}
           azure_cluster_resource_group: ${{ env.AZURE_CLUSTER_RESOURCE_GROUP }}
 
-      - name: "Terraform Version Action"
+      - name: Set Terraform Version
         id: set-terraform-version
         uses: entur/gha-terraform/.github/actions/terraform-version@v1
         with:
@@ -109,7 +109,6 @@ jobs:
           terraform_wrapper: false
 
       - name: Terraform Init
-        id: init
         working-directory: ${{ env.GHA_TERRAFORM_DIRECTORY }}
         shell: bash
         run: |
@@ -117,35 +116,34 @@ jobs:
           terraform init
 
       - name: Terraform Workspace
-        id: workspace
         working-directory: ${{ env.GHA_TERRAFORM_DIRECTORY }}
         shell: bash
         run: |
           terraform workspace select -or-create=true ${GHA_TERRAFORM_WORKSPACE}
 
       - name: Terraform Plan
-        id: plan
         working-directory: ${{ env.GHA_TERRAFORM_DIRECTORY }}
         shell: bash
         run: |
           set +e
           terraform plan -var-file=env/${GHA_TERRAFORM_ENVIRONMENT}.tfvars -detailed-exitcode -out tfplan
-          echo "GHA_TERRAFORM_STATUS=$?" >> $GITHUB_ENV
+          echo "GHA_TERRAFORM_PLAN_STATUS=$?" >> $GITHUB_ENV
           set -e
 
-      - if: env.GHA_TERRAFORM_STATUS == 2
+      - if: env.GHA_TERRAFORM_PLAN_STATUS == 2
         name: Terraform Changes Detected
         working-directory: ${{ env.GHA_TERRAFORM_DIRECTORY }}
         shell: bash
         run: |
           # Save the plan output to a file so we can upload as a artifact and add a download link to the PR comment
-          terraform show -no-color tfplan > tfplan.tf
+          terraform show -no-color tfplan > tfplan.txt
           # Create highlights of the changes
-          GHA_TERRAFORM_SUMMARY=$(terraform show -no-color tfplan |grep -E '(^[[:punct:]]|Plan)')
-          echo "GHA_TERRAFORM_SUMMARY=${GHA_TERRAFORM_SUMMARY}" >> $GITHUB_ENV
+          GHA_TERRAFORM_PLAN_SUMMARY=$(terraform show -no-color tfplan |grep -E '(^[[:punct:]]|Plan)')
+          echo "GHA_TERRAFORM_PLAN_SUMMARY=${GHA_TERRAFORM_PLAN_SUMMARY}" >> $GITHUB_ENV
+          echo "${GHA_TERRAFORM_PLAN_SUMMARY}" >> $GITHUB_STEP_SUMMARY
 
-      - if: env.GHA_TERRAFORM_STATUS == 2
-        name: Split plan and create summary
+      - if: env.GHA_TERRAFORM_PLAN_STATUS == 2
+        name: Split plan
         working-directory: ${{ env.GHA_TERRAFORM_DIRECTORY }}
         shell: bash
         run: |
@@ -169,14 +167,7 @@ jobs:
           }
           EOF
           # Split the files
-          awk -f split.awk tfplan.tf
-
-      - if: env.GHA_TERRAFORM_STATUS != 0 && env.GHA_TERRAFORM_STATUS != 2
-        name: Terraform Plan Status Check
-        shell: bash
-        run: |
-          echo GHA_TERRAFORM_SUMMARY="Plan failed" >> $GITHUB_ENV
-          exit 99
+          awk -f split.awk tfplan.txt
 
       - name: Delete previous plan comments for same environment
         if: github.event_name == 'pull_request'
@@ -202,16 +193,15 @@ jobs:
               }
             }
 
-      - name: Upload Plan
-        id: upload
-        if: env.GHA_TERRAFORM_STATUS == 2
+      - if: env.GHA_TERRAFORM_PLAN_STATUS == 2
+        name: Upload Plan
         uses: actions/upload-artifact@v4
         with:
-          name: tfplan.tf
-          path: ${{ env.GHA_TERRAFORM_DIRECTORY }}/tfplan.tf
+          name: tfplan.txt
+          path: ${{ env.GHA_TERRAFORM_DIRECTORY }}/tfplan.txt
           if-no-files-found: error
 
-      - if: env.GHA_TERRAFORM_STATUS == 2 && github.event_name == 'pull_request'
+      - if: env.GHA_TERRAFORM_PLAN_STATUS == 2 && github.event_name == 'pull_request'
         name: Terraform Plan Status
         uses: actions/github-script@v7
         with:
@@ -226,13 +216,13 @@ jobs:
               repo: context.repo.repo,
               run_id: context.runId
             });
-            const artifact = artifactResponse.data.artifacts.find(a => a.name === 'tfplan.tf');
+            const artifact = artifactResponse.data.artifacts.find(a => a.name === 'tfplan.txt');
             if (!artifact) {
               throw new Error('Artifact not found');
             }
             const artifact_id = artifact.id;
             const fs = require('fs')
-            const globber = await glob.create(`${process.env.GHA_TERRAFORM_DIRECTORY}/tfplan.tf.*`)
+            const globber = await glob.create(`${process.env.GHA_TERRAFORM_DIRECTORY}/tfplan.txt.*`)
             const files = await globber.glob()
             files.sort(filesort)
             const codeblockstart = '```tf\n'
@@ -246,15 +236,15 @@ jobs:
               plan = fs.readFileSync(file, 'utf8');
               if (files.length > 1) {
                 n++
-                header = `## Terraform Plan ${process.env.GHA_TERRAFORM_ENVIRONMENT.toString().toUpperCase()} - Part ${n}/${files.length}\n`;
+                header = `## :page_facing_up: Terraform Plan ${process.env.GHA_TERRAFORM_ENVIRONMENT.toString().toUpperCase()} - Part ${n}/${files.length}\n`;
                 if (n == 1) {
-                  body = `${header} ${codeblockstart} ${process.env.GHA_TERRAFORM_SUMMARY} ${codeblockend} ${codeblockstart} ${plan} ${codeblockend} ${downloadlink}\n`;
+                  body = `${header} ${codeblockstart} ${process.env.GHA_TERRAFORM_PLAN_SUMMARY} ${codeblockend} ${codeblockstart} ${plan} ${codeblockend} ${downloadlink}\n`;
                 } else {
                   body = `${header} ${codeblockstart} ${plan} ${codeblockend}\n`;
                 }
               }else{
-                header = `## Terraform Plan ${process.env.GHA_TERRAFORM_ENVIRONMENT.toString().toUpperCase()}\n`;
-                body = `${header} ${codeblockstart} ${process.env.GHA_TERRAFORM_SUMMARY} ${codeblockend} ${codeblockstart} ${plan} ${codeblockend} ${downloadlink}\n`;
+                header = `## :page_facing_up: Terraform Plan ${process.env.GHA_TERRAFORM_ENVIRONMENT.toString().toUpperCase()}\n`;
+                body = `${header} ${codeblockstart} ${process.env.GHA_TERRAFORM_PLAN_SUMMARY} ${codeblockend} ${codeblockstart} ${plan} ${codeblockend} ${downloadlink}\n`;
               }
               await github.rest.issues.createComment({
                 issue_number: context.issue.number,
@@ -263,3 +253,29 @@ jobs:
                 body: body
               })
             }
+      - if: env.GHA_TERRAFORM_PLAN_STATUS == 0
+        name: Terraform Plan No Changes
+        shell: bash
+        run: |
+          GHA_TERRAFORM_PLAN_SUMMARY="## :heavy_check_mark: Terraform Plan - no changes detected"
+          echo "${GHA_TERRAFORM_PLAN_SUMMARY}" >> $GITHUB_STEP_SUMMARY
+
+      - if: github.event_name == 'pull_request' && env.GHA_TERRAFORM_PLAN_STATUS != 0 && env.GHA_TERRAFORM_PLAN_STATUS != 2
+        name: Terraform Plan Status Check Comment
+        uses: actions/github-script@v7
+        with:
+          script: |
+            await github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: `## :x: Terraform Plan ${process.env.GHA_TERRAFORM_ENVIRONMENT.toString().toUpperCase()}\n\nTerraform plan failed. Please check the logs for more information.`
+            })
+
+      - if: env.GHA_TERRAFORM_PLAN_STATUS != 0 && env.GHA_TERRAFORM_PLAN_STATUS != 2
+        name: Terraform Plan Status Check
+        shell: bash
+        run: |
+          GHA_TERRAFORM_PLAN_SUMMARY="## :x: Terraform Plan failed"
+          echo "${GHA_TERRAFORM_PLAN_SUMMARY}" >> $GITHUB_STEP_SUMMARY
+          exit 99
