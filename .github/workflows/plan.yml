@@ -206,6 +206,7 @@ jobs:
 
       - if: env.GHA_TERRAFORM_PLAN_STATUS == 2
         name: Upload Plan
+        id: upload-artifact
         uses: actions/upload-artifact@v4
         with:
           name: tfplan.txt
@@ -222,23 +223,13 @@ jobs:
               y=parseInt(y.split('.').slice(-1));
               return x<y ? -1 : x>y ? 1 : 0;
             }
-            const artifactResponse = await github.rest.actions.listWorkflowRunArtifacts({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              run_id: context.runId
-            });
-            const artifact = artifactResponse.data.artifacts.find(a => a.name === 'tfplan.txt');
-            if (!artifact) {
-              throw new Error('Artifact not found');
-            }
-            const artifact_id = artifact.id;
             const fs = require('fs')
             const globber = await glob.create(`${process.env.GHA_TERRAFORM_DIRECTORY}/tfplan.txt.*`)
             const files = await globber.glob()
             files.sort(filesort)
             const codeblockstart = '```tf\n'
             const codeblockend = '\n```\n'
-            const downloadlink = `\n[Download Plan](${process.env.GITHUB_SERVER_URL}/${process.env.GITHUB_REPOSITORY}/actions/runs/${process.env.GITHUB_RUN_ID}/artifacts/${artifact_id})\n`;
+            const downloadlink = `\n[Download Plan](${steps.upload-artifact.outputs.artifact-url})\n`;
             let plan = '';
             let n = 0;
             let body = '';
