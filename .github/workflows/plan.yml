@@ -148,7 +148,9 @@ jobs:
           terraform show -no-color tfplan > tfplan.txt
           # Create highlights of the changes
           GHA_TERRAFORM_PLAN_SUMMARY=$(terraform show -no-color tfplan |grep -E '(^[[:punct:]]|Plan)')
-          echo "GHA_TERRAFORM_PLAN_SUMMARY=${GHA_TERRAFORM_PLAN_SUMMARY}" >> $GITHUB_ENV
+          echo "GHA_TERRAFORM_PLAN_SUMMARY<<EOF" >> $GITHUB_ENV
+          echo "${GHA_TERRAFORM_PLAN_SUMMARY}" >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
           echo ":page_facing_up: ${GHA_TERRAFORM_PLAN_SUMMARY}" >> $GITHUB_STEP_SUMMARY
 
       - if: env.GHA_TERRAFORM_PLAN_STATUS == 2
