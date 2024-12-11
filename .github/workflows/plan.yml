@@ -136,6 +136,8 @@ jobs:
           echo "GHA_TERRAFORM_PLAN_SUMMARY<<EOF" >> $GITHUB_ENV
           echo "${err}" >> $GITHUB_ENV
           echo "EOF" >> $GITHUB_ENV
+          # Print the error to the log for debugging
+          echo "${err}"
 
       - if: env.GHA_TERRAFORM_PLAN_STATUS == 2
         name: Terraform Changes Detected
