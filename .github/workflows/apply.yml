@@ -160,6 +160,7 @@ jobs:
         shell: bash
         run: |
           set +e
+          # Apply the plan, but also save any errors to the file
           terraform apply -no-color tfplan 2>&1|tee tfapply.txt
           echo "GHA_TERRAFORM_APPLY_STATUS=${PIPESTATUS[0]}" >> $GITHUB_ENV
           set -e
@@ -307,7 +308,7 @@ jobs:
               issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
-              body: `## :x: Terraform Plan ${process.env.GHA_TERRAFORM_ENVIRONMENT.toString().toUpperCase()}\n\nTerraform plan failed. \n\${process.env.GHA_TERRAFORM_PLAN_SUMMARY}`
+              body: `## :x: Terraform Plan ${process.env.GHA_TERRAFORM_ENVIRONMENT.toString().toUpperCase()}\n\nTerraform plan failed. \n\n${process.env.GHA_TERRAFORM_PLAN_SUMMARY}`
             })
       - if: (env.GHA_TERRAFORM_PLAN_STATUS != 0 && env.GHA_TERRAFORM_PLAN_STATUS != 2) || env.GHA_TERRAFORM_APPLY_STATUS != 0
         name: Terraform Apply Status Check
