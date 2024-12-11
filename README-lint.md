@@ -2,15 +2,13 @@
 
 ## Usage
 
-See [getting-started](https://github.com/entur/getting-started/blob/main/.github/workflows/cd.yml) for a real-world example.
-
 Add the following step to your workflow configuration:
 
 ```yml
 jobs:
   tf-lint:
     name: Terraform Lint
-    uses: entur/gha-terraform/.github/workflows/lint.yml@v1
+    uses: entur/gha-terraform/.github/workflows/lint.yml@v2
 ```
 
 ## Inputs
