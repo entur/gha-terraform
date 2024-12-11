@@ -131,9 +131,9 @@ jobs:
           # Run terraform plan and save the output to a file, but also save any errors to a variable
           { err=$(terraform plan -var-file=env/${GHA_TERRAFORM_ENVIRONMENT}.tfvars -detailed-exitcode -out tfplan 2>&1 >&3 3>&-); } 3>&1
           echo "GHA_TERRAFORM_PLAN_STATUS=$?" >> $GITHUB_ENV
-          set -e
           # Save the error to the Summary, if empty/ok, it will be overwritten later
           echo "GHA_TERRAFORM_PLAN_SUMMARY=${err}" >> $GITHUB_ENV
+          set -e
 
       - if: env.GHA_TERRAFORM_PLAN_STATUS == 2
         name: Terraform Changes Detected
