@@ -67,6 +67,16 @@ jobs:
       environment: dev
     secrets: inherit
 
+  test-terraform-apply-changes:
+    needs: test-terraform-apply
+    name: Test Terraform Apply with Changes
+    uses: ./.github/workflows/apply.yml
+    with:
+      directory: fixture/terraform_with_changes
+      version: 1.9.8
+      environment: dev
+    secrets: inherit
+
   update-lint-doc:
     name: Update Lint Documentation
     needs: test-terraform-plan-changes

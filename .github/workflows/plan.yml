@@ -74,11 +74,11 @@ jobs:
         run: |
           echo "GHA_TERRAFORM_WORKSPACE=${GHA_TERRAFORM_ENVIRONMENT}" >> $GITHUB_ENV
 
-      - name: checkout
+      - name: Checkout
         uses: actions/checkout@v4
 
-      - uses: entur/gha-meta/.github/actions/cloud-auth@v1
-        name: Authenticate
+      - name: Authenticate with Cloud Provider
+        uses: entur/gha-meta/.github/actions/cloud-auth@v1
         with:
           environment: ${{ env.GHA_TERRAFORM_ENVIRONMENT }}
           cloud_provider: ${{ env.GHA_TERRAFORM_CLOUD_PROVIDER }}
@@ -88,7 +88,8 @@ jobs:
           azure_tenant_id: ${{ env.AZURE_TENANT_ID }}
           azure_subscription_id: ${{ env.AZURE_SUBSCRIPTION_ID }}
 
-      - uses: entur/gha-meta/.github/actions/k8s-auth@v1
+      - name: Authenticate with Kubernetes
+        uses: entur/gha-meta/.github/actions/k8s-auth@v1
         with:
           environment: ${{ env.GHA_TERRAFORM_ENVIRONMENT }}
           cloud_provider: ${{ env.GHA_TERRAFORM_CLOUD_PROVIDER }}
@@ -103,7 +104,8 @@ jobs:
           directory: ${{ env.GHA_TERRAFORM_DIRECTORY }}
           version: ${{ env.GHA_TERRAFORM_VERSION }}
 
-      - uses: hashicorp/setup-terraform@v3
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
         with:
           terraform_version: ${{ steps.set-terraform-version.outputs.version }}
           terraform_wrapper: false
@@ -138,8 +140,9 @@ jobs:
           # Save the plan output to a file so we can upload as a artifact and add a download link to the PR comment
           terraform show -no-color tfplan > tfplan.txt
           # Create highlights of the changes
+          icon=":page_facing_up:"
           GHA_TERRAFORM_PLAN_SUMMARY=$(terraform show -no-color tfplan |grep -E '(^[[:punct:]]|Plan)')
-          echo "GHA_TERRAFORM_PLAN_SUMMARY=${GHA_TERRAFORM_PLAN_SUMMARY}" >> $GITHUB_ENV
+          echo "GHA_TERRAFORM_PLAN_SUMMARY=${icon} ${GHA_TERRAFORM_PLAN_SUMMARY}" >> $GITHUB_ENV
           echo "${GHA_TERRAFORM_PLAN_SUMMARY}" >> $GITHUB_STEP_SUMMARY
 
       - if: env.GHA_TERRAFORM_PLAN_STATUS == 2
@@ -169,8 +172,8 @@ jobs:
           # Split the files
           awk -f split.awk tfplan.txt
 
-      - name: Delete previous plan comments for same environment
-        if: github.event_name == 'pull_request'
+      - if: github.event_name == 'pull_request'
+        name: Delete previous plan comments for same environment
         uses: actions/github-script@v7
         with:
           script: |
@@ -257,7 +260,7 @@ jobs:
         name: Terraform Plan No Changes
         shell: bash
         run: |
-          GHA_TERRAFORM_PLAN_SUMMARY="## :heavy_check_mark: Terraform Plan - no changes detected"
+          GHA_TERRAFORM_PLAN_SUMMARY="## :heavy_check_mark: Terraform Plan - Your infrastructure matches the configuration"
           echo "${GHA_TERRAFORM_PLAN_SUMMARY}" >> $GITHUB_STEP_SUMMARY
 
       - if: github.event_name == 'pull_request' && env.GHA_TERRAFORM_PLAN_STATUS != 0 && env.GHA_TERRAFORM_PLAN_STATUS != 2
@@ -271,11 +274,28 @@ jobs:
               repo: context.repo.repo,
               body: `## :x: Terraform Plan ${process.env.GHA_TERRAFORM_ENVIRONMENT.toString().toUpperCase()}\n\nTerraform plan failed. Please check the logs for more information.`
             })
-
+      - if: env.GHA_TERRAFORM_PLAN_STATUS != 0 && env.GHA_TERRAFORM_PLAN_STATUS != 2
+        name: Post Error To Checks
+        uses: actions/github-script@v7
+        with:
+          script: |
+            await github.rest.checks.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              name: 'Terraform Plan',
+              head_sha: context.sha,
+              status: 'completed',
+              conclusion: 'failure',
+              output: {
+                title: 'Terraform Plan Failed',
+                summary: 'Please check the logs for more information.',
+                text: '```' + process.env.GHA_TERRAFORM_PLAN_SUMMARY + '```'
+              }
+            })
       - if: env.GHA_TERRAFORM_PLAN_STATUS != 0 && env.GHA_TERRAFORM_PLAN_STATUS != 2
         name: Terraform Plan Status Check
         shell: bash
         run: |
-          GHA_TERRAFORM_PLAN_SUMMARY="## :x: Terraform Plan failed"
+          GHA_TERRAFORM_PLAN_SUMMARY="## :x: Terraform Plan failed\n\nPlease check the logs for more information.\n\n $(terraform show -no-color tfplan|tail -n 40)"
           echo "${GHA_TERRAFORM_PLAN_SUMMARY}" >> $GITHUB_STEP_SUMMARY
           exit 99
