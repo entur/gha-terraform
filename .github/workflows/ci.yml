@@ -68,7 +68,7 @@ jobs:
     secrets: inherit
 
   test-terraform-apply-changes:
-    needs: test-terraform-apply
+    needs: test-terraform-plan-changes
     name: Test Terraform Apply with Changes
     uses: ./.github/workflows/apply.yml
     with:
@@ -79,7 +79,7 @@ jobs:
 
   update-lint-doc:
     name: Update Lint Documentation
-    needs: test-terraform-plan-changes
+    needs: test-terraform-apply-changes
     if: ${{ github.event_name == 'pull_request' }}
     uses: entur/gha-meta/.github/workflows/auto-doc.yml@v1
     with:
