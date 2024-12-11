@@ -268,7 +268,7 @@ jobs:
             let body = '';
             let header = '';
             let status = ':white_check_mark:';
-            if (${process.env.GHA_TERRAFORM_APPLY_STATUS} != 0) {
+            if (process.env.GHA_TERRAFORM_APPLY_STATUS != 0) {
               status = ':x:';
             }
             for (const file of files) {
