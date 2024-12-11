@@ -1,5 +1,21 @@
 # Changelog
 
+## [2.0.0](https://github.com/entur/gha-terraform/compare/v1.2.0...v2.0.0) (2024-12-11)
+
+
+### ⚠ BREAKING CHANGES
+
+* split plan and apply logs ([#76](https://github.com/entur/gha-terraform/issues/76))
+
+### Bug Fixes
+
+* only run step if in PR ([#74](https://github.com/entur/gha-terraform/issues/74)) ([06da365](https://github.com/entur/gha-terraform/commit/06da3653e91c4055ee785ccaf1a41b9eb79be66b))
+
+
+### Miscellaneous Chores
+
+* split plan and apply logs ([#76](https://github.com/entur/gha-terraform/issues/76)) ([689fd76](https://github.com/entur/gha-terraform/commit/689fd763dc628eb733bd05dff57001a0967a86d6))
+
 ## [1.2.0](https://github.com/entur/gha-terraform/compare/v1.1.3...v1.2.0) (2024-11-05)
 
 
