@@ -50,10 +50,10 @@ on:
 
 jobs:
   terraform-lint:
-    uses: entur/gha-terraform/.github/workflows/lint.yml@v1
+    uses: entur/gha-terraform/.github/workflows/lint.yml@v2
 
   terraform-plan:
-    uses: entur/gha-terraform/.github/workflows/plan.yml@v1
+    uses: entur/gha-terraform/.github/workflows/plan.yml@v2
 ```
 
 #### cd.yml
@@ -66,9 +66,10 @@ on:
 
 jobs:
   terraform-apply:
-    uses: entur/gha-terraform/.github/workflows/apply.yml@v1
+    uses: entur/gha-terraform/.github/workflows/apply.yml@v2
 ```
 
-#### approval steps
+#### Approval steps
+
 If you don't want to use a third party application to create an approval step before apply, you can use Github Environments,
 For inspiration: https://github.com/entur/thanos/blob/main/.github/workflows/cd.yml
