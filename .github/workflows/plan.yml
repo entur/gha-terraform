@@ -147,10 +147,9 @@ jobs:
           # Save the plan output to a file so we can upload as a artifact and add a download link to the PR comment
           terraform show -no-color tfplan > tfplan.txt
           # Create highlights of the changes
-          icon=":page_facing_up:"
           GHA_TERRAFORM_PLAN_SUMMARY=$(terraform show -no-color tfplan |grep -E '(^[[:punct:]]|Plan)')
-          echo "GHA_TERRAFORM_PLAN_SUMMARY=${icon} ${GHA_TERRAFORM_PLAN_SUMMARY}" >> $GITHUB_ENV
-          echo "${GHA_TERRAFORM_PLAN_SUMMARY}" >> $GITHUB_STEP_SUMMARY
+          echo "GHA_TERRAFORM_PLAN_SUMMARY=${GHA_TERRAFORM_PLAN_SUMMARY}" >> $GITHUB_ENV
+          echo ":page_facing_up: ${GHA_TERRAFORM_PLAN_SUMMARY}" >> $GITHUB_STEP_SUMMARY
 
       - if: env.GHA_TERRAFORM_PLAN_STATUS == 2
         name: Split plan

@@ -173,13 +173,13 @@ jobs:
           # Create highlights of the changes
           GHA_TERRAFORM_APPLY_SUMMARY=$(cat tfapply.txt |grep -E '(^[[:punct:]]|Apply complete)')
           echo "GHA_TERRAFORM_APPLY_SUMMARY=${GHA_TERRAFORM_APPLY_SUMMARY}" >> $GITHUB_ENV
-          echo "${GHA_TERRAFORM_APPLY_SUMMARY}" >> $GITHUB_STEP_SUMMARY
+          echo ":page_facing_up: ${GHA_TERRAFORM_APPLY_SUMMARY}" >> $GITHUB_STEP_SUMMARY
 
       - if: env.GHA_TERRAFORM_PLAN_STATUS == 2 && env.GHA_TERRAFORM_APPLY_STATUS == 0
         name: Upload Plan
         uses: actions/upload-artifact@v4
         with:
-          name: tfapply
+          name: tfapply.txt
           path: |
             ${{ env.GHA_TERRAFORM_DIRECTORY }}/tfapply.txt
             ${{ env.GHA_TERRAFORM_DIRECTORY }}/tfplan.txt
