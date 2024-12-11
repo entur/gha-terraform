@@ -36,9 +36,8 @@ jobs:
 
 <!-- AUTO-DOC-OUTPUT:START - Do not remove or modify this section -->
 
-|                            OUTPUT                             |                      VALUE                      |     DESCRIPTION     |
-|---------------------------------------------------------------|-------------------------------------------------|---------------------|
-| <a name="output_apply-log"></a>[apply-log](#output_apply-log) |  `"${{ jobs.terraform-apply.outputs.apply }}"`  | Terraform apply log |
-|    <a name="output_version"></a>[version](#output_version)    | `"${{ jobs.terraform-apply.outputs.version }}"` |  Terraform version  |
+|                         OUTPUT                          |                      VALUE                      |    DESCRIPTION    |
+|---------------------------------------------------------|-------------------------------------------------|-------------------|
+| <a name="output_version"></a>[version](#output_version) | `"${{ jobs.terraform-apply.outputs.version }}"` | Terraform version |
 
 <!-- AUTO-DOC-OUTPUT:END -->
