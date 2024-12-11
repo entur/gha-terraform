@@ -205,7 +205,7 @@ jobs:
             }
 
       - if: env.GHA_TERRAFORM_PLAN_STATUS == 2
-        name: Upload Plan
+        name: Upload Artifacts
         id: upload-artifact
         uses: actions/upload-artifact@v4
         with:
