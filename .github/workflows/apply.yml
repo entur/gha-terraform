@@ -180,11 +180,12 @@ jobs:
         id: upload-artifact
         uses: actions/upload-artifact@v4
         with:
-          name: tfapply.txt
+          name: tfapply_${{ env.GHA_TERRAFORM_ENVIRONMENT }}.txt
           path: |
             ${{ env.GHA_TERRAFORM_DIRECTORY }}/tfapply.txt
             ${{ env.GHA_TERRAFORM_DIRECTORY }}/tfplan.txt
           if-no-files-found: error
+          overwrite: true
 
       - if: env.GHA_TERRAFORM_PLAN_STATUS == 2 && env.GHA_TERRAFORM_APPLY_STATUS == 0
         name: Split apply output

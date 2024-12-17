@@ -209,9 +209,10 @@ jobs:
         id: upload-artifact
         uses: actions/upload-artifact@v4
         with:
-          name: tfplan.txt
+          name: tfplan_${{ env.GHA_TERRAFORM_ENVIRONMENT }}.txt
           path: ${{ env.GHA_TERRAFORM_DIRECTORY }}/tfplan.txt
           if-no-files-found: error
+          overwrite: true
 
       - if: env.GHA_TERRAFORM_PLAN_STATUS == 2 && github.event_name == 'pull_request'
         name: Terraform Plan Status
