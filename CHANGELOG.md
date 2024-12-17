@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.0.2](https://github.com/entur/gha-terraform/compare/v2.0.1...v2.0.2) (2024-12-17)
+
+
+### Bug Fixes
+
+* artifact overwrite and environment unique name ([#81](https://github.com/entur/gha-terraform/issues/81)) ([238351a](https://github.com/entur/gha-terraform/commit/238351ab6eef85f41f78db2ed0c375b35c6546ce))
+
 ## [2.0.0](https://github.com/entur/gha-terraform/compare/v1.2.0...v2.0.0) (2024-12-11)
 
 
