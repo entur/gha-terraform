@@ -36,7 +36,7 @@ jobs:
 
       - name: "Terraform Version Action"
         id: set-terraform-version
-        uses: entur/gha-terraform/.github/actions/terraform-version@v1
+        uses: entur/gha-terraform/.github/actions/terraform-version@v2
         with:
           directory: ${{ env.GHA_TERRAFORM_DIRECTORY }}
           version: ${{ env.GHA_TERRAFORM_VERSION }}
