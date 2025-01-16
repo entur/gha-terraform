@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.0.3](https://github.com/entur/gha-terraform/compare/v2.0.2...v2.0.3) (2025-01-16)
+
+
+### Bug Fixes
+
+* handle multiline output ([#83](https://github.com/entur/gha-terraform/issues/83)) ([e741c76](https://github.com/entur/gha-terraform/commit/e741c76cbb9de845ba43a2c9dedacf1af43ffa2f))
+
 ## [2.0.2](https://github.com/entur/gha-terraform/compare/v2.0.1...v2.0.2) (2024-12-17)
 
 
