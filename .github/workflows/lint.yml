@@ -32,7 +32,7 @@ jobs:
     outputs:
       version: ${{ steps.set-terraform-version.outputs.version }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: "Terraform Version Action"
         id: set-terraform-version
@@ -45,7 +45,7 @@ jobs:
         with:
           terraform_version: ${{ steps.set-terraform-version.outputs.version }}
           terraform_wrapper: false
-      - uses: terraform-linters/setup-tflint@v4
+      - uses: terraform-linters/setup-tflint@v6
         with:
           tflint_wrapper: true
       - run: |
