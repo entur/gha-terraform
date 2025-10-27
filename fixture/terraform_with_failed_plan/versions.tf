@@ -1,6 +1,5 @@
 terraform {
-  # Leave this version be, to test terraform version fetching
-  required_version = ">1.3.0"
+  required_version = "> 1.0"
   required_providers {
     null = {
       source  = "hashicorp/null"
