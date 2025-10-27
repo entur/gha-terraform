@@ -89,7 +89,7 @@ jobs:
           echo "GHA_TERRAFORM_CLUSTER_NAME=${GHA_TERRAFORM_CLUSTER_NAME}" >> $GITHUB_ENV
 
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Authenticate with Cloud Provider
         uses: entur/gha-meta/.github/actions/cloud-auth@v1

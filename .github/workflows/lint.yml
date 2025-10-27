@@ -32,7 +32,7 @@ jobs:
     outputs:
       version: ${{ steps.set-terraform-version.outputs.version }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: "Terraform Version Action"
         id: set-terraform-version
