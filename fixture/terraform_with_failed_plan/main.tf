@@ -18,6 +18,9 @@ data "google_secret_manager_secret_version" "test_secret" {
   project = "none-existing"
 }
 
+output "secret_value" {
+  value = data.google_secret_manager_secret_version.test_secret.secret_data
+}
 # tests with invalid options:
 # resource "null_resource" "testing_123" {
 #   triggers2 = {
