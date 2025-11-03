@@ -207,7 +207,7 @@ jobs:
       - if: env.GHA_TERRAFORM_PLAN_STATUS == 2
         name: Upload Artifacts
         id: upload-artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: tfplan_${{ env.GHA_TERRAFORM_ENVIRONMENT }}.txt
           path: ${{ env.GHA_TERRAFORM_DIRECTORY }}/tfplan.txt
