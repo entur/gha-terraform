@@ -33,6 +33,14 @@ on:
         description: "Job timeout in minutes"
         type: number
         default: 60
+      has_changes:
+        description: "Whether changes were detected in the plan"
+        type: string
+        default: "true"
+      plan_summary:
+        description: "Summary of the plan"
+        type: string
+        default: ""
     outputs:
       version:
         description: "Terraform version"
@@ -41,6 +49,7 @@ on:
 jobs:
   terraform-apply:
     runs-on: ubuntu-24.04
+    if: inputs.has_changes == 'true'
     outputs:
       version: ${{ steps.set-terraform-version.outputs.version }}
     timeout-minutes: ${{ inputs.timeout_minutes }}
