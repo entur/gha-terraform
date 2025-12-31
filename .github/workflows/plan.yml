@@ -271,6 +271,9 @@ jobs:
         shell: bash
         run: |
           GHA_TERRAFORM_PLAN_SUMMARY="## :heavy_check_mark: Terraform Plan - Your infrastructure matches the configuration"
+          echo "GHA_TERRAFORM_PLAN_SUMMARY<<EOF" >> $GITHUB_ENV
+          echo "${GHA_TERRAFORM_PLAN_SUMMARY}" >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
           echo "${GHA_TERRAFORM_PLAN_SUMMARY}" >> $GITHUB_STEP_SUMMARY
 
       - if: github.event_name == 'pull_request' && env.GHA_TERRAFORM_PLAN_STATUS != 0 && env.GHA_TERRAFORM_PLAN_STATUS != 2
