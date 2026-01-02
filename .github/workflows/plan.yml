@@ -42,7 +42,6 @@ jobs:
   terraform-plan:
     runs-on: ubuntu-24.04
     timeout-minutes: ${{ inputs.timeout_minutes }}
-    environment: ${{ inputs.environment }}
     env:
       GHA_TERRAFORM_DIRECTORY: ${{ inputs.directory }}
       GHA_TERRAFORM_CLOUD_PROVIDER: ${{ inputs.cloud_provider }}
@@ -54,13 +53,8 @@ jobs:
       GHA_TERRAFORM_PLAN_STATUS: 0
       GHA_TERRAFORM_PLAN_SUMMARY: ""
       # ignore "context access might be invalid" warning
-      WORKLOAD_IDENTITY_PROVIDER: ${{ vars.WORKLOAD_IDENTITY_PROVIDER }}
-      SERVICE_ACCOUNT: ${{ vars.SERVICE_ACCOUNT }}
-      AZURE_CLIENT_ID: ${{ vars.AZURE_CLIENT_ID }}
-      AZURE_TENANT_ID: ${{ vars.AZURE_TENANT_ID }}
-      AZURE_SUBSCRIPTION_ID: ${{ vars.AZURE_SUBSCRIPTION_ID }}
-      AZURE_CLUSTER_NAME: ${{ vars.AZURE_CLUSTER_NAME  }}
-      AZURE_CLUSTER_RESOURCE_GROUP: ${{ vars.AZURE_CLUSTER_RESOURCE_GROUP }}
+      WORKLOAD_IDENTITY_PROVIDER: ${{ vars.CI_WORKLOAD_IDENTITY_PROVIDER }}
+      SERVICE_ACCOUNT: ${{ vars.CI_SERVICE_ACCOUNT }}
     permissions:
       contents: read
       id-token: write
