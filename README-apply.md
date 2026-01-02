@@ -38,6 +38,6 @@ jobs:
 
 |                         OUTPUT                          |                      VALUE                      |    DESCRIPTION    |
 |---------------------------------------------------------|-------------------------------------------------|-------------------|
-| <a name="output_version"></a>[version](#output_version) | `"${{ jobs.terraform-apply.outputs.version }}"` | Terraform version |
+| <a name="output_version"></a>[version](#output_version) | "${{ inputs.has_changes == 'true' && jobs.terraform-apply.outputs.version || '' }}" | Terraform version when changes are applied |
 
 <!-- AUTO-DOC-OUTPUT:END -->
