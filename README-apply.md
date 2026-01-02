@@ -25,7 +25,6 @@ jobs:
 | <a name="input_gcp_cluster_name"></a>[gcp_cluster_name](#input_gcp_cluster_name) | string |  false   |               |                                                                     N/A                                                                      |
 |    <a name="input_gcp_project_id"></a>[gcp_project_id](#input_gcp_project_id)    | string |  false   |               |                                                                     N/A                                                                      |
 |        <a name="input_has_changes"></a>[has_changes](#input_has_changes)         | string |  false   |   `"true"`    |                                                Whether changes were detected in <br>the plan                                                 |
-|       <a name="input_plan_summary"></a>[plan_summary](#input_plan_summary)       | string |  false   |               |                                                             Summary of the plan                                                              |
 |  <a name="input_timeout_minutes"></a>[timeout_minutes](#input_timeout_minutes)   | number |  false   |     `60`      |                                                            Job timeout in minutes                                                            |
 |              <a name="input_version"></a>[version](#input_version)               | string |  false   |  `"latest"`   | Terraform version, nb: Setting this, <br>overrides the version defined in <br>code. If not set in <br>code, the latest version is <br>used.  |
 |           <a name="input_workspace"></a>[workspace](#input_workspace)            | string |  false   |    `"env"`    |                                         The terraform workspace, defaults to <br>environment input                                           |
@@ -36,8 +35,8 @@ jobs:
 
 <!-- AUTO-DOC-OUTPUT:START - Do not remove or modify this section -->
 
-|                         OUTPUT                          |                      VALUE                      |    DESCRIPTION    |
-|---------------------------------------------------------|-------------------------------------------------|-------------------|
-| <a name="output_version"></a>[version](#output_version) | "${{ inputs.has_changes == 'true' && jobs.terraform-apply.outputs.version || '' }}" | Terraform version when changes are applied |
+|                         OUTPUT                          |                                           VALUE                                           |    DESCRIPTION    |
+|---------------------------------------------------------|-------------------------------------------------------------------------------------------|-------------------|
+| <a name="output_version"></a>[version](#output_version) | `${{ inputs.has_changes == 'true' && jobs.terraform-apply.outputs.version "\|""\|" '' }}` | Terraform version |
 
 <!-- AUTO-DOC-OUTPUT:END -->
