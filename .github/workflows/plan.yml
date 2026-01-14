@@ -270,11 +270,9 @@ jobs:
         name: Terraform Plan No Changes
         shell: bash
         run: |
-          cat <<'EOF' >> "$GITHUB_ENV"
-GHA_TERRAFORM_PLAN_SUMMARY<<EOT
-## :heavy_check_mark: Terraform Plan - Your infrastructure matches the configuration
-EOT
-EOF
+          echo "GHA_TERRAFORM_PLAN_SUMMARY<<EOF" >> $GITHUB_ENV
+          echo "## :heavy_check_mark: Terraform Plan - Your infrastructure matches the configuration" >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
           echo "## :heavy_check_mark: Terraform Plan - Your infrastructure matches the configuration" >> "$GITHUB_STEP_SUMMARY"
 
       - if: github.event_name == 'pull_request' && env.GHA_TERRAFORM_PLAN_STATUS != 0 && env.GHA_TERRAFORM_PLAN_STATUS != 2
