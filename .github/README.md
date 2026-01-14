@@ -72,4 +72,4 @@ jobs:
 #### Approval steps
 
 If you don't want to use a third party application to create an approval step before apply, you can use Github Environments,
-For inspiration: https://github.com/entur/thanos/blob/main/.github/workflows/cd.yml
+For inspiration: https://github.com/entur/thanos/blob/main/.github/workflows/deploy-to-all-envs.yml
