@@ -29,6 +29,10 @@ on:
       gcp_cluster_name:
         type: string
         description: "N/A"
+      has_changes:
+        description: "Whether changes were detected in the plan"
+        type: string
+        default: "false"
       timeout_minutes:
         description: "Job timeout in minutes"
         type: number
@@ -36,10 +40,11 @@ on:
     outputs:
       version:
         description: "Terraform version"
-        value: ${{ jobs.terraform-apply.outputs.version }}
+        value: ${{ inputs.has_changes == 'true' && jobs.terraform-apply.outputs.version || '' }}
 
 jobs:
   terraform-apply:
+    if: inputs.has_changes == 'true'
     runs-on: ubuntu-24.04
     outputs:
       version: ${{ steps.set-terraform-version.outputs.version }}
