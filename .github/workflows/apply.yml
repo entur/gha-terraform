@@ -40,7 +40,7 @@ on:
     outputs:
       version:
         description: "Terraform version"
-        value: ${{ inputs.has_changes == 'true' && jobs.terraform-apply.outputs.version || '' }}
+        value: ${{ jobs.terraform-apply.outputs.version }}
 
 jobs:
   terraform-apply:

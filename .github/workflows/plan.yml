@@ -287,20 +287,6 @@ jobs:
               body: `## :x: Terraform Plan ${process.env.GHA_TERRAFORM_ENVIRONMENT.toString().toUpperCase()}\n\nTerraform plan failed. \n\n${process.env.GHA_TERRAFORM_PLAN_SUMMARY}`
             })
 
-      - name: Set Output Status
-        id: output-status
-        shell: bash
-        run: |
-          if [ "${GHA_TERRAFORM_PLAN_STATUS}" == "2" ]; then
-            echo "has_changes=true" >> $GITHUB_OUTPUT
-          else
-            echo "has_changes=false" >> $GITHUB_OUTPUT
-          fi
-          # Handle multiline summary for output
-          echo "plan_summary<<EOF" >> $GITHUB_OUTPUT
-          echo "${GHA_TERRAFORM_PLAN_SUMMARY}" >> $GITHUB_OUTPUT
-          echo "EOF" >> $GITHUB_OUTPUT
-
       - if: env.GHA_TERRAFORM_PLAN_STATUS != 0 && env.GHA_TERRAFORM_PLAN_STATUS != 2
         name: Terraform Plan Status Check
         shell: bash
