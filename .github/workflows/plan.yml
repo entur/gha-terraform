@@ -292,6 +292,9 @@ jobs:
         shell: bash
         run: |
           GHA_TERRAFORM_PLAN_SUMMARY="## :x: Terraform Plan failed\n\n${GHA_TERRAFORM_PLAN_SUMMARY}"
+          echo "GHA_TERRAFORM_PLAN_SUMMARY<<EOF" >> $GITHUB_ENV
+          echo "${GHA_TERRAFORM_PLAN_SUMMARY}" >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
           echo "${GHA_TERRAFORM_PLAN_SUMMARY}" >> $GITHUB_STEP_SUMMARY
           exit 99
 
@@ -300,11 +303,12 @@ jobs:
         if: always()
         shell: bash
         run: |
-          if [ "$GHA_TERRAFORM_PLAN_STATUS" == "2" ]; then
+          PLAN_SUMMARY="${GHA_TERRAFORM_PLAN_SUMMARY:-Terraform plan did not complete.}"
+          if [ "${GHA_TERRAFORM_PLAN_STATUS:-0}" == "2" ]; then
             echo "has_changes=true" >> "$GITHUB_OUTPUT"
           else
             echo "has_changes=false" >> "$GITHUB_OUTPUT"
           fi
           echo "plan_summary<<EOF" >> "$GITHUB_OUTPUT"
-          echo "$GHA_TERRAFORM_PLAN_SUMMARY" >> "$GITHUB_OUTPUT"
+          echo "$PLAN_SUMMARY" >> "$GITHUB_OUTPUT"
           echo "EOF" >> "$GITHUB_OUTPUT"

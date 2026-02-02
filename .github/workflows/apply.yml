@@ -39,12 +39,13 @@ on:
         default: 60
     outputs:
       version:
-        description: "Terraform version"
+        description: "Terraform version (may be empty if terraform-apply job is skipped when has_changes != 'true')"
         value: ${{ jobs.terraform-apply.outputs.version }}
 
 jobs:
   terraform-apply:
     if: inputs.has_changes == 'true'
+    # When this job is skipped, the workflow output "version" is empty by design.
     runs-on: ubuntu-24.04
     outputs:
       version: ${{ steps.set-terraform-version.outputs.version }}
