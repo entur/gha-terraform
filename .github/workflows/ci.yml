@@ -86,7 +86,7 @@ jobs:
       workflow_file: .github/workflows/lint.yml
       readme_file: README-lint.md
   update-plan-doc:
-    name: Update Plan Documentation
+    name: Update Plan documentation
     if: ${{ github.event_name == 'pull_request' }}
     uses: entur/gha-meta/.github/workflows/auto-doc.yml@v1
     needs: [update-lint-doc]
@@ -94,7 +94,7 @@ jobs:
       workflow_file: .github/workflows/plan.yml
       readme_file: README-plan.md
   update-apply-doc:
-    name: Update Apply Documentation
+    name: Update Applocumentation
     if: ${{ github.event_name == 'pull_request' }}
     uses: entur/gha-meta/.github/workflows/auto-doc.yml@v1
     needs: [update-plan-doc, test-terraform-plan]
