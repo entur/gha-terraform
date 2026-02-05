@@ -185,7 +185,7 @@ jobs:
           echo ":page_facing_up: ${GHA_TERRAFORM_APPLY_SUMMARY}" >> $GITHUB_STEP_SUMMARY
 
       - if: env.GHA_TERRAFORM_PLAN_STATUS == 2 && env.GHA_TERRAFORM_APPLY_STATUS == 0
-        name: Upload artifacts
+        name: Upload Artifacts
         id: upload-artifact
         uses: actions/upload-artifact@v6
         with:
