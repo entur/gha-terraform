@@ -303,7 +303,7 @@ jobs:
         if: always()
         shell: bash
         run: |
-          PLAN_SUMMARY="${GHA_TERRAFORM_PLAN_SUMMARY:-Terraform plan did not complete.}"
+          PLAN_SUMMARY="${GHA_TERRAFORM_PLAN_SUMMARY:-Terraform plan did not complete}"
           if [ "${GHA_TERRAFORM_PLAN_STATUS:-0}" == "2" ]; then
             echo "has_changes=true" >> "$GITHUB_OUTPUT"
           else

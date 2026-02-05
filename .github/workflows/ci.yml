@@ -86,7 +86,7 @@ jobs:
       workflow_file: .github/workflows/lint.yml
       readme_file: README-lint.md
   update-plan-doc:
-    name: Update Plan documentation
+    name: Update Plan Documentation
     if: ${{ github.event_name == 'pull_request' }}
     uses: entur/gha-meta/.github/workflows/auto-doc.yml@v1
     needs: [update-lint-doc]
