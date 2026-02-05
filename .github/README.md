@@ -69,19 +69,15 @@ jobs:
     uses: entur/gha-terraform/.github/workflows/apply.yml@v2
 ```
 
-#### Approval steps
+#### Approval jobs
 
-If you don't want to use a third party application to create an approval step before apply, you can use Github Environments,
+If you don't want to use a third party application to create an approval job before apply, you can use Github Environments,
 For inspiration: https://github.com/entur/thanos/blob/main/.github/workflows/deploy-to-all-envs.yml
 
 
-#### Conditional steps
+#### Conditional jobs
 
-If you want to skip `terraform apply` step when `terraform plan` step has no changes, you can use [has_changes](../README-plan.md#L39) parameter.
-You need to add following command in apply step and define a name to `terraform plan` step;
-`has_changes: ${{ needs.<TERRAFORM_PLAN_STEP_NAME>.outputs.has_changes }}`
-To execute next step you need to add following command as is:
-`if: ${{ always() && !cancelled() && !contains(needs.*.result, 'failure') }}`
+If you want to skip the terraform apply job when the terraform plan job has no changes, you can use has_changes output from the plan job as input to the apply job. In the apply job, add this; `has_changes: ${{ needs.<TERRAFORM_PLAN_JOB_NAME>.outputs.has_changes }}`. This will skip the apply job in GHA. To execute next job in the pipeline even if the apply job is skipped, you need to add following if statement in the next job as is: `if: ${{ always() && !cancelled() && !contains(needs.*.result, 'failure') }}`
 
 Example:
 ```yaml
@@ -93,30 +89,22 @@ Example:
     with:
       environment: dev
 
-  approval-step:
-     needs:
-       - tf-plan-dev
-     runs-on: ubuntu-latest
-     environment: Approve
-     steps:
-       - name: Manual approval
-         id: Approve
-         shell: bash
-         run: echo "Approve the deployment"
-
   tf-apply-dev:
-    needs: [approval-step, tf-plan-dev]
+    needs: [tf-plan-dev]
     name: Terraform Apply DEV
     uses: entur/gha-terraform/.github/workflows/apply.yml@v1
     with:
       environment: dev
       has_changes: ${{ needs.tf-plan-dev.outputs.has_changes }}
 
-  tf-plan-tst:
+  next-job-example:
     needs: [tf-apply-dev]
     if: ${{ always() && !cancelled() && !contains(needs.*.result, 'failure') }} 
-    name: Terraform plan TEST
-    uses: entur/gha-terraform/.github/workflows/plan.yml@v1
-    with:
-      environment: tst
+    runs-on: ubuntu-latest
+    environment: Approve
+    steps:
+      - name: Manual approval
+        id: Approve
+        shell: bash
+        run: echo "Approve the deployment"
 ```
