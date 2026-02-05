@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - main
-      - CLOUD-3767-conditional-apply
 
 jobs:
   verify-pr:
