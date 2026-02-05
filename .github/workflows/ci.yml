@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - CLOUD-3767-conditional-apply
 
 jobs:
   verify-pr:
@@ -80,14 +81,14 @@ jobs:
   update-lint-doc:
     name: Update Lint Documentation
     needs: test-terraform-apply-changes
-    #if: ${{ github.event_name == 'pull_request' }}
+    if: ${{ github.event_name == 'pull_request' }}
     uses: entur/gha-meta/.github/workflows/auto-doc.yml@v1
     with:
       workflow_file: .github/workflows/lint.yml
       readme_file: README-lint.md
   update-plan-doc:
     name: Update Plan Documentation
-    #if: ${{ github.event_name == 'pull_request' }}
+    if: ${{ github.event_name == 'pull_request' }}
     uses: entur/gha-meta/.github/workflows/auto-doc.yml@v1
     needs: [update-lint-doc]
     with:
@@ -95,7 +96,7 @@ jobs:
       readme_file: README-plan.md
   update-apply-doc:
     name: Update Applocumentation
-    #if: ${{ github.event_name == 'pull_request' }}
+    if: ${{ github.event_name == 'pull_request' }}
     uses: entur/gha-meta/.github/workflows/auto-doc.yml@v1
     needs: [update-plan-doc, test-terraform-plan]
     with:
