@@ -69,7 +69,41 @@ jobs:
     uses: entur/gha-terraform/.github/workflows/apply.yml@v2
 ```
 
-#### Approval steps
+#### Approval jobs
 
-If you don't want to use a third party application to create an approval step before apply, you can use Github Environments,
-For inspiration: https://github.com/entur/thanos/blob/main/.github/workflows/cd.yml
+If you don't want to use a third party application to create an approval job before apply, you can use Github Environments. For inspiration: https://github.com/entur/thanos/blob/main/.github/workflows/deploy-to-all-envs.yml
+
+
+#### Conditional jobs
+
+If you want to skip the terraform apply job when the terraform plan job has no changes, you can use `has_changes` output from the plan job as input to the apply job. In the apply job, add this: `has_changes: ${{ needs.<TERRAFORM_PLAN_JOB_NAME>.outputs.has_changes }}`. This will skip the apply job in GHA. To execute next job in the pipeline even if the apply job is skipped, you need to add following if statement in the next job as is: `if: ${{ always() && !cancelled() && !contains(needs.*.result, 'failure') }}`.
+
+Example:
+```yaml
+...
+  tf-plan-dev:
+    needs: terraform-lint
+    name: Terraform Plan DEV
+    uses: entur/gha-terraform/.github/workflows/plan.yml@v1
+    with:
+      environment: dev
+
+  tf-apply-dev:
+    needs: [tf-plan-dev]
+    name: Terraform Apply DEV
+    uses: entur/gha-terraform/.github/workflows/apply.yml@v1
+    with:
+      environment: dev
+      has_changes: ${{ needs.tf-plan-dev.outputs.has_changes }}
+
+  next-job-example:
+    needs: [tf-apply-dev]
+    if: ${{ always() && !cancelled() && !contains(needs.*.result, 'failure') }} 
+    runs-on: ubuntu-latest
+    environment: Approve
+    steps:
+      - name: Manual approval
+        id: Approve
+        shell: bash
+        run: echo "Approve the deployment"
+```

@@ -37,6 +37,12 @@ on:
       version:
         description: "Terraform version"
         value: ${{ jobs.terraform-plan.outputs.version }}
+      has_changes:
+        description: "Indicates whether the Terraform plan detected changes: Can be 'true' or 'false'"
+        value: ${{ jobs.terraform-plan.outputs.has_changes }}
+      plan_summary:
+        description: "Summary of the plan"
+        value: ${{ jobs.terraform-plan.outputs.plan_summary }}
 
 jobs:
   terraform-plan:
@@ -67,6 +73,8 @@ jobs:
       pull-requests: write
     outputs:
       version: ${{ steps.set-terraform-version.outputs.version }}
+      has_changes: ${{ steps.output-status.outputs.has_changes }}
+      plan_summary: ${{ steps.output-status.outputs.plan_summary }}
     steps:
       - if: env.GHA_TERRAFORM_WORKSPACE == 'env'
         name: Set Terraform Workspace Variable
@@ -262,8 +270,10 @@ jobs:
         name: Terraform Plan No Changes
         shell: bash
         run: |
-          GHA_TERRAFORM_PLAN_SUMMARY="## :heavy_check_mark: Terraform Plan - Your infrastructure matches the configuration"
-          echo "${GHA_TERRAFORM_PLAN_SUMMARY}" >> $GITHUB_STEP_SUMMARY
+          echo "GHA_TERRAFORM_PLAN_SUMMARY<<EOF" >> $GITHUB_ENV
+          echo "## :heavy_check_mark: Terraform Plan - Your infrastructure matches the configuration" >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
+          echo "## :heavy_check_mark: Terraform Plan - Your infrastructure matches the configuration" >> "$GITHUB_STEP_SUMMARY"
 
       - if: github.event_name == 'pull_request' && env.GHA_TERRAFORM_PLAN_STATUS != 0 && env.GHA_TERRAFORM_PLAN_STATUS != 2
         name: Terraform Plan Status Check Comment
@@ -282,5 +292,23 @@ jobs:
         shell: bash
         run: |
           GHA_TERRAFORM_PLAN_SUMMARY="## :x: Terraform Plan failed\n\n${GHA_TERRAFORM_PLAN_SUMMARY}"
+          echo "GHA_TERRAFORM_PLAN_SUMMARY<<EOF" >> $GITHUB_ENV
+          echo "${GHA_TERRAFORM_PLAN_SUMMARY}" >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
           echo "${GHA_TERRAFORM_PLAN_SUMMARY}" >> $GITHUB_STEP_SUMMARY
           exit 99
+
+      - name: Output Status
+        id: output-status
+        if: always()
+        shell: bash
+        run: |
+          PLAN_SUMMARY="${GHA_TERRAFORM_PLAN_SUMMARY:-Terraform plan did not complete}"
+          if [ "${GHA_TERRAFORM_PLAN_STATUS:-0}" == "2" ]; then
+            echo "has_changes=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "has_changes=false" >> "$GITHUB_OUTPUT"
+          fi
+          echo "plan_summary<<EOF" >> "$GITHUB_OUTPUT"
+          echo "$PLAN_SUMMARY" >> "$GITHUB_OUTPUT"
+          echo "EOF" >> "$GITHUB_OUTPUT"
