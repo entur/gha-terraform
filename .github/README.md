@@ -71,8 +71,7 @@ jobs:
 
 #### Approval jobs
 
-If you don't want to use a third party application to create an approval job before apply, you can use Github Environments,
-For inspiration: https://github.com/entur/thanos/blob/main/.github/workflows/deploy-to-all-envs.yml
+If you don't want to use a third party application to create an approval job before apply, you can use Github Environments. For inspiration: https://github.com/entur/thanos/blob/main/.github/workflows/deploy-to-all-envs.yml
 
 
 #### Conditional jobs
