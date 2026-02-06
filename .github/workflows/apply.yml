@@ -32,7 +32,7 @@ on:
       has_changes:
         description: "Indicates whether the Terraform plan detected changes: Can be 'true' or 'false'"
         type: string
-        default: "false"
+        default: "true"
       timeout_minutes:
         description: "Job timeout in minutes"
         type: number
