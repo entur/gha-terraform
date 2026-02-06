@@ -94,7 +94,7 @@ jobs:
       workflow_file: .github/workflows/plan.yml
       readme_file: README-plan.md
   update-apply-doc:
-    name: Update Applocumentation
+    name: Update Apply Documentation
     if: ${{ github.event_name == 'pull_request' }}
     uses: entur/gha-meta/.github/workflows/auto-doc.yml@v1
     needs: [update-plan-doc, test-terraform-plan]
