@@ -34,10 +34,10 @@ jobs:
 
 <!-- AUTO-DOC-OUTPUT:START - Do not remove or modify this section -->
 
-|                                 OUTPUT                                 |                        VALUE                        |          DESCRIPTION          |
-|------------------------------------------------------------------------|-----------------------------------------------------|-------------------------------|
-|  <a name="output_has_changes"></a>[has_changes](#output_has_changes)   | `"${{ jobs.terraform-plan.outputs.has_changes }}"`  | Whether changes were detected |
-| <a name="output_plan_summary"></a>[plan_summary](#output_plan_summary) | `"${{ jobs.terraform-plan.outputs.plan_summary }}"` |      Summary of the plan      |
-|        <a name="output_version"></a>[version](#output_version)         |   `"${{ jobs.terraform-plan.outputs.version }}"`    |       Terraform version       |
+|                                 OUTPUT                                 |                        VALUE                        |                                       DESCRIPTION                                        |
+|------------------------------------------------------------------------|-----------------------------------------------------|------------------------------------------------------------------------------------------|
+|  <a name="output_has_changes"></a>[has_changes](#output_has_changes)   | `"${{ jobs.terraform-plan.outputs.has_changes }}"`  | Indicates whether the Terraform plan <br>detected changes: Can be 'true' <br>or 'false'  |
+| <a name="output_plan_summary"></a>[plan_summary](#output_plan_summary) | `"${{ jobs.terraform-plan.outputs.plan_summary }}"` |                                   Summary of the plan                                    |
+|        <a name="output_version"></a>[version](#output_version)         |   `"${{ jobs.terraform-plan.outputs.version }}"`    |                                    Terraform version                                     |
 
 <!-- AUTO-DOC-OUTPUT:END -->
