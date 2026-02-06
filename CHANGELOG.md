@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.1.0](https://github.com/entur/gha-terraform/compare/v2.0.3...v2.1.0) (2026-02-06)
+
+
+### Features
+
+* add conditional job executing ([#99](https://github.com/entur/gha-terraform/issues/99)) ([40ac704](https://github.com/entur/gha-terraform/commit/40ac7049dfa6c6e46c7bd24c0451623c1fe18e46))
+* conditional apply ([#100](https://github.com/entur/gha-terraform/issues/100)) ([26afd60](https://github.com/entur/gha-terraform/commit/26afd6054a7d3a937f74197e311e16599ebc6d52))
+
 ## [2.0.3](https://github.com/entur/gha-terraform/compare/v2.0.2...v2.0.3) (2025-01-16)
 
 
