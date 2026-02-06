@@ -76,7 +76,7 @@ If you don't want to use a third party application to create an approval job bef
 
 #### Conditional jobs
 
-If you want to skip the terraform apply job when the terraform plan job has no changes, you can use has_changes output from the plan job as input to the apply job. In the apply job, add this; `has_changes: ${{ needs.<TERRAFORM_PLAN_JOB_NAME>.outputs.has_changes }}`. This will skip the apply job in GHA. To execute next job in the pipeline even if the apply job is skipped, you need to add following if statement in the next job as is: `if: ${{ always() && !cancelled() && !contains(needs.*.result, 'failure') }}`
+If you want to skip the terraform apply job when the terraform plan job has no changes, you can use `has_changes` output from the plan job as input to the apply job. In the apply job, add this: `has_changes: ${{ needs.<TERRAFORM_PLAN_JOB_NAME>.outputs.has_changes }}`. This will skip the apply job in GHA. To execute next job in the pipeline even if the apply job is skipped, you need to add following if statement in the next job as is: `if: ${{ always() && !cancelled() && !contains(needs.*.result, 'failure') }}`.
 
 Example:
 ```yaml
