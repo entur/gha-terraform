@@ -20,6 +20,11 @@ jobs:
     uses: ./.github/workflows/lint.yml
     with:
       directory: fixture/terraform_with_changes
+  test-lint-with-warning-ok:
+    name: Test Lint Passes with Warning
+    uses: ./.github/workflows/lint.yml
+    with:
+      directory: fixture/terraform_with_warning
 
   verify-version:
     needs: test-lint-ok
