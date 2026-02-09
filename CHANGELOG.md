@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.1.1](https://github.com/entur/gha-terraform/compare/v2.1.0...v2.1.1) (2026-02-09)
+
+
+### Bug Fixes
+
+* set minimum failure severity for linting ([#102](https://github.com/entur/gha-terraform/issues/102)) ([e433e2f](https://github.com/entur/gha-terraform/commit/e433e2f8b3eb9093ad681d3f5c8fe03a3ccf0a25))
+
 ## [2.1.0](https://github.com/entur/gha-terraform/compare/v2.0.3...v2.1.0) (2026-02-06)
 
 
