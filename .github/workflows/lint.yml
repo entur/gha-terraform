@@ -71,7 +71,7 @@ jobs:
           printf "%bRunning TFLint: %b\n" "${YELLOW}" "${NEUTRAL}"
           printf "#--------------------------------------------------------------------------------\n"
           tflint --init
-          if ! tflint --chdir=${GHA_TERRAFORM_DIRECTORY} --recursive; then
+          if ! tflint --chdir=${GHA_TERRAFORM_DIRECTORY} --recursive --minimum-failure-severity=error; then
             printf "#--------------------------------------------------------------------------------\n"
             printf "%bERROR%b: TFLint found issues in the Terraform configuration\n" "${RED}" "${NEUTRAL}"
             printf "Please check the error messages above and fix the issue\n\n"
