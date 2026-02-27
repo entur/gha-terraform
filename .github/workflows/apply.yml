@@ -264,7 +264,7 @@ jobs:
             files.sort(filesort)
             const codeblockstart = '```tf\n'
             const codeblockend = '\n```\n'
-            const downloadlink = `\n[Download Apply Log](${process.env.GHA_ARTIFACT_DOWNLOAD_LINK})\n`;
+            const downloadlink = `\n[View full apply log](${process.env.GHA_ARTIFACT_DOWNLOAD_LINK})\n`;
             let apply = '';
             let n = 0;
             let body = '';

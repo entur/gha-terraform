@@ -241,7 +241,7 @@ jobs:
             files.sort(filesort)
             const codeblockstart = '```tf\n'
             const codeblockend = '\n```\n'
-            const downloadlink = `\n[Download Plan](${process.env.GHA_ARTIFACT_DOWNLOAD_LINK})\n`;
+            const downloadlink = `\n[View full plan](${process.env.GHA_ARTIFACT_DOWNLOAD_LINK})\n`;
             let plan = '';
             let n = 0;
             let body = '';
