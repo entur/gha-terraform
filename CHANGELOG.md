@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.1.2](https://github.com/entur/gha-terraform/compare/v2.1.1...v2.1.2) (2026-02-27)
+
+
+### Bug Fixes
+
+* don't zip tfplan.txt and tfapply.txt ([#104](https://github.com/entur/gha-terraform/issues/104)) ([ab33d59](https://github.com/entur/gha-terraform/commit/ab33d59a5c9d35113ff4b12d413f88f0dc2d053c))
+
 ## [2.1.1](https://github.com/entur/gha-terraform/compare/v2.1.0...v2.1.1) (2026-02-09)
 
 
