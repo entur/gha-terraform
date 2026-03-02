@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.1.3](https://github.com/entur/gha-terraform/compare/v2.1.2...v2.1.3) (2026-03-02)
+
+
+### Bug Fixes
+
+* revert to using archive, but rename file to .zip ([#108](https://github.com/entur/gha-terraform/issues/108)) ([d5d73e6](https://github.com/entur/gha-terraform/commit/d5d73e69bda65a497fa61864904bbd1bc871d9b5))
+
 ## [2.1.2](https://github.com/entur/gha-terraform/compare/v2.1.1...v2.1.2) (2026-02-27)
 
 
