@@ -189,11 +189,11 @@ jobs:
         id: upload-artifact
         uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
         with:
-          name: tfapply_${{ env.GHA_TERRAFORM_ENVIRONMENT }}.txt
+          name: tfapply_${{ env.GHA_TERRAFORM_ENVIRONMENT }}.txt.zip
           path: ${{ env.GHA_TERRAFORM_DIRECTORY }}/tfapply.txt
           if-no-files-found: error
           overwrite: true
-          archive: false # do not zip the file, to make it easier to read in the PR comment
+          archive: true # BUGGY, skip for now: do not zip the file, to make it easier to read in the PR comment
 
       - if: env.GHA_TERRAFORM_PLAN_STATUS == 2 && env.GHA_TERRAFORM_APPLY_STATUS == 0
         name: Split apply output
