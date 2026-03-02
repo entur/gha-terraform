@@ -41,7 +41,7 @@ jobs:
           directory: ${{ env.GHA_TERRAFORM_DIRECTORY }}
           version: ${{ env.GHA_TERRAFORM_VERSION }}
 
-      - uses: hashicorp/setup-terraform@v3
+      - uses: hashicorp/setup-terraform@v4
         with:
           terraform_version: ${{ steps.set-terraform-version.outputs.version }}
           terraform_wrapper: false
