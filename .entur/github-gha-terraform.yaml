@@ -2,7 +2,7 @@ apiVersion: orchestrator.entur.io/github/v1
 kind: GitHubActions
 metadata:
   id: gha-terraform
-  trigger: 1774014568
+  trigger: 1774014569
 spec:
   environments:
   - dev
