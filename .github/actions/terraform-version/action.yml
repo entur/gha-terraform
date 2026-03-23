@@ -23,14 +23,13 @@ runs:
       working-directory: ${{ inputs.directory }}
       shell: bash
       run: |
-        terraform=version
         red='\033[0;31m'
         green='\033[0;32m'
         yellow='\033[0;33m'
         neutral='\033[0m'
         if [ "${inputs_version}" == "latest" ]; then
           version=$( \
-            { grep -IR -A 100 "terraform {" || echo ""; } \
+            { grep -IR --exclude-dir=.terraform -A 100 "terraform {" || echo ""; } \
             | { grep -oE 'required_version\s*=\s*"([^"]+)"' || echo ""; } \
             | { grep -Eo '[0-9]+\.[0-9]+\.[0-9]+' || echo ""; } \
             | head -1 \

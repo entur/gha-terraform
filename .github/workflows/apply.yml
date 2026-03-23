@@ -8,12 +8,12 @@ on:
         type: string
         default: "terraform"
       cloud_provider:
-        description: "Which cloud service provider to use - Google Cloud: 'gcp' or Azure: 'az'"
+        description: "Which cloud service provider to use - Google Cloud: 'gcp'"
         type: string
         default: "gcp"
       environment:
         type: string
-        description: "GitHub environment to use Google Cloud: (dev, tst, prd) or Azure: (az-dev, az-test, az-prod)"
+        description: "GitHub environment to use: dev, tst, prd"
         required: true
       workspace:
         description: "The terraform workspace, defaults to environment input"
@@ -63,14 +63,8 @@ jobs:
       GHA_TERRAFORM_PLAN_SUMMARY: ""
       GHA_TERRAFORM_APPLY_STATUS: 0
       GHA_TERRAFORM_APPLY_SUMMARY: ""
-      # ignore "context access might be invalid" warning
       GHA_WORKLOAD_IDENTITY_PROVIDER: ${{ vars.WORKLOAD_IDENTITY_PROVIDER }}
       GHA_SERVICE_ACCOUNT: ${{ vars.SERVICE_ACCOUNT }}
-      AZURE_CLIENT_ID: ${{ vars.AZURE_CLIENT_ID }}
-      AZURE_TENANT_ID: ${{ vars.AZURE_TENANT_ID }}
-      AZURE_SUBSCRIPTION_ID: ${{ vars.AZURE_SUBSCRIPTION_ID }}
-      AZURE_CLUSTER_NAME: ${{ vars.AZURE_CLUSTER_NAME  }}
-      AZURE_CLUSTER_RESOURCE_GROUP: ${{ vars.AZURE_CLUSTER_RESOURCE_GROUP }}
     permissions:
       contents: read
       id-token: write
@@ -82,18 +76,6 @@ jobs:
         run: |
           echo "GHA_TERRAFORM_WORKSPACE=${GHA_TERRAFORM_ENVIRONMENT}" >> $GITHUB_ENV
 
-      - name: Set Cluster Name
-        shell: bash
-        if: inputs.cloud_provider == 'az'
-        env:
-          GHA_TERRAFORM_CLUSTER_NAME: ${{ env.AZURE_CLUSTER_NAME  }}
-        run: |
-          if [ -z "${{ env.GHA_TERRAFORM_CLUSTER_NAME }}" ]; then
-            echo "GitHub repository environment variable AZURE_CLUSTER_NAME is not set. Setup using tf-azure-apps. Exiting."
-            exit 1
-          fi
-          echo "GHA_TERRAFORM_CLUSTER_NAME=${GHA_TERRAFORM_CLUSTER_NAME}" >> $GITHUB_ENV
-
       - name: Checkout
         uses: actions/checkout@v6
 
@@ -104,9 +86,6 @@ jobs:
           cloud_provider: ${{ env.GHA_TERRAFORM_CLOUD_PROVIDER }}
           gcp_workload_identity_provider: ${{ env.GHA_WORKLOAD_IDENTITY_PROVIDER }}
           gcp_service_account: ${{ env.GHA_SERVICE_ACCOUNT }}
-          azure_client_id: ${{ env.AZURE_CLIENT_ID }}
-          azure_tenant_id: ${{ env.AZURE_TENANT_ID }}
-          azure_subscription_id: ${{ env.AZURE_SUBSCRIPTION_ID }}
 
       - name: Authenticate with Kubernetes
         uses: entur/gha-meta/.github/actions/k8s-auth@v1
@@ -115,7 +94,6 @@ jobs:
           cloud_provider: ${{ env.GHA_TERRAFORM_CLOUD_PROVIDER }}
           gcp_project_id: ${{ env.GHA_TERRAFORM_GCP_PROJECT_ID }}
           gcp_cluster_name: ${{ env.GHA_TERRAFORM_GCP_CLUSTER_NAME }}
-          azure_cluster_resource_group: ${{ env.AZURE_CLUSTER_RESOURCE_GROUP }}
 
       - name: Set Terraform Version
         id: set-terraform-version

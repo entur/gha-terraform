@@ -2,6 +2,8 @@
 
 ## Usage
 
+For complete usage examples and golden path, see the [Platform Examples repository](https://github.com/entur/platform-examples/).
+
 Add the following step to your workflow configuration:
 
 ```yml
