@@ -326,7 +326,7 @@ jobs:
           GHA_TERRAFORM_APPLY_SUMMARY="## :x: Terraform Apply failed\n\n${GHA_TERRAFORM_PLAN_SUMMARY}, ${GHA_TERRAFORM_APPLY_SUMMARY}"
 
           # Print error message to the gha output, and save it to the summary.
-          echo "{GHA_TERRAFORM_APPLY_SUMMARY}"
+          echo "${GHA_TERRAFORM_APPLY_SUMMARY}"
           echo "${GHA_TERRAFORM_APPLY_SUMMARY}" >> $GITHUB_STEP_SUMMARY
           echo "Check the Terraform Plan and Apply step logs for more details."
           exit 99
