@@ -296,7 +296,11 @@ jobs:
           echo "GHA_TERRAFORM_PLAN_SUMMARY<<EOF" >> $GITHUB_ENV
           echo "${GHA_TERRAFORM_PLAN_SUMMARY}" >> $GITHUB_ENV
           echo "EOF" >> $GITHUB_ENV
+
+          # Print error message to the gha output, and save it to the summary.
+          echo "${GHA_TERRAFORM_PLAN_SUMMARY}"
           echo "${GHA_TERRAFORM_PLAN_SUMMARY}" >> $GITHUB_STEP_SUMMARY
+          echo "Check the Terraform Plan step logs for more details."
           exit 99
 
       - name: Output Status
