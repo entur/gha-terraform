@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.2.0](https://github.com/entur/gha-terraform/compare/v2.1.3...v2.2.0) (2026-03-27)
+
+
+### Features
+
+* print the terraform error in the failing step ([#111](https://github.com/entur/gha-terraform/issues/111)) ([5360de6](https://github.com/entur/gha-terraform/commit/5360de659a33f2a649aec397f4a9c0df1ce31014))
+
 ## [2.1.3](https://github.com/entur/gha-terraform/compare/v2.1.2...v2.1.3) (2026-03-02)
 
 
