@@ -2,6 +2,8 @@
 
 ## Usage
 
+For complete usage examples and golden path, see the [Platform Examples repository](https://github.com/entur/platform-examples/).
+
 Add the following step to your workflow configuration:
 
 ```yml
@@ -19,9 +21,9 @@ jobs:
 
 |                                      INPUT                                       |  TYPE  | REQUIRED |    DEFAULT    |                                                                 DESCRIPTION                                                                  |
 |----------------------------------------------------------------------------------|--------|----------|---------------|----------------------------------------------------------------------------------------------------------------------------------------------|
-|    <a name="input_cloud_provider"></a>[cloud_provider](#input_cloud_provider)    | string |  false   |    `"gcp"`    |                              Which cloud service provider to <br>use - Google Cloud: 'gcp' <br>or Azure: 'az'                                |
+|    <a name="input_cloud_provider"></a>[cloud_provider](#input_cloud_provider)    | string |  false   |    `"gcp"`    |                                        Which cloud service provider to <br>use - Google Cloud: 'gcp'                                         |
 |           <a name="input_directory"></a>[directory](#input_directory)            | string |  false   | `"terraform"` |                                                         Path to Terraform Directory                                                          |
-|        <a name="input_environment"></a>[environment](#input_environment)         | string |   true   |               |                      GitHub environment to use Google <br>Cloud: (dev, tst, prd) or Azure: (az-dev, az-test, az-prod)                        |
+|        <a name="input_environment"></a>[environment](#input_environment)         | string |   true   |               |                                                GitHub environment to use: dev, <br>tst, prd                                                  |
 | <a name="input_gcp_cluster_name"></a>[gcp_cluster_name](#input_gcp_cluster_name) | string |  false   |               |                                                                     N/A                                                                      |
 |    <a name="input_gcp_project_id"></a>[gcp_project_id](#input_gcp_project_id)    | string |  false   |               |                                                                     N/A                                                                      |
 |        <a name="input_has_changes"></a>[has_changes](#input_has_changes)         | string |  false   |   `"true"`    |                           Indicates whether the Terraform plan <br>detected changes: Can be 'true' <br>or 'false'                            |
