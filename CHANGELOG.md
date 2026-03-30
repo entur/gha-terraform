@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.3.0](https://github.com/entur/gha-terraform/compare/v2.2.0...v2.3.0) (2026-03-30)
+
+
+### Features
+
+* use CI account for terraform plan, deprecate Azure support ([#110](https://github.com/entur/gha-terraform/issues/110)) ([2b90699](https://github.com/entur/gha-terraform/commit/2b90699c41232002584cd760514d4fdd0fe05199))
+
 ## [2.2.0](https://github.com/entur/gha-terraform/compare/v2.1.3...v2.2.0) (2026-03-27)
 
 
