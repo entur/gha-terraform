@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.3.1](https://github.com/entur/gha-terraform/compare/v2.3.0...v2.3.1) (2026-04-13)
+
+
+### Bug Fixes
+
+* **deps:** bump actions/github-script from 8 to 9 ([#114](https://github.com/entur/gha-terraform/issues/114)) ([bd2e582](https://github.com/entur/gha-terraform/commit/bd2e5826cc7f744f21f6e5fd9e1a8b0196749201))
+
 ## [2.3.0](https://github.com/entur/gha-terraform/compare/v2.2.0...v2.3.0) (2026-03-30)
 
 
