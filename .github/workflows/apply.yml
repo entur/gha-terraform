@@ -202,7 +202,7 @@ jobs:
 
       - name: Delete previous apply comments for same environment
         if: github.event_name == 'pull_request'
-        uses: actions/github-script@v8
+        uses: actions/github-script@v9
         with:
           script: |
             const { data: comments } = await github.rest.issues.listComments({
@@ -226,7 +226,7 @@ jobs:
 
       - if: env.GHA_TERRAFORM_PLAN_STATUS == 2 && github.event_name == 'pull_request'
         name: Terraform Apply Status
-        uses: actions/github-script@v8
+        uses: actions/github-script@v9
         env:
           GHA_ARTIFACT_DOWNLOAD_LINK: ${{ steps.upload-artifact.outputs.artifact-url }}
         with:
@@ -281,7 +281,7 @@ jobs:
 
       - if: github.event_name == 'pull_request' && env.GHA_TERRAFORM_PLAN_STATUS == 1
         name: Terraform Plan Status Check Comment
-        uses: actions/github-script@v8
+        uses: actions/github-script@v9
         with:
           script: |
             await github.rest.issues.createComment({
