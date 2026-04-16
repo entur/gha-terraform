@@ -4,9 +4,9 @@ updates:
 - package-ecosystem: github-actions
   directory: "/"
   exclude-paths:
-    - /.github/workflows/apply.yml
-    - /.github/workflows/plan.yml
-    - /.github/workflows/lint.yml
+    - ".github/workflows/apply.yml"
+    - ".github/workflows/plan.yml"
+    - ".github/workflows/lint.yml"
   schedule:
     interval: "weekly"
     time: "09:00"
@@ -15,9 +15,9 @@ updates:
   open-pull-requests-limit: 2
 - package-ecosystem: github-actions
   directories:
-    - /.github/workflows/apply.yml
-    - /.github/workflows/plan.yml
-    - /.github/workflows/lint.yml
+    - ".github/workflows/apply.yml"
+    - ".github/workflows/plan.yml"
+    - ".github/workflows/lint.yml"
   schedule:
     interval: "weekly"
     time: "09:00"
