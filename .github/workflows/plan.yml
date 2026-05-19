@@ -23,6 +23,10 @@ on:
         description: "Job timeout in minutes"
         type: number
         default: 10
+      extra_tf_vars:
+        description: "Extra Terraform variables to pass to plan, one per line in KEY=value format"
+        type: string
+        default: ""
       # skip these - only used by fellestjenester.
       cloud_provider:
         description: "Which cloud service provider to use - Google Cloud: 'gcp' is currently the only supported option"
@@ -58,6 +62,7 @@ jobs:
       GHA_TERRAFORM_VERSION: ${{ inputs.version }}
       GHA_TERRAFORM_GCP_PROJECT_ID: ${{ inputs.gcp_project_id }}
       GHA_TERRAFORM_GCP_CLUSTER_NAME: ${{ inputs.gcp_cluster_name }}
+      GHA_TERRAFORM_EXTRA_TF_VARS: ${{ inputs.extra_tf_vars }}
       GHA_TERRAFORM_PLAN_STATUS: 0
       GHA_TERRAFORM_PLAN_SUMMARY: ""
       WORKLOAD_IDENTITY_PROVIDER: ${{ vars.CI_WORKLOAD_IDENTITY_PROVIDER }}
@@ -126,9 +131,15 @@ jobs:
         working-directory: ${{ env.GHA_TERRAFORM_DIRECTORY }}
         shell: bash
         run: |
+          # Build -var flags from extra_tf_vars input (one KEY=value per line)
+          EXTRA_VAR_ARGS=()
+          while IFS= read -r line; do
+            [ -z "$line" ] && continue
+            EXTRA_VAR_ARGS+=("-var" "$line")
+          done <<< "${GHA_TERRAFORM_EXTRA_TF_VARS}"
           set +e
           # Run terraform plan and save the plan to a file, but also save any errors to a variable
-          { err=$(terraform plan -var-file=env/${GHA_TERRAFORM_ENVIRONMENT}.tfvars -detailed-exitcode -no-color -out tfplan -lock=false 2>&1 >&3 3>&-); } 3>&1
+          { err=$(terraform plan -var-file=env/${GHA_TERRAFORM_ENVIRONMENT}.tfvars "${EXTRA_VAR_ARGS[@]}" -detailed-exitcode -no-color -out tfplan -lock=false 2>&1 >&3 3>&-); } 3>&1
           echo "GHA_TERRAFORM_PLAN_STATUS=$?" >> $GITHUB_ENV
           set -e
           # Save the multiline error to the Summary, if empty/ok, it will be overwritten later
