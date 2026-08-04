@@ -78,7 +78,7 @@ jobs:
           echo "GHA_TERRAFORM_WORKSPACE=${GHA_TERRAFORM_ENVIRONMENT}" >> $GITHUB_ENV
 
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
 
       - name: Authenticate with Cloud Provider
         uses: entur/gha-meta/.github/actions/cloud-auth@v1
@@ -104,7 +104,7 @@ jobs:
           version: ${{ env.GHA_TERRAFORM_VERSION }}
 
       - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v4
+        uses: hashicorp/setup-terraform@dfe3c3f87815947d99a8997f908cb6525fc44e9e # v4.0.1
         with:
           terraform_version: ${{ steps.set-terraform-version.outputs.version }}
           terraform_wrapper: false
@@ -181,7 +181,7 @@ jobs:
 
       - if: github.event_name == 'pull_request'
         name: Delete previous plan comments for same environment
-        uses: actions/github-script@v9
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
         with:
           script: |
             const { data: comments } = await github.rest.issues.listComments({
@@ -216,7 +216,7 @@ jobs:
 
       - if: env.GHA_TERRAFORM_PLAN_STATUS == 2 && github.event_name == 'pull_request'
         name: Terraform Plan Status
-        uses: actions/github-script@v9
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
         env:
           GHA_ARTIFACT_DOWNLOAD_LINK: ${{ steps.upload-artifact.outputs.artifact-url }}
         with:
@@ -269,7 +269,7 @@ jobs:
 
       - if: github.event_name == 'pull_request' && env.GHA_TERRAFORM_PLAN_STATUS != 0 && env.GHA_TERRAFORM_PLAN_STATUS != 2
         name: Terraform Plan Status Check Comment
-        uses: actions/github-script@v9
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
         with:
           script: |
             await github.rest.issues.createComment({
