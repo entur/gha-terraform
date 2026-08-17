@@ -31,7 +31,7 @@ on:
         description: "N/A"
       gcp_cluster_location:
         type: string
-        description: "europe-west1"
+        default: "europe-west1"
       has_changes:
         description: "Indicates whether the Terraform plan detected changes: Can be 'true' or 'false'"
         type: string
