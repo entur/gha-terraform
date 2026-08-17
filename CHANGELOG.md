@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.5.0](https://github.com/entur/gha-terraform/compare/v2.4.0...v2.5.0) (2026-08-17)
+
+
+### Features
+
+* Add option for cluster location to authenticate to k8s ([#124](https://github.com/entur/gha-terraform/issues/124)) ([ca24e92](https://github.com/entur/gha-terraform/commit/ca24e92fc883f06219e5903b3cbd394f94ae2dd1))
+
 ## [2.4.0](https://github.com/entur/gha-terraform/compare/v2.3.1...v2.4.0) (2026-08-04)
 
 
