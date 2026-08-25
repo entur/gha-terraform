@@ -1,5 +1,16 @@
 # Changelog
 
+## [3.0.0](https://github.com/entur/gha-terraform/compare/v2.5.0...v3.0.0) (2026-08-25)
+
+
+### ⚠ BREAKING CHANGES
+
+* Bump actions/checkout to v7. For most workflows this is not br… ([#126](https://github.com/entur/gha-terraform/issues/126))
+
+### Features
+
+* Bump actions/checkout to v7. For most workflows this is not br… ([#126](https://github.com/entur/gha-terraform/issues/126)) ([6d6de30](https://github.com/entur/gha-terraform/commit/6d6de306e323450496db578158d1a417ee50d276))
+
 ## [2.5.0](https://github.com/entur/gha-terraform/compare/v2.4.0...v2.5.0) (2026-08-17)
 
 
