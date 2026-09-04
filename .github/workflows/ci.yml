@@ -60,6 +60,7 @@ jobs:
     with:
       directory: fixture/terraform
       environment: dev
+      has_changes: ${{ needs.test-terraform-plan.outputs.has_changes }}
     secrets: inherit
 
   test-terraform-plan-changes:
@@ -80,6 +81,7 @@ jobs:
       directory: fixture/terraform_with_changes
       version: 1.9.8
       environment: dev
+      has_changes: ${{ needs.test-terraform-plan-changes.outputs.has_changes }}
     secrets: inherit
 
   update-lint-doc:
